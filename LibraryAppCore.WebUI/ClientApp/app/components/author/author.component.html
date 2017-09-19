@@ -1,0 +1,79 @@
+﻿<h1>Authors List</h1>
+<input type="button" value="Add Author" class="btn btn-default" (click)="addAuthor()" />
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Name</td>
+            <td>Surname</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let author of pagedAuthorItems">
+            <ng-template [ngTemplateOutlet]="loadTemplate(author)"
+                         [ngOutletContext]="{ $implicit: author}">
+            </ng-template>
+        </tr>
+    </tbody>
+</table>
+<div>
+    <!-- pagination -->
+    <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+        <li [ngClass]="{disabled:pager.currentPage === 1}">
+            <a (click)="setPage(1)">First</a>
+        </li>
+        <li [ngClass]="{disabled:pager.currentPage === 1}">
+            <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+        </li>
+        <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+            <a (click)="setPage(page)">{{page}}</a>
+        </li>
+        <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+            <a (click)="setPage(pager.currentPage + 1)">Next</a>
+        </li>
+        <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+            <a (click)="setPage(pager.totalPages)">Last</a>
+        </li>
+    </ul>
+</div>
+<div>{{statusMessage}}</div>
+
+
+<ng-template #readOnlyTemplate let-author>
+
+    <td>{{author.id}}</td>
+    <td>{{author.name}}</td>
+    <td>{{author.surname}}</td>
+    <td>
+        <input type="button" value="Books by Author" class="btn btn-default" (click)="routeToBooks(author)" />
+    </td>
+    <td>
+        <input type="button" value="Edit" class="btn btn-default" (click)="editAuthor(author)" />
+    </td>
+    <td>
+        <input type="button" value="Delete" class="btn btn-danger" (click)="deleteAuthor(author)" />
+    </td>
+</ng-template>
+
+<ng-template #editTemplate>
+    <td>
+        <input type="text" [(ngModel)]="editedAuthor.id" readonly disabled class="form-control" />
+    </td>
+    <td>
+        <input type="text" name="authorName" [(ngModel)]="editedAuthor.name" class="form-control" #authorName="ngModel" required />
+        <p [hidden]="authorName.valid || authorName.untouched" class="danger">Enter the name!</p>
+    </td>
+    <td>
+        <input type="text" name="authorSurname" [(ngModel)]="editedAuthor.surname" class="form-control" #authorSurname="ngModel" required />
+        <p [hidden]="authorSurname.valid || authorSurname.untouched" class="danger">Enter the surname!</p>
+    </td>
+    <td>
+        <button [disabled]="authorName.invalid || authorSurname.invalid" (click)="saveAuthor()" class="btn btn-success">Save</button>
+    </td>
+    <td>
+        <button (click)="cancel()" class="btn btn-warning">Cencel</button>
+    </td>
+</ng-template>
