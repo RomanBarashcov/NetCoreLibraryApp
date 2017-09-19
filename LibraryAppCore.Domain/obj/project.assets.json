@@ -186,11 +186,11 @@
       "hideWarningsAndErrors": true
     },
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\source\\repos\\LibraryAppCore\\LibraryAppCore.Domain\\LibraryAppCore.Domain.csproj",
+      "projectUniqueName": "C:\\Users\\user\\source\\repos\\LibraryApp\\LibraryAppCore.Domain\\LibraryAppCore.Domain.csproj",
       "projectName": "LibraryAppCore.Domain",
-      "projectPath": "C:\\Users\\user\\source\\repos\\LibraryAppCore\\LibraryAppCore.Domain\\LibraryAppCore.Domain.csproj",
+      "projectPath": "C:\\Users\\user\\source\\repos\\LibraryApp\\LibraryAppCore.Domain\\LibraryAppCore.Domain.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\source\\repos\\LibraryAppCore\\LibraryAppCore.Domain\\obj\\",
+      "outputPath": "C:\\Users\\user\\source\\repos\\LibraryApp\\LibraryAppCore.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

@@ -13,7 +13,7 @@ namespace LibraryAppCore.Domain.Concrete.DataRequired
             bool isDataNoEmpty = false;
             if (IsDataConvertingCorrect(book.AuthorId))
             {
-                if (book.Year != null && !String.IsNullOrEmpty(book.Name) && !String.IsNullOrEmpty(book.Description) && !String.IsNullOrEmpty(book.AuthorId))
+                if (book.Year > 0 && !String.IsNullOrEmpty(book.Name) && !String.IsNullOrEmpty(book.Description) && !String.IsNullOrEmpty(book.AuthorId))
                 {
                     isDataNoEmpty = true;
                 }

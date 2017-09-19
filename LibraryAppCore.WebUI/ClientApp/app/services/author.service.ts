@@ -10,7 +10,7 @@ import 'rxjs/add/observable/throw';
 @Injectable()
 export class AuthorService {
 
-    private url = "http://localhost:49781/AuthorApi";
+    private url = "http://localhost:50201/AuthorApi";
 
     constructor(private http: Http) { }
 
@@ -20,12 +20,12 @@ export class AuthorService {
 
                 let authorList = resp.json();
                 let authors: Author[] = [];
-                console.log(authorList);
+                console.log("First getAuthors() " + authorList);
 
                 for (let index in authorList) {
-                    console.log(authorList[index]);
+                    console.log("Second getAuthors() " + authorList[index]);
                     let author = authorList[index];
-                    authors.push({ id: author.Id, name: author.Name, surname: author.Surname });
+                    authors.push({ id: author.id, name: author.name, surname: author.surname });
                 }
                 return authors;
             }).catch((error: any) => { return Observable.throw(error); });
@@ -36,7 +36,10 @@ export class AuthorService {
         console.log(body);
         let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
         return this.http.post(this.url, body, { headers: headers })
-            .map((res: Response) => AuthorService.json(res))
+            .map((res: Response) => {
+                console.log("createAuthor() Result: " + res.status);
+                return res;
+            })
             .catch(this.handleError);
     }
 
@@ -44,13 +47,19 @@ export class AuthorService {
         let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
         const body = JSON.stringify(obj);
         return this.http.put(this.url + '/' + id, body, { headers: headers })
-            .map((res: Response) => AuthorService.json(res))
+            .map((res: Response) => {
+                console.log("updateAuthor() Result: " + res.status);
+                return res;
+            })
             .catch(this.handleError);
     }
 
     deleteUser(id: string) {
         return this.http.delete(this.url + '/' + id)
-            .map((res: Response) => AuthorService.json(res))
+            .map((res: Response) => {
+                console.log("deleteUser() Result: " + res.status);
+                return res;
+            })
             .catch(this.handleError);
     }
 

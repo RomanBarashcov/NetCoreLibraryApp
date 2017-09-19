@@ -27,7 +27,7 @@ import { PagerService } from './services/pagination.service';
             { path: 'home', component: HomeComponent },
             { path: 'author', component: AuthorComponent },
             { path: 'book', component: BookComponent },
-            { path: 'booksByAuthor/:id', component: BookComponent },
+            { path: 'bookByAuthor/:id', component: BookComponent },
             { path: '**', redirectTo: 'home' }
         ])
     ],

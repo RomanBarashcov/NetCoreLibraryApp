@@ -10,7 +10,7 @@ import 'rxjs/add/observable/throw';
 @Injectable()
 export class BookService {
 
-    private url = "http://localhost:49781/BookApi";
+    private url = "http://localhost:50201/BookApi";
 
     constructor(private http: Http) { }
 
@@ -20,11 +20,11 @@ export class BookService {
 
                 let bookList = resp.json();
                 let books: Book[] = [];
-
+                console.log("first  getBooks() Result: " + bookList)
                 for (let index in bookList) {
-                    console.log(bookList[index]);
+                    console.log("second  getBooks() Result: " + bookList[index]);
                     let book = bookList[index];
-                    books.push({ id: book.Id, year: book.Year, name: book.Name, description: book.Description, authorId: book.AuthorId });
+                    books.push({ id: book.id, year: book.year, name: book.name, description: book.description, authorId: book.authorId });
                 }
                 return books;
 
@@ -37,11 +37,11 @@ export class BookService {
 
             let bookList = resp.json();
             let books: Book[] = [];
-
+            console.log("first  getBookByAuthorId() Result: " + bookList)
             for (let index in bookList) {
                 let book = bookList[index];
-                console.log(bookList[index])
-                books.push({ id: book.Id, year: book.Year, name: book.Name, description: book.Description, authorId: book.AuthorId });
+                console.log("second getBookByAuthorId() Result: " + bookList[index])
+                books.push({ id: book.id, year: book.year, name: book.name, description: book.description, authorId: book.authorId });
             }
             return books;
         }).catch((error: any) => { return Observable.throw(error); });
@@ -50,7 +50,10 @@ export class BookService {
         const body = JSON.stringify(obj);
         let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
         return this.http.post(this.url, body, { headers: headers })
-            .map((res: Response) => BookService.json(res))
+            .map((res: Response) => {
+                console.log("createBook() Result: " + res.status);
+                return res;
+            })
             .catch(this.handleError);
     }
 
@@ -58,13 +61,19 @@ export class BookService {
         let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
         const body = JSON.stringify(obj);
         return this.http.put(this.url + '/' + id, body, { headers: headers })
-            .map((res: Response) => BookService.json(res))
+            .map((res: Response) => {
+                console.log("updateBook() Result: " + res.status);
+                return res;
+            })
             .catch(this.handleError);
     }
 
     deleteBook(id: string) {
         return this.http.delete(this.url + '/' + id)
-            .map((res: Response) => BookService.json(res))
+            .map((res: Response) => {
+                console.log("deleteBook() Result: " + res.status);
+                return res;
+            })
             .catch(this.handleError);
     }
 

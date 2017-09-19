@@ -34,14 +34,17 @@ namespace LibraryAppCore_WebUI
             services.AddDbContext<LibraryContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly("LibraryAppCore.WebUI")));
 
             //DI
-            services.AddTransient<IAuthorRepository, AuthorMsSqlConcrete>();
-            services.AddTransient<IBookRespository, BookMsSqlConcrete>();
+            services.AddTransient<IAuthorRepository, AuthorMsSqlConcrete>().AddDbContext<LibraryContext>();
+            services.AddTransient<IBookRespository, BookMsSqlConcrete>().AddDbContext<LibraryContext>();
             services.AddTransient<IConvertDataHelper<AuthorMsSql, Author>, AuthorMsSqlConvert>();
             services.AddTransient<IConvertDataHelper<BookMsSql, Book>, BookMsSqlConvert>();
             services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
             services.AddTransient<IDataRequired<Book>, BookDataRequired>();
             //
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,7 +69,9 @@ namespace LibraryAppCore_WebUI
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "Home", action = "Index" });
+                 
 
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",

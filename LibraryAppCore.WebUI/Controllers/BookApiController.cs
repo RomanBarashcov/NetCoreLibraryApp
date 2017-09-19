@@ -12,7 +12,7 @@ using LibraryAppCore.Domain.Abstracts;
 
 namespace LibraryAppCore.WebUI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/BookApi")]
     public class BookApiController : Controller
     {
         private IBookRespository repository;
@@ -23,65 +23,65 @@ namespace LibraryAppCore.WebUI.Controllers
             this.dataReqiered = dRequired;
         }
 
-        public async Task<IActionResult> GetBooks()
+        public async Task<IEnumerable<Book>> GetBooks()
         {
             IEnumerable<Book> Books = await repository.GetAllBooks();
-            return Ok(Books);
+            return Books;
         }
 
         [HttpPost]
-        public async Task<HttpResponseMessage> CreateBook([FromBody] Book book)
+        public async Task<IActionResult> CreateBook([FromBody] Book book)
         {
             int DbResult = 0;
-            HttpResponseMessage RespMessage = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            IActionResult ActionRes = BadRequest();
             if (dataReqiered.IsDataNoEmpty(book))
             {
                 DbResult = await repository.CreateBook(book);
                 if (DbResult != 0)
                 {
-                    RespMessage = new HttpResponseMessage(HttpStatusCode.Created);
+                    ActionRes = Ok();
                 }
             }
-            return RespMessage;
+            return ActionRes;
         }
 
-        [HttpPut]
-        public async Task<HttpResponseMessage> UpdateBook(string id, [FromBody] Book book)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBook(string id, [FromBody] Book book)
         {
             int DbResult = 0;
-            HttpResponseMessage RespMessage = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            IActionResult ActionRes = BadRequest();
             if (!String.IsNullOrEmpty(id) && dataReqiered.IsDataNoEmpty(book))
             {
                 DbResult = await repository.UpdateBook(id, book);
                 if (DbResult != 0)
                 {
-                    RespMessage = new HttpResponseMessage(HttpStatusCode.Created);
+                    ActionRes = Ok();
                 }
             }
-            return RespMessage;
+            return ActionRes;
         }
 
-        [HttpDelete]
-        public async Task<HttpResponseMessage> DeleteBook(string id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBook(string id)
         {
             int DbResult = 0;
-            HttpResponseMessage RespMessage = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            IActionResult ActionRes = BadRequest();
             if (!String.IsNullOrEmpty(id))
             {
                 DbResult = await repository.DeleteBook(id);
                 if (DbResult != 0)
                 {
-                    RespMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                    ActionRes = Ok();
                 }
             }
-            return RespMessage;
+            return ActionRes;
         }
 
-        [Route("BookApi/GetBookByAuthorId/{id}")]
-        public async Task<IActionResult> GetBookByAuthorId(string id)
+        [HttpGet("/BookApi/GetBookByAuthorId/{id}")]
+        public async Task<IEnumerable<Book>> GetBookByAuthorId(string id)
         {
             IEnumerable<Book> Books = await repository.GetBookByAuthorId(id);
-            return Ok(Books);
+            return Books;
         }
     }
 }

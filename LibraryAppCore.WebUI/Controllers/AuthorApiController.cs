@@ -12,7 +12,7 @@ using LibraryAppCore.Domain.Entities;
 
 namespace LibraryAppCore.WebUI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/AuthorApi")]
     public class AuthorApiController : Controller
     {
         private IAuthorRepository repository;
@@ -23,58 +23,58 @@ namespace LibraryAppCore.WebUI.Controllers
             this.dataReqiered = dReqiered;
         }
 
-        public async Task<IActionResult> GetAuthors()
+        public async Task<IEnumerable<Author>> GetAuthors()
         {
             IEnumerable<Author> Authors = await repository.GetAllAuthors();
-            return Ok(Authors);
+            return Authors;
         }
 
         [HttpPost]
-        public async Task<HttpResponseMessage> CreateAuthor([FromBody] Author author)
+        public async Task<IActionResult> CreateAuthor([FromBody] Author author)
         {
             int DbResult = 0;
-            HttpResponseMessage RespMessage = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            IActionResult ActionRes = BadRequest();
             if (dataReqiered.IsDataNoEmpty(author))
             {
                 DbResult = await repository.CreateAuthor(author);
                 if (DbResult != 0)
                 {
-                    RespMessage = new HttpResponseMessage(HttpStatusCode.Created);
+                    ActionRes = Ok(author);
                 }
             }
-            return RespMessage;
+            return ActionRes;
         }
 
-        [HttpPut]
-        public async Task<HttpResponseMessage> UpdateAuthor(string id, [FromBody] Author author)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAuthor(string id, [FromBody] Author author)
         {
             int DbResult = 0;
-            HttpResponseMessage RespMessage = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            IActionResult ActionRes = BadRequest();
             if (!String.IsNullOrEmpty(id) && dataReqiered.IsDataNoEmpty(author))
             {
                 DbResult = await repository.UpdateAuthor(id, author);
                 if (DbResult != 0)
                 {
-                    RespMessage = new HttpResponseMessage(HttpStatusCode.Created);
+                    ActionRes = Ok(author);
                 }
             }
-            return RespMessage;
+            return ActionRes;
         }
 
-        [HttpDelete]
-        public async Task<HttpResponseMessage> DeleteAuthor(string id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAuthor(string id)
         {
             int DbResult = 0;
-            HttpResponseMessage RespMessage = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            IActionResult ActionRes = BadRequest();
             if (!String.IsNullOrEmpty(id))
             {
                 DbResult = await repository.DeleteAuthor(id);
                 if (DbResult != 0)
                 {
-                    RespMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                    ActionRes = Ok();
                 }
             }
-            return RespMessage;
+            return ActionRes;
         }
     }
 }

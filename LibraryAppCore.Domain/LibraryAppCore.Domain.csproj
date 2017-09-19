@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Concrete\MongoDb\" />
     <Folder Include="Entities\MondoDb\" />
   </ItemGroup>
 

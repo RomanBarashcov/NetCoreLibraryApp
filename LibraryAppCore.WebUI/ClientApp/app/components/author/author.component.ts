@@ -23,6 +23,7 @@ export class AuthorComponent implements OnDestroy, OnInit {
 
     authors: Author[] = [];
     editedAuthor: Author;
+    editAuthorNull: Author;
     isNewRecord: boolean;
     statusMessage: string;
     private sub: Subscription;
@@ -71,8 +72,11 @@ export class AuthorComponent implements OnDestroy, OnInit {
     saveAuthor() {
         if (this.isNewRecord) {
             this.serv.createAuthor(this.editedAuthor).subscribe((resp: Response) => {
-                if (resp.ok) {
+                console.log("saveAuthor() resp: = " + resp);
+
+                if (resp.status == 200) {
                     this.statusMessage = 'Saved successfully!';
+                    this.editedAuthor = this.editAuthorNull;
                     this.ngOnInit();
                 }
             },
@@ -83,12 +87,13 @@ export class AuthorComponent implements OnDestroy, OnInit {
                 });
 
             this.isNewRecord = false;
-            this.editedAuthor = new Author("","","");
+           
 
         } else {
             this.serv.updateAuthor(this.editedAuthor.id, this.editedAuthor).subscribe((resp: Response) => {
-                if (resp.ok) {
+                if (resp.status == 200) {
                     this.statusMessage = 'Updated successfully!';
+                    this.editedAuthor = this.editAuthorNull;
                     this.ngOnInit();
                 }
             },
@@ -97,18 +102,17 @@ export class AuthorComponent implements OnDestroy, OnInit {
                     console.log(error);
                     this.ngOnInit();
                 });
-            this.editedAuthor = new Author("", "", "");
         }
     }
 
     cancel() {
-        this.editedAuthor = new Author("", "", "");
+        this.editedAuthor = this.editAuthorNull;
         this.ngOnInit();
     }
 
     deleteAuthor(author: Author) {
         this.serv.deleteUser(author.id).subscribe((resp: Response) => {
-            if (resp.ok) {
+            if (resp.status == 200) {
                 this.statusMessage = 'Deleted successfully!',
                     this.ngOnInit();
             }
@@ -121,7 +125,7 @@ export class AuthorComponent implements OnDestroy, OnInit {
     }
 
     routeToBooks(author: Author) {
-        this.router.navigate(['/booksByAuthor', author.id]);
+        this.router.navigate(['/bookByAuthor', author.id]);
     }
 
     ngOnDestroy() {

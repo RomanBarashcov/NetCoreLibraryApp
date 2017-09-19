@@ -23,6 +23,7 @@ export class BookComponent implements OnDestroy {
 
     books: Book[] = [];
     editedBook: Book;
+    editedBookNull: Book;
     isNewRecord: boolean;
     statusMessage: string;
     hiddenAuthorId: string;
@@ -52,6 +53,7 @@ export class BookComponent implements OnDestroy {
         this.serv.getBookByAuthorId(id).subscribe((data) => {
             this.books = data;
             this.pagedBookItems = this.books;
+            console.log("loadBookByAuthor() component result: " + this.books);
             if (this.pager.totalPages > 0) {
                 this.setPage(this.pager.totalPages);
             }
@@ -94,7 +96,7 @@ export class BookComponent implements OnDestroy {
         if (this.isNewRecord) {
             this.serv.createBook(this.editedBook).subscribe((resp: Response) => {
                 console.log("saveBook function");
-                if (resp.ok) {
+                if (resp.status == 200) {
                     this.statusMessage = 'Saved successfully!';
                     this.loadBooks();
                 }
@@ -106,11 +108,11 @@ export class BookComponent implements OnDestroy {
                 });
 
             this.isNewRecord = false;
-            this.editedBook = new Book("", 0, "", "", "");
+            this.editedBook = this.editedBookNull;
 
         } else {
             this.serv.updateBook(this.editedBook.id, this.editedBook).subscribe((resp: Response) => {
-                if (resp.ok) {
+                if (resp.status == 200) {
                     this.statusMessage = 'Updated successfully!';
                     this.loadBooks();
                 }
@@ -121,18 +123,18 @@ export class BookComponent implements OnDestroy {
                     this.loadBooks();
                 });
 
-            this.editedBook = new Book("", 0, "", "", "");
+            this.editedBook = this.editedBookNull;
         }
     }
 
     cancel() {
-        this.editedBook = new Book("", 0, "", "", "");
+        this.editedBook = this.editedBookNull;
         this.loadBooks();
     }
 
     deleteBook(book: Book) {
         this.serv.deleteBook(book.id).subscribe((resp: Response) => {
-            if (resp.ok) {
+            if (resp.status == 200) {
                 this.statusMessage = 'Deleted successfully!',
                     this.loadBooks();
             }
