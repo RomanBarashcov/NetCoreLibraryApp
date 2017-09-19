@@ -15,6 +15,7 @@ using LibraryAppCore.Domain.Concrete.ConvertData;
 using LibraryAppCore.Domain.Entities.MsSql;
 using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Concrete.DataRequired;
+using LibraryAppCore.WebUI.Services;
 
 namespace LibraryAppCore_WebUI
 {
@@ -26,6 +27,7 @@ namespace LibraryAppCore_WebUI
         }
 
         public IConfiguration Configuration { get; }
+        public IServiceCollection servicesCollection;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -34,17 +36,14 @@ namespace LibraryAppCore_WebUI
             services.AddDbContext<LibraryContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly("LibraryAppCore.WebUI")));
 
             //DI
-            services.AddTransient<IAuthorRepository, AuthorMsSqlConcrete>().AddDbContext<LibraryContext>();
-            services.AddTransient<IBookRespository, BookMsSqlConcrete>().AddDbContext<LibraryContext>();
-            services.AddTransient<IConvertDataHelper<AuthorMsSql, Author>, AuthorMsSqlConvert>();
-            services.AddTransient<IConvertDataHelper<BookMsSql, Book>, BookMsSqlConvert>();
-            services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
-            services.AddTransient<IDataRequired<Book>, BookDataRequired>();
+            services.AddConnection("MongoDbConnection");
             //
             services.AddMvc(options =>
             {
                 options.RespectBrowserAcceptHeader = true;
             });
+
+            servicesCollection = services;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,11 +70,29 @@ namespace LibraryAppCore_WebUI
                     name: "default",
                     template: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" });
-                 
+
 
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
+                
+            });
+            
+
+        }
+        public void Conf(IApplicationBuilder app)
+        {
+            app.Run(async context =>
+            {
+                if (context.Request.Query["ConnectionStrong"] == "MongoDbConnection")
+                {
+                    servicesCollection.AddConnection("MongoDbConnection");
+                }
+                else
+                {
+                    servicesCollection.AddConnection("DefaultConnection");
+                    
+                }
             });
         }
     }

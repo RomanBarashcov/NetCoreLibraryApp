@@ -1,4 +1,5 @@
-﻿using LibraryAppCore.Domain.Entities.MsSql;
+﻿using LibraryAppCore.Domain.Entities.MondoDb;
+using LibraryAppCore.Domain.Entities.MsSql;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,6 +13,7 @@ namespace LibraryAppCore.Domain.Entities
         public string Surname { get; set; }
 
         private AuthorMsSql authorMsSql;
+        private AuthorMongoDb AuthorMongoDb;
 
         public Author(AuthorMsSql author)
         {
@@ -19,6 +21,14 @@ namespace LibraryAppCore.Domain.Entities
             Name = author.Name;
             Surname = author.Surname;
             authorMsSql = author;
+        }
+
+        public Author(AuthorMongoDb author)
+        {
+            Id = author.Id;
+            Name = author.Name;
+            Surname = author.Surname;
+            AuthorMongoDb = author;
         }
 
         public Author() { }
