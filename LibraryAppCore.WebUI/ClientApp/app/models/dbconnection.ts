@@ -1,4 +1,4 @@
 ﻿export class DbConnection {
-    constructor(public ConnectionStrong: string)
+    constructor(public ConnectionString: string)
     { }
 }

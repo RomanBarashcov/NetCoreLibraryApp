@@ -38,7 +38,6 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\components\author\author.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\book\book.component.ts" />
-    <TypeScriptCompile Include="ClientApp\app\components\dbconnection\dbconnection.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dbconnection\dbcon.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\author.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\book.ts" />

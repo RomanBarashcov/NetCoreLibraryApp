@@ -13,11 +13,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LibraryAppCore.WebUI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAppCore.WebUI.Services
 {
-    public static class IServiceCollectionExtension
+    public static class IServiceCollectionExtension  
     {
+        public static string cString { get; set; }
+        public static IServiceCollection servicesCollection { get; set; }
+
         public static IServiceCollection AddMsSqlConcreate(this IServiceCollection services)
         {
             services.AddTransient<IAuthorRepository, AuthorMsSqlConcrete>().AddDbContext<LibraryContext>();
@@ -26,6 +31,7 @@ namespace LibraryAppCore.WebUI.Services
             services.AddTransient<IConvertDataHelper<BookMsSql, Book>, BookMsSqlConvert>();
             services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
             services.AddTransient<IDataRequired<Book>, BookDataRequired>();
+            servicesCollection = services;
             return services;
         }
 
@@ -37,30 +43,11 @@ namespace LibraryAppCore.WebUI.Services
             services.AddTransient<IConvertDataHelper<BookMongoDb, Book>, BookMongoDbConvert>();
             services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
             services.AddTransient<IDataRequired<Book>, BookDataRequired>();
+            servicesCollection = services;
             return services;
         }
 
-        public static IServiceCollection AddConnection(this IServiceCollection services, string cString)
-        {
-            if (cString == "DefaultConnection")
-            {
-                services.AddTransient<IAuthorRepository, AuthorMsSqlConcrete>().AddDbContext<LibraryContext>();
-                services.AddTransient<IBookRespository, BookMsSqlConcrete>().AddDbContext<LibraryContext>();
-                services.AddTransient<IConvertDataHelper<AuthorMsSql, Author>, AuthorMsSqlConvert>();
-                services.AddTransient<IConvertDataHelper<BookMsSql, Book>, BookMsSqlConvert>();
-                services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
-                services.AddTransient<IDataRequired<Book>, BookDataRequired>();
-            }
-            else
-            {
-                services.AddTransient<IAuthorRepository, AuthorMongoDbConcrete>().AddDbContext<LibraryMongoDbContext>();
-                services.AddTransient<IBookRespository, BookMongoDbConcrete>().AddDbContext<LibraryMongoDbContext>();
-                services.AddTransient<IConvertDataHelper<AuthorMongoDb, Author>, AuthorMongoDbConvert>();
-                services.AddTransient<IConvertDataHelper<BookMongoDb, Book>, BookMongoDbConvert>();
-                services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
-                services.AddTransient<IDataRequired<Book>, BookDataRequired>();
-            }
-            return services;
-        }
+
+
     }
 }

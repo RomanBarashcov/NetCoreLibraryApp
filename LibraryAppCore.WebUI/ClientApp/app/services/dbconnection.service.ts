@@ -10,13 +10,14 @@ import 'rxjs/add/observable/throw';
 @Injectable()
 export class DbConnectionService {
 
-    private url = "http://localhost:50201/?=";
+    private url = "http://localhost:50201/ConnectionStringApi/";
 
     constructor(private http: Http) { }
 
     sendConnectionString(obj: DbConnection) {
         console.log(obj);
-
-        return this.http.get("http://localhost:50201/?=" + DbConnection).catch((error: any) => { return Observable.throw(error); });
+        let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
+        const body = JSON.stringify(obj);
+        return this.http.post(this.url, body, { headers: headers }).catch((error: any) => { return Observable.throw(error); });
     }
 }

@@ -25,8 +25,9 @@ export class DbConnectionComponent implements OnDestroy {
 
     choseDb(conString: string) {
         this.conStringDb = new DbConnection(conString);
+        console.log("Chosed Db Connection: " + this.conStringDb);
         this.serv.sendConnectionString(this.conStringDb).subscribe(error => { this.error = error; console.log(error); });
-        if (this.error == null) {
+        if (this.error != null) {
             this.chosedDb = " Chosed " + conString + " Db successful! You can chose any tab!";
         }
     }
