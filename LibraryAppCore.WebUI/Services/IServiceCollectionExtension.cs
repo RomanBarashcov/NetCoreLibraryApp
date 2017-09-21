@@ -23,7 +23,7 @@ namespace LibraryAppCore.WebUI.Services
         public static string cString { get; set; }
         public static IServiceCollection servicesCollection { get; set; }
 
-        public static IServiceCollection AddPostgresSqlConcreate(this IServiceCollection services)
+        public static IServiceCollection AddPostgreSqlConcreate(this IServiceCollection services)
         {
             services.AddTransient<IAuthorRepository, AuthorPostgreSqlConcrete>().AddDbContext<LibraryPostgreSqlContext>();
             services.AddTransient<IBookRespository, BookPostgreSqlConcrete>().AddDbContext<LibraryPostgreSqlContext>();
