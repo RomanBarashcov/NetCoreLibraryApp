@@ -7,6 +7,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using LibraryAppCore.WebUI.Models;
+using LibraryAppCore.WebUI.Services;
 
 namespace LibraryAppCore_WebUI
 {
@@ -22,4 +24,5 @@ namespace LibraryAppCore_WebUI
                 .UseStartup<Startup>()
                 .Build();
     }
+
 }

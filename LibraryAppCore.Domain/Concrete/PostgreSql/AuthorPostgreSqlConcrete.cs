@@ -9,28 +9,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAppCore.Domain.Concrete.MsSql
 {
-    public class AuthorMsSqlConcrete : IAuthorRepository
+    public class AuthorPostgreSqlConcrete : IAuthorRepository
     {
         private IEnumerable<Author> result = null;
-        private IConvertDataHelper<AuthorMsSql, Author> MsSqlDataConvert;
+        private IConvertDataHelper<AuthorPostgreSql, Author> PostgreSqlDataConvert;
         private IDataRequired<Author> dataReqiered;
-        private LibraryContext db;
+        private LibraryPostgreSqlContext db;
 
-        public AuthorMsSqlConcrete(LibraryContext context, IConvertDataHelper<AuthorMsSql, Author> msSqlDataConvert, IDataRequired<Author> dReqiered)
+        public AuthorPostgreSqlConcrete(LibraryPostgreSqlContext context, IConvertDataHelper<AuthorPostgreSql, Author> pSqlDataConvert, IDataRequired<Author> dReqiered)
         {
             this.db = context;
-            this.MsSqlDataConvert = msSqlDataConvert;
+            this.PostgreSqlDataConvert = pSqlDataConvert;
             this.dataReqiered = dReqiered;
         }
 
         public async Task<IEnumerable<Author>> GetAllAuthors()
         {
-            List<AuthorMsSql> AuthorList = await db.Authors.ToListAsync();
+            List<AuthorPostgreSql> AuthorList = await db.Authors.ToListAsync();
 
             if (AuthorList != null)
             {
-                MsSqlDataConvert.InitData(AuthorList);
-                result = MsSqlDataConvert.GetIEnumerubleDbResult();
+                PostgreSqlDataConvert.InitData(AuthorList);
+                result = PostgreSqlDataConvert.GetIEnumerubleDbResult();
             }
             return result;
         }
@@ -40,7 +40,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             int DbResult = 0;
             if (dataReqiered.IsDataNoEmpty(author))
             {
-                AuthorMsSql newAuthor = new AuthorMsSql { Name = author.Name, Surname = author.Surname };
+                AuthorPostgreSql newAuthor = new AuthorPostgreSql { Name = author.Name, Surname = author.Surname };
                 db.Authors.Add(newAuthor);
                 try
                 {
@@ -61,7 +61,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             {
                 int oldDataAuthorId = Convert.ToInt32(authorId);
                 int newDataAuthorId = Convert.ToInt32(author.Id);
-                AuthorMsSql updatingAuthor = null;
+                AuthorPostgreSql updatingAuthor = null;
                 updatingAuthor = await db.Authors.FindAsync(oldDataAuthorId);
 
                 if (oldDataAuthorId == newDataAuthorId)
@@ -88,7 +88,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             if (!String.IsNullOrEmpty(authorId))
             {
                 int delAuthorId = Convert.ToInt32(authorId);
-                AuthorMsSql author = await db.Authors.FindAsync(delAuthorId);
+                AuthorPostgreSql author = await db.Authors.FindAsync(delAuthorId);
 
                 if (author != null)
                 {

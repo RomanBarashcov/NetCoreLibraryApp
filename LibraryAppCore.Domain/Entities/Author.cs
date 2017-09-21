@@ -12,15 +12,15 @@ namespace LibraryAppCore.Domain.Entities
         public string Name { get; set; }
         public string Surname { get; set; }
 
-        private AuthorMsSql authorMsSql;
+        private AuthorPostgreSql authorPostgreSql;
         private AuthorMongoDb AuthorMongoDb;
 
-        public Author(AuthorMsSql author)
+        public Author(AuthorPostgreSql author)
         {
             Id = Convert.ToString(author.Id);
             Name = author.Name;
             Surname = author.Surname;
-            authorMsSql = author;
+            authorPostgreSql = author;
         }
 
         public Author(AuthorMongoDb author)

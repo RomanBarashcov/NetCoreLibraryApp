@@ -10,28 +10,28 @@ using System.Linq;
 
 namespace LibraryAppCore.Domain.Concrete.MsSql
 {
-    public class BookMsSqlConcrete : IBookRespository
+    public class BookPostgreSqlConcrete : IBookRespository
     {
         private IEnumerable<Book> result = null;
-        private IConvertDataHelper<BookMsSql, Book> MsSqlDataConvert;
+        private IConvertDataHelper<BookPostgreSql, Book> PostgreSqlDataConvert;
         private IDataRequired<Book> dataReqiered;
-        private LibraryContext db;
+        private LibraryPostgreSqlContext db;
 
-        public BookMsSqlConcrete(LibraryContext context, IConvertDataHelper<BookMsSql, Book> msSqlDataConvert, IDataRequired<Book> dReqiered)
+        public BookPostgreSqlConcrete(LibraryPostgreSqlContext context, IConvertDataHelper<BookPostgreSql, Book> pSqlDataConvert, IDataRequired<Book> dReqiered)
         {
             this.db = context;
-            this.MsSqlDataConvert = msSqlDataConvert;
+            this.PostgreSqlDataConvert = pSqlDataConvert;
             this.dataReqiered = dReqiered;
         }
 
         public async Task<IEnumerable<Book>> GetAllBooks()
         {
-            List<BookMsSql> BookList = await db.Books.ToListAsync();
+            List<BookPostgreSql> BookList = await db.Books.ToListAsync();
 
             if (BookList != null)
             {
-                MsSqlDataConvert.InitData(BookList);
-                result = MsSqlDataConvert.GetIEnumerubleDbResult();
+                PostgreSqlDataConvert.InitData(BookList);
+                result = PostgreSqlDataConvert.GetIEnumerubleDbResult();
             }
             return result;
         }
@@ -43,7 +43,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             if (dataReqiered.IsDataNoEmpty(book))
             {
                 authorId = Convert.ToInt32(book.AuthorId);
-                BookMsSql newBook = new BookMsSql { Name = book.Name, Description = book.Description, Year = book.Year, AuthorId = authorId };
+                BookPostgreSql newBook = new BookPostgreSql { Name = book.Name, Description = book.Description, Year = book.Year, AuthorId = authorId };
                 db.Books.Add(newBook);
 
                 try
@@ -67,7 +67,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             {
                 oldDataBookId = Convert.ToInt32(id);
                 newDataBookId = Convert.ToInt32(book.Id);
-                BookMsSql updatingBook = null;
+                BookPostgreSql updatingBook = null;
                 updatingBook = await db.Books.FindAsync(oldDataBookId);
 
                 if (oldDataBookId == newDataBookId)
@@ -92,7 +92,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
         public async Task<int> DeleteBook(string id)
         {
             int DbResult = 0;
-            BookMsSql book = null;
+            BookPostgreSql book = null;
             if (!String.IsNullOrEmpty(id))
             {
                 int delBookId = Convert.ToInt32(id);
@@ -112,12 +112,12 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             if (!String.IsNullOrEmpty(authorId))
             {
                 int author_Id = Convert.ToInt32(authorId);
-                List<BookMsSql> BookList = await db.Books.Where(x => x.AuthorId == author_Id).ToListAsync();
+                List<BookPostgreSql> BookList = await db.Books.Where(x => x.AuthorId == author_Id).ToListAsync();
 
                 if (BookList != null)
                 {
-                    MsSqlDataConvert.InitData(BookList);
-                    result = MsSqlDataConvert.GetIEnumerubleDbResult();
+                    PostgreSqlDataConvert.InitData(BookList);
+                    result = PostgreSqlDataConvert.GetIEnumerubleDbResult();
                 }
             }
             return result;

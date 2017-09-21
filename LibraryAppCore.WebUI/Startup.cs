@@ -39,8 +39,8 @@ namespace LibraryAppCore_WebUI
             if(conString == "DefaultConnection")
             {
                 string connection = Configuration.GetConnectionString("DefaultConnection");
-                services.AddDbContext<LibraryContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly("LibraryAppCore.WebUI")));
-                services.AddMsSqlConcreate();
+                services.AddDbContext<LibraryPostgreSqlContext>(options => options.UseNpgsql(connection, b => b.MigrationsAssembly("LibraryAppCore.WebUI")));
+                services.AddPostgresSqlConcreate();
 
             }
             else

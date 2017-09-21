@@ -10,17 +10,18 @@ using System;
 
 namespace LibraryAppCore.WebUI.Migrations
 {
-    [DbContext(typeof(LibraryContext))]
-    partial class LibraryContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(LibraryPostgreSqlContext))]
+    [Migration("20170921123201_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.0-rtm-26452")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
+                .HasAnnotation("ProductVersion", "2.0.0-rtm-26452");
 
-            modelBuilder.Entity("LibraryAppCore.Domain.Entities.MsSql.AuthorMsSql", b =>
+            modelBuilder.Entity("LibraryAppCore.Domain.Entities.MsSql.AuthorPostgreSql", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -34,7 +35,7 @@ namespace LibraryAppCore.WebUI.Migrations
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("LibraryAppCore.Domain.Entities.MsSql.BookMsSql", b =>
+            modelBuilder.Entity("LibraryAppCore.Domain.Entities.MsSql.BookPostgreSql", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -54,9 +55,9 @@ namespace LibraryAppCore.WebUI.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("LibraryAppCore.Domain.Entities.MsSql.BookMsSql", b =>
+            modelBuilder.Entity("LibraryAppCore.Domain.Entities.MsSql.BookPostgreSql", b =>
                 {
-                    b.HasOne("LibraryAppCore.Domain.Entities.MsSql.AuthorMsSql", "Author")
+                    b.HasOne("LibraryAppCore.Domain.Entities.MsSql.AuthorPostgreSql", "Author")
                         .WithMany("books")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade);

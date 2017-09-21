@@ -7,25 +7,25 @@ using System.Text;
 
 namespace LibraryAppCore.Domain.Concrete.ConvertData
 {
-    public class BookMsSqlConvert : IConvertDataHelper<BookMsSql, Book>
+    public class BookPostgreSqlConvert : IConvertDataHelper<BookPostgreSql, Book>
     {
-        private List<BookMsSql> Books = new List<BookMsSql>();
-        private BookMsSql BookMssql = new BookMsSql();
+        private List<BookPostgreSql> Books = new List<BookPostgreSql>();
+        private BookPostgreSql BookPostgreSql = new BookPostgreSql();
         private Book booksNode = new Book();
         private List<Book> ListBook = new List<Book>();
         private IEnumerable<Book> result = null;
 
-        public void InitData(List<BookMsSql> books)
+        public void InitData(List<BookPostgreSql> books)
         {
             Books = books;
         }
 
         public IEnumerable<Book> GetIEnumerubleDbResult()
         {
-            foreach (BookMsSql b in Books)
+            foreach (BookPostgreSql b in Books)
             {
-                BookMssql = new BookMsSql { Id = b.Id, Name = b.Name, Year = b.Year, Description = b.Description, AuthorId = b.AuthorId };
-                booksNode = new Book(BookMssql);
+                BookPostgreSql = new BookPostgreSql { Id = b.Id, Name = b.Name, Year = b.Year, Description = b.Description, AuthorId = b.AuthorId };
+                booksNode = new Book(BookPostgreSql);
                 ListBook.Add(booksNode);
                 result = ListBook;
             }

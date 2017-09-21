@@ -14,15 +14,17 @@ namespace LibraryAppCore.Domain.Entities
         public string Description { get; set; }
         public string AuthorId { get; set; }
 
-        private BookMsSql bookMsSql { get; set; }
+        private BookPostgreSql bookPostgreSql { get; set; }
         private BookMongoDb BookMongoDb { get; set; }
-        public Book(BookMsSql book)
+
+        public Book(BookPostgreSql book)
         {
             Id = Convert.ToString(book.Id);
             Name = book.Name;
             Year = book.Year;
             Description = book.Description;
             AuthorId = Convert.ToString(book.AuthorId);
+            bookPostgreSql = book;
         }
 
         public Book(BookMongoDb book)

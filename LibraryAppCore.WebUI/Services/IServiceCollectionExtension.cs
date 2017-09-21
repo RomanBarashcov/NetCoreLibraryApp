@@ -23,12 +23,12 @@ namespace LibraryAppCore.WebUI.Services
         public static string cString { get; set; }
         public static IServiceCollection servicesCollection { get; set; }
 
-        public static IServiceCollection AddMsSqlConcreate(this IServiceCollection services)
+        public static IServiceCollection AddPostgresSqlConcreate(this IServiceCollection services)
         {
-            services.AddTransient<IAuthorRepository, AuthorMsSqlConcrete>().AddDbContext<LibraryContext>();
-            services.AddTransient<IBookRespository, BookMsSqlConcrete>().AddDbContext<LibraryContext>();
-            services.AddTransient<IConvertDataHelper<AuthorMsSql, Author>, AuthorMsSqlConvert>();
-            services.AddTransient<IConvertDataHelper<BookMsSql, Book>, BookMsSqlConvert>();
+            services.AddTransient<IAuthorRepository, AuthorPostgreSqlConcrete>().AddDbContext<LibraryPostgreSqlContext>();
+            services.AddTransient<IBookRespository, BookPostgreSqlConcrete>().AddDbContext<LibraryPostgreSqlContext>();
+            services.AddTransient<IConvertDataHelper<AuthorPostgreSql, Author>, AuthorPostgreSqlConvert>();
+            services.AddTransient<IConvertDataHelper<BookPostgreSql, Book>, BookPostgreSqlConvert>();
             services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
             services.AddTransient<IDataRequired<Book>, BookDataRequired>();
             servicesCollection = services;

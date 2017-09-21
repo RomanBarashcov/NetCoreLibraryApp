@@ -4,16 +4,16 @@ using System.Text;
 
 namespace LibraryAppCore.Domain.Entities.MsSql
 {
-    public class AuthorMsSql
+    public class AuthorPostgreSql
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
 
-        public ICollection<BookMsSql> books { get; set; }
-        public AuthorMsSql()
+        public ICollection<BookPostgreSql> books { get; set; }
+        public AuthorPostgreSql()
         {
-            books = new List<BookMsSql>();
+            books = new List<BookPostgreSql>();
         }
     }
 }
