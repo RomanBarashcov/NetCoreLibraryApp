@@ -28,6 +28,7 @@ namespace LibraryAppCore.WebUI.Controllers
         [HttpPost]
         public IActionResult SetDbConnection([FromBody]LibraryAppCore.WebUI.Models.DbConnection dbConnection)
         {
+            IServiceCollectionExtension.cString = dbConnection.ConnectionString;
             return Ok();
         }
 

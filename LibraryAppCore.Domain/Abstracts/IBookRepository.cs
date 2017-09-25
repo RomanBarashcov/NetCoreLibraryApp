@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LibraryAppCore.Domain.Abstracts
 {
-    public interface IBookRespository
+    public interface IBookRepository
     {
         Task<IEnumerable<Book>> GetAllBooks();
         Task<int> CreateBook(Book book);

@@ -25,34 +25,23 @@ namespace LibraryAppCore_WebUI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            conString = "DefaultConnection";
+            IServiceCollectionExtension.cString = "DefaultConnection";
         }
 
         public string conString { get; set;}
         public IConfiguration Configuration { get; }
-        public IServiceCollection serviceCollection { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //DI
-            if(conString == "DefaultConnection")
-            {
-                string connection = Configuration.GetConnectionString("DefaultConnection");
-                services.AddDbContext<LibraryPostgreSqlContext>(options => options.UseNpgsql(connection, b => b.MigrationsAssembly("LibraryAppCore.WebUI")));
-                services.AddPostgresSqlConcreate();
-
-            }
-            else
-            {
-                services.AddDbContext<LibraryMongoDbContext>();
-                services.AddMongoDbConcreate();
-            }
-
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<LibraryPostgreSqlContext>(options => options.UseNpgsql(connection, b => b.MigrationsAssembly("LibraryAppCore.WebUI")));
+            services.AddConcreate();
             services.AddMvc(options =>
             {
                 options.RespectBrowserAcceptHeader = true;
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,7 +74,7 @@ namespace LibraryAppCore_WebUI
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
                 
-            });
+            }); 
 
         }
     }

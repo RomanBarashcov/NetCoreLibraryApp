@@ -15,9 +15,9 @@ namespace LibraryAppCore.WebUI.Controllers
     [Route("/BookApi")]
     public class BookApiController : Controller
     {
-        private IBookRespository repository;
+        private IBookRepository repository;
         private IDataRequired<Book> dataReqiered;
-        public BookApiController(IBookRespository bookRepository, IDataRequired<Book> dRequired)
+        public BookApiController(IBookRepository bookRepository, IDataRequired<Book> dRequired)
         {
             this.repository = bookRepository;
             this.dataReqiered = dRequired;

@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "eaf65f2c76090ea026c4"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "1926e544dc447944523f"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -6132,7 +6132,7 @@ module.exports = "<h1>Books List</h1>\r\n<input type=\"button\" value=\"Add Book
 /* 96 */
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n    <h2> Chose Db </h2>\r\n    <p><a (click)=\"choseDb(DefaultConnection)\">MsSql</a> <a (click)=\"choseDb(MongoDbConnection)\">MongoDb</a></p>\r\n    <div>{{error}}{{chosedDb}}</div>\r\n</div>";
+module.exports = "<div>\r\n    <h2> Chose Db </h2>\r\n    <p><a (click)=\"choseDb(DefaultConnection)\">PostgreSql</a> <a (click)=\"choseDb(MongoDbConnection)\">MongoDb</a></p>\r\n    <div>{{error}}{{chosedDb}}</div>\r\n</div>";
 
 /***/ }),
 /* 97 */

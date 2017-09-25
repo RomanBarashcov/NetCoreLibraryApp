@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace LibraryAppCore.Domain.Concrete.MsSql
 {
-    public class BookPostgreSqlConcrete : IBookRespository
+    public class BookPostgreSqlConcrete : IBookRepository
     {
         private IEnumerable<Book> result = null;
         private IConvertDataHelper<BookPostgreSql, Book> PostgreSqlDataConvert;

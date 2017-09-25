@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace LibraryAppCore.Domain.Concrete.MongoDb
 {
-    public class BookMongoDbConcrete : IBookRespository
+    public class BookMongoDbConcrete : IBookRepository
     {
         private IEnumerable<Book> result = null;
         private IConvertDataHelper<BookMongoDb, Book> mongoDbDataConvert;

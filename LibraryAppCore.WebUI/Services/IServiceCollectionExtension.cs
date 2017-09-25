@@ -8,13 +8,10 @@ using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Entities.MondoDb;
 using LibraryAppCore.Domain.Entities.MsSql;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LibraryAppCore.WebUI.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LibraryAppCore.WebUI.Services
 {
@@ -22,28 +19,47 @@ namespace LibraryAppCore.WebUI.Services
     {
         public static string cString { get; set; }
         public static IServiceCollection servicesCollection { get; set; }
+        public static IConfiguration Configuration { get; set; }
+        public static IApplicationBuilder app { get; set; }
+        public static IHostingEnvironment env { get; set; }
 
         public static IServiceCollection AddPostgreSqlConcreate(this IServiceCollection services)
         {
-            services.AddTransient<IAuthorRepository, AuthorPostgreSqlConcrete>().AddDbContext<LibraryPostgreSqlContext>();
-            services.AddTransient<IBookRespository, BookPostgreSqlConcrete>().AddDbContext<LibraryPostgreSqlContext>();
-            services.AddTransient<IConvertDataHelper<AuthorPostgreSql, Author>, AuthorPostgreSqlConvert>();
-            services.AddTransient<IConvertDataHelper<BookPostgreSql, Book>, BookPostgreSqlConvert>();
-            services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
-            services.AddTransient<IDataRequired<Book>, BookDataRequired>();
-            servicesCollection = services;
+            services.AddScoped<IAuthorRepository, AuthorPostgreSqlConcrete>().AddDbContext<LibraryPostgreSqlContext>();
+            services.AddScoped<IBookRepository, BookPostgreSqlConcrete>().AddDbContext<LibraryPostgreSqlContext>();
+            services.AddScoped<IConvertDataHelper<AuthorPostgreSql, Author>, AuthorPostgreSqlConvert>();
+            services.AddScoped<IConvertDataHelper<BookPostgreSql, Book>, BookPostgreSqlConvert>();
+            services.AddScoped<IDataRequired<Author>, AuthorDataRequired>();
+            services.AddScoped<IDataRequired<Book>, BookDataRequired>();
             return services;
         }
 
         public static IServiceCollection AddMongoDbConcreate(this IServiceCollection services)
         {
-            services.AddTransient<IAuthorRepository, AuthorMongoDbConcrete>().AddDbContext<LibraryMongoDbContext>();
-            services.AddTransient<IBookRespository, BookMongoDbConcrete>().AddDbContext<LibraryMongoDbContext>();
-            services.AddTransient<IConvertDataHelper<AuthorMongoDb, Author>, AuthorMongoDbConvert>();
-            services.AddTransient<IConvertDataHelper<BookMongoDb, Book>, BookMongoDbConvert>();
-            services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
-            services.AddTransient<IDataRequired<Book>, BookDataRequired>();
-            servicesCollection = services;
+            services.AddScoped<IAuthorRepository, AuthorMongoDbConcrete>().AddDbContext<LibraryMongoDbContext>();
+            services.AddScoped<IBookRepository, BookMongoDbConcrete>().AddDbContext<LibraryMongoDbContext>();
+            services.AddScoped<IConvertDataHelper<AuthorMongoDb, Author>, AuthorMongoDbConvert>();
+            services.AddScoped<IConvertDataHelper<BookMongoDb, Book>, BookMongoDbConvert>();
+            services.AddScoped<IDataRequired<Author>, AuthorDataRequired>();
+            services.AddScoped<IDataRequired<Book>, BookDataRequired>();
+            return services;
+        }
+
+        public static IServiceCollection AddConcreate(this IServiceCollection services)
+        {
+            if(cString == "DefaultConnection")
+            {
+                services = AddPostgreSqlConcreate(services);
+            }
+            else
+            {
+                services.AddDbContext<LibraryMongoDbContext>();
+                services = AddMongoDbConcreate(services);
+            }
+
+            services.AddScoped<IDataRequired<Author>, AuthorDataRequired>();
+            services.AddScoped<IDataRequired<Book>, BookDataRequired>();
+
             return services;
         }
 
