@@ -29,7 +29,7 @@ namespace LibraryAppCore.Domain.Entities
 
         public Book(BookMongoDb book)
         {
-            Id = book.Id.ToString();
+            Id = book.Id;
             Year = book.Year;
             Name = book.Name;
             Description = book.Description;

@@ -48,24 +48,23 @@ namespace LibraryAppCore_WebUI
                 }
             });
 
+            services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
+            services.AddTransient<IDataRequired<Book>, BookDataRequired>();
+
             services.AddTransient<IBookRepository>(provider =>
             {
                 if (ConnectionDB.ConnectionString == "DefaultConnection")
                 {
-                    services.AddScoped<IDataRequired<Book>, BookDataRequiredPSql>();
+                   
                     services.AddTransient<IConvertDataHelper<BookPostgreSql, Book>, BookPostgreSqlConvert>();
-                    return new BookPostgreSqlConcrete(new LibraryPostgreSqlContext(optionsBuilder.Options), new BookPostgreSqlConvert(), new BookDataRequiredPSql());
+                    return new BookPostgreSqlConcrete(new LibraryPostgreSqlContext(optionsBuilder.Options), new BookPostgreSqlConvert(), new BookDataRequired());
                 }
                 else
                 {
-                    services.AddScoped<IDataRequired<Book>, BookDataRequiredMDb>();
                     services.AddTransient<IConvertDataHelper<BookMongoDb, Book>, BookMongoDbConvert>();
-                    return new BookMongoDbConcrete(new LibraryMongoDbContext(), new BookMongoDbConvert(), new BookDataRequiredPSql());
+                    return new BookMongoDbConcrete(new LibraryMongoDbContext(), new BookMongoDbConvert(), new BookDataRequired());
                 }
             });
-
-            services.AddScoped<IDataRequired<Author>, AuthorDataRequired>();
-            
 
             services.AddMvc(options =>
             {
@@ -91,7 +90,7 @@ namespace LibraryAppCore_WebUI
             }
 
             app.UseStaticFiles();
-           
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

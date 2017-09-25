@@ -23,6 +23,7 @@ namespace LibraryAppCore.WebUI.Controllers
             this.dataReqiered = dReqiered;
         }
 
+        [HttpGet]
         public async Task<IEnumerable<Author>> GetAuthors()
         {
             IEnumerable<Author> Authors = await repository.GetAllAuthors();

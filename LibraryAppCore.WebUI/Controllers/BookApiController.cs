@@ -23,6 +23,7 @@ namespace LibraryAppCore.WebUI.Controllers
             this.dataReqiered = dRequired;
         }
 
+        [HttpGet]
         public async Task<IEnumerable<Book>> GetBooks()
         {
             IEnumerable<Book> Books = await repository.GetAllBooks();
