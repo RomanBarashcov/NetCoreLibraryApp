@@ -17,7 +17,7 @@ namespace LibraryAppCore.Domain.Concrete
         {
             string connectionString = "mongodb://localhost:27017/Library";
             var connection = new MongoUrlBuilder(connectionString);
-            MongoClient client = new MongoClient(connectionString);
+            client = new MongoClient(connectionString);
             database = client.GetDatabase(connection.DatabaseName);
 
         }

@@ -14,9 +14,6 @@ using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Concrete.ConvertData;
 using LibraryAppCore.Domain.Concrete.DataRequired;
 using LibraryAppCore.Domain.Entities.MondoDb;
-using Microsoft.AspNetCore.Builder.Internal;
-using Microsoft.AspNetCore.Hosting.Internal;
-using LibraryAppCore.WebUI.Models;
 
 namespace LibraryAppCore_WebUI
 {
@@ -25,18 +22,51 @@ namespace LibraryAppCore_WebUI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            IServiceCollectionExtension.cString = "DefaultConnection";
+            ConnectionDB.ConnectionString = "DefaultConnection";
         }
 
-        public string conString { get; set;}
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<LibraryPostgreSqlContext>(options => options.UseNpgsql(connection, b => b.MigrationsAssembly("LibraryAppCore.WebUI")));
-            services.AddConcreate();
+            var optionsBuilder = new DbContextOptionsBuilder<LibraryPostgreSqlContext>();
+            optionsBuilder.UseNpgsql(connection);
+
+            services.AddTransient<IAuthorRepository>(provider =>
+            {
+                if (ConnectionDB.ConnectionString == "DefaultConnection")
+                {
+                    services.AddTransient<IConvertDataHelper<AuthorPostgreSql, Author>, AuthorPostgreSqlConvert>();
+                    return new AuthorPostgreSqlConcrete(new LibraryPostgreSqlContext(optionsBuilder.Options), new AuthorPostgreSqlConvert(), new AuthorDataRequired());
+                }
+                else
+                {
+                    services.AddTransient<IConvertDataHelper<AuthorMongoDb, Author>, AuthorMongoDbConvert>();
+                    return new AuthorMongoDbConcrete(new LibraryMongoDbContext(), new AuthorMongoDbConvert(), new AuthorDataRequired());
+                }
+            });
+
+            services.AddTransient<IBookRepository>(provider =>
+            {
+                if (ConnectionDB.ConnectionString == "DefaultConnection")
+                {
+                    services.AddScoped<IDataRequired<Book>, BookDataRequiredPSql>();
+                    services.AddTransient<IConvertDataHelper<BookPostgreSql, Book>, BookPostgreSqlConvert>();
+                    return new BookPostgreSqlConcrete(new LibraryPostgreSqlContext(optionsBuilder.Options), new BookPostgreSqlConvert(), new BookDataRequiredPSql());
+                }
+                else
+                {
+                    services.AddScoped<IDataRequired<Book>, BookDataRequiredMDb>();
+                    services.AddTransient<IConvertDataHelper<BookMongoDb, Book>, BookMongoDbConvert>();
+                    return new BookMongoDbConcrete(new LibraryMongoDbContext(), new BookMongoDbConvert(), new BookDataRequiredPSql());
+                }
+            });
+
+            services.AddScoped<IDataRequired<Author>, AuthorDataRequired>();
+            
+
             services.AddMvc(options =>
             {
                 options.RespectBrowserAcceptHeader = true;
@@ -61,7 +91,7 @@ namespace LibraryAppCore_WebUI
             }
 
             app.UseStaticFiles();
-
+           
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

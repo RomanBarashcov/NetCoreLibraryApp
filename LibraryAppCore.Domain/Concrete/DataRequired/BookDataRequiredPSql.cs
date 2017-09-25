@@ -6,7 +6,7 @@ using System.Text;
 
 namespace LibraryAppCore.Domain.Concrete.DataRequired
 {
-    public class BookDataRequired : IDataRequired<Book>
+    public class BookDataRequiredPSql : IDataRequired<Book>
     {
         public bool IsDataNoEmpty(Book book)
         {
