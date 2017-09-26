@@ -1,23 +1,28 @@
 ﻿<h1>Books List</h1>
-<input type="button" value="Add Book" class="btn btn-default" (click)="addBook(hiddenAuthorId)" />
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <td>Id</td>
-            <td>Year</td>
-            <td>Name</td>
-            <td>Description</td>
-            <td>AuthorId</td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let book of pagedBookItems">
-            <ng-template [ngTemplateOutlet]="loadTemplate(book)"
-                         [ngOutletContext]="{ $implicit: book}">
-            </ng-template>
-        </tr>
-    </tbody>
-</table>
+<input type="button" value="Add Book" class="btn btn-success" (click)="addBook(hiddenAuthorId)" />
+
+<div class="table-responsive padding-top-table">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Year</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>AuthorId</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let book of pagedBookItems">
+                <ng-template [ngTemplateOutlet]="loadTemplate(book)"
+                             [ngOutletContext]="{ $implicit: book}">
+                </ng-template>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <div>
     <!-- pagination -->
     <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
@@ -48,7 +53,7 @@
     <td>{{book.description}}</td>
     <td>{{book.authorId}}</td>
     <td>
-        <input type="button" value="Edit" class="btn btn-default" (click)="editBook(book)" />
+        <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book)" />
     </td>
     <td>
         <input type="button" value="Delete" class="btn btn-danger" (click)="deleteBook(book)" />

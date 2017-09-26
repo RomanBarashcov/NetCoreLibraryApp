@@ -1,24 +1,27 @@
 ﻿<h1>Authors List</h1>
-<input type="button" value="Add Author" class="btn btn-default" (click)="addAuthor()" />
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <td>Id</td>
-            <td>Name</td>
-            <td>Surname</td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let author of pagedAuthorItems">
-            <ng-template [ngTemplateOutlet]="loadTemplate(author)"
-                         [ngOutletContext]="{ $implicit: author}">
-            </ng-template>
-        </tr>
-    </tbody>
-</table>
+<input type="button" value="Add Author" class="btn btn-success" (click)="addAuthor()" />
+
+<div class="table-responsive padding-top-table">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let author of pagedAuthorItems">
+                <ng-template [ngTemplateOutlet]="loadTemplate(author)"
+                             [ngOutletContext]="{ $implicit: author}">
+                </ng-template>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <div>
     <!-- pagination -->
     <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
@@ -43,7 +46,6 @@
 
 
 <ng-template #readOnlyTemplate let-author>
-
     <td>{{author.id}}</td>
     <td>{{author.name}}</td>
     <td>{{author.surname}}</td>
@@ -51,7 +53,7 @@
         <input type="button" value="Books by Author" class="btn btn-default" (click)="routeToBooks(author)" />
     </td>
     <td>
-        <input type="button" value="Edit" class="btn btn-default" (click)="editAuthor(author)" />
+        <input type="button" value="Edit" class="btn btn-warning" (click)="editAuthor(author)" />
     </td>
     <td>
         <input type="button" value="Delete" class="btn btn-danger" (click)="deleteAuthor(author)" />
