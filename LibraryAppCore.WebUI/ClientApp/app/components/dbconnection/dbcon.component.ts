@@ -7,6 +7,7 @@ import { DbConnectionService } from '../../services/dbconnection.service';
 @Component({
     selector: 'chose-connection-string',
     templateUrl: 'dbcon.component.html',
+    styleUrls: ['dbcon.component.css'],
     providers: [DbConnectionService]
 })
 

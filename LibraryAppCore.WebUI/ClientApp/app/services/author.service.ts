@@ -10,7 +10,7 @@ import 'rxjs/add/observable/throw';
 @Injectable()
 export class AuthorService {
 
-    private url = "http://localhost:50201/AuthorApi";
+    private url = "/AuthorApi";
 
     constructor(private http: Http) { }
 

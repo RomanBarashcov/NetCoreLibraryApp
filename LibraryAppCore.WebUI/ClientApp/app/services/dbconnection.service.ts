@@ -10,7 +10,7 @@ import 'rxjs/add/observable/throw';
 @Injectable()
 export class DbConnectionService {
 
-    private url = "http://localhost:50201/ConnectionStringApi/";
+    private url = "/ConnectionStringApi/";
 
     constructor(private http: Http) { }
 
