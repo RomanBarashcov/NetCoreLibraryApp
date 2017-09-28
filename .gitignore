@@ -76,6 +76,7 @@ artifacts/
 *.svclog
 *.scc
 
+
 # Chutzpah Test files
 _Chutzpah*
 
@@ -300,3 +301,20 @@ __pycache__/
 
 # OpenCover UI analysis results
 OpenCover/
+
+/89889688147bd7575d6327160d64e760.svg
+/main-client.js
+/main-client.js.map
+/main-server.js
+/vendor.js
+/LibraryAppCore.Domain.AssemblyInfo.cs
+/LibraryAppCore.Domain.AssemblyInfoInputs.cache
+/LibraryAppCore.Domain.csproj.CoreCompileInputs.cache
+/LibraryAppCore.Domain.csproj.nuget.cache
+/LibraryAppCore.Domain.csproj.nuget.g.props
+/LibraryAppCore.Domain.csproj.nuget.g.targets
+/project.assets.json
+/storage.ide
+/.suo
+/applicationhost.config
+*.svg
