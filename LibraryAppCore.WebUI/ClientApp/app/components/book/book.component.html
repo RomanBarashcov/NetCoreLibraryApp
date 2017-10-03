@@ -15,7 +15,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let book of pagedBookItems">
+            <tr [@flyInOut]="state" *ngFor="let book of pagedBookItems">
                 <ng-template [ngTemplateOutlet]="loadTemplate(book)"
                              [ngOutletContext]="{ $implicit: book}">
                 </ng-template>

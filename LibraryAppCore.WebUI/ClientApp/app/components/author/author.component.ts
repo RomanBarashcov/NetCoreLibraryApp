@@ -1,5 +1,4 @@
-﻿import { TemplateRef, ViewChild } from '@angular/core';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+﻿import { TemplateRef, ViewChild, Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
@@ -9,15 +8,59 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
 import { PagerService } from '../../services/pagination.service';
+import {
+    trigger,
+    state,
+    style,
+    animate,
+    transition, 
+    group
+} from '@angular/animations';
+
 
 @Component({
     selector: 'authors-app',
     templateUrl: 'author.component.html',
     styleUrls: ['author.component.css'],
-    providers: [AuthorService]
+    providers: [AuthorService],
+    animations: [
+        trigger('flyInOut', [
+            state('in', style({transform: 'translateX(0)', opacity: 1})),
+            transition('void => *', [
+                style({transform: 'translateX(0px)', opacity: 0}),
+                group([
+                    animate('1s 0.1s ease', style({
+                        transform: 'translateX(0)',
+                        
+                    })),
+                    animate('1s ease', style({
+                        opacity: 1
+                    }))
+                ])
+            ]),
+            transition('* => void', [
+                group([
+                    animate('1s ease', style({
+                        transform: 'translateX(0px)',
+          
+                    })),
+                    animate('1s 0.2s ease', style({
+                        opacity: 0
+                    }))
+                ])
+            ])
+        ])
+    ]
+
 })
 export class AuthorComponent implements OnDestroy, OnInit {
 
+    state: string = '';
+
+    animateMe() {
+        this.state = (this.state === '' ? 'in' : '');
+    }
+    
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
 
@@ -40,6 +83,8 @@ export class AuthorComponent implements OnDestroy, OnInit {
         this.serv.getAuthors().subscribe(data => {
             this.authors = data;
             this.setPage(1);
+            this.animateMe();
+            this.state = "in";
         },
             error => {
                 this.statusMessage = error;

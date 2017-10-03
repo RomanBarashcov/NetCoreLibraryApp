@@ -1,4 +1,6 @@
-﻿<h1>Authors List</h1>
+﻿
+<h1>Authors List</h1>
+
 <input type="button" value="Add Author" class="btn btn-success" (click)="addAuthor()" />
 
 <div class="table-responsive padding-top-table">
@@ -14,7 +16,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let author of pagedAuthorItems">
+            <tr [@flyInOut]="state" *ngFor="let author of pagedAuthorItems">
                 <ng-template [ngTemplateOutlet]="loadTemplate(author)"
                              [ngOutletContext]="{ $implicit: author}">
                 </ng-template>
@@ -45,7 +47,8 @@
 <div>{{statusMessage}}</div>
 
 
-<ng-template #readOnlyTemplate let-author>
+
+<ng-template  #readOnlyTemplate let-author>
     <td>{{author.id}}</td>
     <td>{{author.name}}</td>
     <td>{{author.surname}}</td>

@@ -9,15 +9,58 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
 import { PagerService } from '../../services/pagination.service';
+import {
+    trigger,
+    state,
+    style,
+    animate,
+    transition,
+    group
+} from '@angular/animations';
+
 
 @Component({
     selector: 'books-app',
     templateUrl: 'book.component.html',
     styleUrls: ['book.component.css'],
-    providers: [BookService]
+    providers: [BookService],
+    animations: [
+        trigger('flyInOut', [
+            state('in', style({transform: 'translateX(0)', opacity: 1})),
+            transition('void => *', [
+                style({transform: 'translateX(0px)', opacity: 0}),
+                group([
+                    animate('1s 0.1s ease', style({
+                        transform: 'translateX(0)',
+
+                    })),
+                    animate('1s ease', style({
+                        opacity: 1
+                    }))
+                ])
+            ]),
+            transition('* => void', [
+                group([
+                    animate('1s ease', style({
+                        transform: 'translateX(0px)',
+
+                    })),
+                    animate('1s 0.2s ease', style({
+                        opacity: 0
+                    }))
+                ])
+            ])
+        ])
+    ]
 })
 export class BookComponent implements OnDestroy {
+    
+    state: string = '';
 
+    animateMe() {
+        this.state = (this.state === '' ? 'in' : '');
+    }
+    
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
 
@@ -42,6 +85,7 @@ export class BookComponent implements OnDestroy {
         this.serv.getBooks().subscribe(data => {
             this.books = data;
             this.setPage(1);
+            this.animateMe();
         },
             error => {
                 this.statusMessage = error;
