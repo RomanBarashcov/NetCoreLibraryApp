@@ -9,15 +9,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
 import { PagerService } from '../../services/pagination.service';
-import {
-    trigger,
-    state,
-    style,
-    animate,
-    transition,
-    group
-} from '@angular/animations';
-
+import { trigger, state, style, animate, transition, group } from '@angular/animations';
 
 @Component({
     selector: 'books-app',
@@ -57,7 +49,7 @@ export class BookComponent implements OnDestroy {
     
     state: string = '';
 
-    animateMe() {
+    animate() {
         this.state = (this.state === '' ? 'in' : '');
     }
     
@@ -85,7 +77,7 @@ export class BookComponent implements OnDestroy {
         this.serv.getBooks().subscribe(data => {
             this.books = data;
             this.setPage(1);
-            this.animateMe();
+            this.animate();
         },
             error => {
                 this.statusMessage = error;
@@ -173,7 +165,6 @@ export class BookComponent implements OnDestroy {
 
     cancel() {
         this.editedBook = this.editedBookNull;
-        this.loadBooks();
     }
 
     deleteBook(book: Book) {

@@ -43,7 +43,7 @@ import {
 export class HomeComponent {
     state: string = '';
 
-    animateMe() {
+    animate() {
         this.state = (this.state === '' ? 'in' : '');
     }
 }

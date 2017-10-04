@@ -8,14 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
 import { PagerService } from '../../services/pagination.service';
-import {
-    trigger,
-    state,
-    style,
-    animate,
-    transition, 
-    group
-} from '@angular/animations';
+import { trigger, state, style, animate, transition, group } from '@angular/animations';
 
 
 @Component({
@@ -57,7 +50,7 @@ export class AuthorComponent implements OnDestroy, OnInit {
 
     state: string = '';
 
-    animateMe() {
+    animate() {
         this.state = (this.state === '' ? 'in' : '');
     }
     
@@ -83,7 +76,7 @@ export class AuthorComponent implements OnDestroy, OnInit {
         this.serv.getAuthors().subscribe(data => {
             this.authors = data;
             this.setPage(1);
-            this.animateMe();
+            this.animate();
             this.state = "in";
         },
             error => {
@@ -132,7 +125,6 @@ export class AuthorComponent implements OnDestroy, OnInit {
                 });
 
             this.isNewRecord = false;
-           
 
         } else {
             this.serv.updateAuthor(this.editedAuthor.id, this.editedAuthor).subscribe((resp: Response) => {
@@ -152,13 +144,12 @@ export class AuthorComponent implements OnDestroy, OnInit {
 
     cancel() {
         this.editedAuthor = this.editAuthorNull;
-        this.ngOnInit();
     }
 
     deleteAuthor(author: Author) {
         this.serv.deleteUser(author.id).subscribe((resp: Response) => {
             if (resp.status == 200) {
-                this.statusMessage = 'Deleted successfully!',
+                this.statusMessage = 'Deleted successfully!';
                     this.ngOnInit();
             }
         },
