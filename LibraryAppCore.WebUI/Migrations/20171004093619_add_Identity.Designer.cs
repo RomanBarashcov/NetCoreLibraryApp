@@ -11,9 +11,10 @@ using System;
 namespace LibraryAppCore.WebUI.Migrations
 {
     [DbContext(typeof(LibraryPostgreSqlContext))]
-    partial class LibraryPostgreSqlContextModelSnapshot : ModelSnapshot
+    [Migration("20171004093619_add_Identity")]
+    partial class add_Identity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

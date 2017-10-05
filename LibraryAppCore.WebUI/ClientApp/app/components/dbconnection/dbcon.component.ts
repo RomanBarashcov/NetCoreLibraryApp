@@ -3,14 +3,7 @@ import { DbConnection } from '../../models/dbconnection';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { DbConnectionService } from '../../services/dbconnection.service';
-import {
-    trigger,
-    state,
-    style,
-    animate,
-    transition,
-    group
-} from '@angular/animations';
+import { trigger, state, style, animate, transition, group } from '@angular/animations';
 
 @Component({
     selector: 'chose-connection-string',
@@ -48,11 +41,6 @@ import {
 })
 
 export class DbConnectionComponent implements OnDestroy {
-    state: string = '';
-
-    animateMe() {
-        this.state = (this.state === '' ? 'in' : '');
-    }
     
     private sub: Subscription;
     DefaultConnection: string = "DefaultConnection";
@@ -60,11 +48,16 @@ export class DbConnectionComponent implements OnDestroy {
     conStringDb: DbConnection;
     error: any;
     chosedDb: string;
-
+    state: string = '';
+    
     constructor(private serv: DbConnectionService, private activatedRoute: ActivatedRoute, private router: Router) {
         this.sub = activatedRoute.params.subscribe();
     }
-
+    
+    animateMe() {
+        this.state = (this.state === '' ? 'in' : '');
+    }
+    
     choseDb(conString: string) {
         this.conStringDb = new DbConnection(conString);
         console.log("Chosed Db Connection: " + this.conStringDb);

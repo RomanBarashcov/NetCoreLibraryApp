@@ -10,8 +10,10 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthorComponent } from './components/author/author.component';
 import { BookComponent } from './components/book/book.component';
 import { DbConnectionComponent } from './components/dbconnection/dbcon.component';
-import { PagerService } from './services/pagination.service';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
 
+import { PagerService } from './services/pagination.service';
 
 @NgModule({
     declarations: [
@@ -20,6 +22,8 @@ import { PagerService } from './services/pagination.service';
         HomeComponent,
         AuthorComponent,
         BookComponent,
+        LoginComponent,
+        RegisterComponent,
         DbConnectionComponent
     ],
     imports: [
@@ -31,6 +35,8 @@ import { PagerService } from './services/pagination.service';
             { path: 'author', component: AuthorComponent },
             { path: 'book', component: BookComponent },
             { path: 'bookByAuthor/:id', component: BookComponent },
+            { path: 'login', component: LoginComponent },
+            { path: 'registration', component: RegisterComponent },
             { path: 'dbconnection', component: DbConnectionComponent },
             { path: '**', redirectTo: 'home' }
         ])

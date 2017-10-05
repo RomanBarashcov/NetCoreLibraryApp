@@ -4,6 +4,7 @@ import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 import { AuthorService } from '../../services/author.service';
 import { Author } from '../../models/author';
+import { AccountService } from '../../services/account.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
@@ -15,7 +16,7 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     selector: 'authors-app',
     templateUrl: 'author.component.html',
     styleUrls: ['author.component.css'],
-    providers: [AuthorService],
+    providers: [ AuthorService, AccountService ],
     animations: [
         trigger('flyInOut', [
             state('in', style({transform: 'translateX(0)', opacity: 1})),
@@ -47,12 +48,6 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
 
 })
 export class AuthorComponent implements OnDestroy, OnInit {
-
-    state: string = '';
-
-    animate() {
-        this.state = (this.state === '' ? 'in' : '');
-    }
     
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
@@ -67,11 +62,16 @@ export class AuthorComponent implements OnDestroy, OnInit {
     pagedAuthorItems: any[];
     pager: any = {};
     error: any;
-
+    state: string = '';
+    
     constructor(private serv: AuthorService, private router: Router, private activateRoute: ActivatedRoute, private pagerService: PagerService) {
         this.sub = activateRoute.params.subscribe();
     }
 
+    animate() {
+        this.state = (this.state === '' ? 'in' : '');
+    }
+    
     ngOnInit() {
         this.serv.getAuthors().subscribe(data => {
             this.authors = data;

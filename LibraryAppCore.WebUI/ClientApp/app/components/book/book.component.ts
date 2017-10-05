@@ -47,11 +47,8 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
 })
 export class BookComponent implements OnDestroy {
     
-    state: string = '';
-
-    animate() {
-        this.state = (this.state === '' ? 'in' : '');
-    }
+ 
+    
     
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
@@ -68,11 +65,16 @@ export class BookComponent implements OnDestroy {
     pagedBookItems: any[];
     pager: any = {};
     error: any;
+    state: string = '';
 
     constructor(private serv: BookService, private activateRoute: ActivatedRoute, private pagerService: PagerService) {
         this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
     }
 
+    animate() {
+        this.state = (this.state === '' ? 'in' : '');
+    }
+    
     loadBooks() {
         this.serv.getBooks().subscribe(data => {
             this.books = data;

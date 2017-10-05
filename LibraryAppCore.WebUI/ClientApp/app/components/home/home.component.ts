@@ -1,12 +1,5 @@
 import { Component } from '@angular/core';
-import {
-    trigger,
-    state,
-    style,
-    animate,
-    transition,
-    group
-} from '@angular/animations';
+import { trigger, state, style, animate, transition, group } from '@angular/animations';
 
 @Component({
     selector: 'home',

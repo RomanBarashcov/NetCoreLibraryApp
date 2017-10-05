@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
@@ -14,6 +15,8 @@ using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Concrete.ConvertData;
 using LibraryAppCore.Domain.Concrete.DataRequired;
 using LibraryAppCore.Domain.Entities.MondoDb;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LibraryAppCore_WebUI
 {
@@ -33,6 +36,24 @@ namespace LibraryAppCore_WebUI
             string connection = Configuration.GetConnectionString("DefaultConnection");
             var optionsBuilder = new DbContextOptionsBuilder<LibraryPostgreSqlContext>();
             optionsBuilder.UseNpgsql(connection);
+            
+            services.AddAuthentication()
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+     
+                    cfg.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = Configuration["Tokens:Issuer"],
+                        ValidAudience = Configuration["Tokens:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                    };
+ 
+                });
+
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<LibraryPostgreSqlContext>();
 
             services.AddTransient<IAuthorRepository>(provider =>
             {
@@ -65,6 +86,7 @@ namespace LibraryAppCore_WebUI
                     return new BookMongoDbConcrete(new LibraryMongoDbContext(), new BookMongoDbConvert(), new BookDataRequired());
                 }
             });
+            
 
             services.AddMvc(options =>
             {
@@ -90,7 +112,8 @@ namespace LibraryAppCore_WebUI
             }
 
             app.UseStaticFiles();
-
+            app.UseAuthentication();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

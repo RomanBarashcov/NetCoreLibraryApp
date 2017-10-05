@@ -1,8 +1,8 @@
 ﻿import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { Response, Headers } from '@angular/http';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Author } from '../models/author';
 import { Observable } from 'rxjs/Observable';
+import { AccountService } from '../services/account.service';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -12,10 +12,14 @@ export class AuthorService {
 
     private url = "/AuthorApi";
 
-    constructor(private http: Http) { }
+    constructor(private http: Http, private accoutnService: AccountService) { }
 
     getAuthors(): Observable<Author[]> {
-        return this.http.get(this.url)
+        
+        let headers = new Headers({ 'Authorization': 'Bearer ' + this.accoutnService.token });
+        let options = new RequestOptions({ headers: headers });
+        
+        return this.http.get(this.url, options)
             .map((resp: Response) => {
 
                 let authorList = resp.json();
@@ -32,10 +36,14 @@ export class AuthorService {
     }
 
     createAuthor(obj: Author) {
+        
+        let headers = new Headers({ 'Authorization': 'Bearer ' + this.accoutnService.token });
+        let options = new RequestOptions({ headers: headers });
+
         const body = JSON.stringify(obj);
         console.log(body);
-        let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
-        return this.http.post(this.url, body, { headers: headers })
+
+        return this.http.post(this.url, body, options)
             .map((res: Response) => {
                 console.log("createAuthor() Result: " + res.status);
                 return res;
@@ -44,9 +52,12 @@ export class AuthorService {
     }
 
     updateAuthor(id: string, obj: Author) {
-        let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
+
+        let headers = new Headers({ 'Authorization': 'Bearer ' + this.accoutnService.token });
+        let options = new RequestOptions({ headers: headers });
+
         const body = JSON.stringify(obj);
-        return this.http.put(this.url + '/' + id, body, { headers: headers })
+        return this.http.put(this.url + '/' + id, body, options)
             .map((res: Response) => {
                 console.log("updateAuthor() Result: " + res.status);
                 return res;
@@ -55,7 +66,11 @@ export class AuthorService {
     }
 
     deleteUser(id: string) {
-        return this.http.delete(this.url + '/' + id)
+
+        let headers = new Headers({ 'Authorization': 'Bearer ' + this.accoutnService.token });
+        let options = new RequestOptions({ headers: headers });
+        
+        return this.http.delete(this.url + '/' + id, options)
             .map((res: Response) => {
                 console.log("deleteUser() Result: " + res.status);
                 return res;
