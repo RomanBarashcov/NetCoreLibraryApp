@@ -23,7 +23,8 @@ namespace LibraryAppCore.WebUI
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            builder.UseNpgsql(connectionString, b => b.MigrationsAssembly("LibraryAppCore.WebUI"));
+            //builder.UseNpgsql(connectionString, b => b.MigrationsAssembly("LibraryAppCore.WebUI"));
+            builder.UseSqlServer(connectionString, b => b.MigrationsAssembly("LibraryAppCore.WebUI"));
 
             return new LibraryPostgreSqlContext(builder.Options);
         }

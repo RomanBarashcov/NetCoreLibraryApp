@@ -16,7 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LibraryAppCore.WebUI.Controllers
 {
-    [Route("[controller]/[action]")]
+    //[Route("[controller]/[action]")]
+    [Route("/Account")]
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -30,14 +31,14 @@ namespace LibraryAppCore.WebUI.Controllers
             _config = config;
         }
         
-        
         [HttpGet]
-        public async Task<IActionResult>  Get()
+        public IActionResult Get()
         {
             return Ok();
         }
         
-        [HttpPost]
+        [HttpPost("/Account/Register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
             IActionResult ActionRes = BadRequest();
@@ -51,6 +52,10 @@ namespace LibraryAppCore.WebUI.Controllers
                     await _signInManager.SignInAsync(user, false);
                     ActionRes = Ok();
                 }
+                else
+                {
+                    ActionRes = BadRequest(result.Errors.ToString());
+                }
             }
             else
             {
@@ -59,8 +64,8 @@ namespace LibraryAppCore.WebUI.Controllers
             return ActionRes;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost("/Account/Login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginViewModel model)
         {
             IActionResult ActionRes = BadRequest();
@@ -71,7 +76,7 @@ namespace LibraryAppCore.WebUI.Controllers
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        ActionRes = Ok();
+                        ActionRes = await GenerateToken(model.Email, model.Password);
                     }
                 }
                 else
@@ -81,20 +86,17 @@ namespace LibraryAppCore.WebUI.Controllers
             }
             return ActionRes;
         }
-        
-        
-        
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> GenerateToken([FromBody] LoginViewModel model)
+
+
+        public async Task<IActionResult> GenerateToken(string email, string password)
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(email);
  
                 if (user != null)
                 {
-                    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                    var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
                     if (result.Succeeded)
                     {
  
@@ -104,14 +106,16 @@ namespace LibraryAppCore.WebUI.Controllers
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         };
  
-                        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
+                        var key = AuthOptions.GetSymmetricSecurityKey();
                         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
  
-                        var token = new JwtSecurityToken(_config["Tokens:Issuer"],
-                            _config["Tokens:Issuer"],
-                            claims,
-                            expires: DateTime.Now.AddMinutes(30),
-                            signingCredentials: creds);
+                        var token = new JwtSecurityToken(
+                                AuthOptions.ISSUER,
+                                AuthOptions.AUDIENCE,
+                                claims,
+                                expires: DateTime.Now.AddMinutes(30),
+                                signingCredentials: creds
+                            );
  
                         return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
                     }
@@ -121,13 +125,17 @@ namespace LibraryAppCore.WebUI.Controllers
             return BadRequest("Could not create token");
         }
         
-        
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
             return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult GetLogin()
+        {
+            return Ok($"Ваш логин: {User.Identity.Name}");
         }
     }
 }

@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 import { BookService } from '../../services/book.service';
+import { AccountService } from '../../services/account.service';
 import { Book } from '../../models/book';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
@@ -15,7 +16,7 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     selector: 'books-app',
     templateUrl: 'book.component.html',
     styleUrls: ['book.component.css'],
-    providers: [BookService],
+    providers: [BookService, AccountService],
     animations: [
         trigger('flyInOut', [
             state('in', style({transform: 'translateX(0)', opacity: 1})),
@@ -67,7 +68,7 @@ export class BookComponent implements OnDestroy {
     error: any;
     state: string = '';
 
-    constructor(private serv: BookService, private activateRoute: ActivatedRoute, private pagerService: PagerService) {
+    constructor(private serv: BookService, private accountService: AccountService, private activateRoute: ActivatedRoute, private pagerService: PagerService) {
         this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
     }
 

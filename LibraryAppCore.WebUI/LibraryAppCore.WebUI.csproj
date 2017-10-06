@@ -6,7 +6,12 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AspNetCore.Identity.PostgreSQL.dll" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.0" PrivateAssets="All" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.0.0" />
     <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="4.0.11" />
@@ -36,6 +41,7 @@
     <TypeScriptCompile Include="ClientApp\app\components\author\author.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\book\book.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dbconnection\dbcon.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\logout\logout.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\author.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\book.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\dbconnection.ts" />

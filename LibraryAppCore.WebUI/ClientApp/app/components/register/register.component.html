@@ -1,20 +1,20 @@
-<div class="col-md-3 col-md-offset-1">
-    <h2>Registeration</h2>
-    <form name="form" (ngSubmit)="f.form.valid && Registration(model)" #f="ngForm" novalidate>
-        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !model.Email.valid }">
+<h2>Registration</h2>
+<div class="col-md-3 col-md-offset-0">
+    <form name="form" (ngSubmit)="f.form.valid && Registration()" #f="ngForm" novalidate>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted  }">
             <label>Email</label>
-            <input type="text" class="form-control" name="Email" [(ngModel)]="model.Email" #Email="ngModel" required />
+            <input type="email" class="form-control" name="Email" [(ngModel)]="model.Email"  />
             <div *ngIf="f.submitted && !model.Email.valid" class="help-block">Email is required</div>
         </div>
-        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !Password.valid }">
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted }">
             <label>Password</label>
-            <input type="Password" class="form-control" name="Password" [(ngModel)]="model.Password" #Password="ngModel" required />
+            <input type="Password" class="form-control" name="Password" [(ngModel)]="model.Password" />
             <div *ngIf="f.submitted && !model.Password.valid" class="help-block">Password is required</div>
         </div>
-        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !ConfirmPassword.valid }">
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted }">
             <label>Confirm Password</label>
-            <input type="Password" class="form-control" name="ConfirmPassword" [(ngModel)]="model.ConfirmPassword" #ConfirmPassword="ngModel" required />
-            <div *ngIf="f.submitted && !model.ConfirmPassword.valid" class="help-block">Confirm Password is required</div>
+            <input type="Password" class="form-control" name="PasswordConfirm" [(ngModel)]="model.PasswordConfirm" />
+            <div *ngIf="f.submitted && !model.PasswordConfirm.valid" class="help-block">Password Confirm is required</div>
         </div>
         <div class="form-group">
             <button [disabled]="loading" class="btn btn-success">Register</button>

@@ -1,6 +1,5 @@
-
-<div class="col-md-4 col-md-offset-4">
-    <h2>Login</h2>
+<h2>Login</h2>
+<div class="col-md-3 col-md-offset-0">
     <form name="form" (ngSubmit)="f.form.valid && login(model)" #f="ngForm" novalidate>
         <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !model.Email.valid }">
             <label>Email</label>
@@ -11,6 +10,9 @@
             <label>Password</label>
             <input type="Password" class="form-control" name="Password" [(ngModel)]="model.Password" #Password="ngModel" required />
             <div *ngIf="f.submitted && !Password.valid" class="help-block">Password is required</div>
+        </div>
+        <div class="form-group">
+            <label> <input type="checkbox" name="RememberMe" [(ngModel)]="model.RememberMe" #RememberMe="ngModel" /> Remember Me </label>
         </div>
         <div class="form-group">
             <button [disabled]="loading" class="btn btn-success">Login</button>

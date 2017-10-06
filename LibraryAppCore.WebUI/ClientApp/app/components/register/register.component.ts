@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 export class RegisterComponent implements OnDestroy{
     
-    model: RegisterViewModel[] = [];
+    model: RegisterViewModel = new RegisterViewModel("","","");
     registerUser: RegisterViewModel;
     loading: boolean = false;
     error='';
@@ -22,17 +22,16 @@ export class RegisterComponent implements OnDestroy{
         private router: Router,
         private  accountService: AccountService,  private activateRoute: ActivatedRoute) {
         this.sub = activateRoute.params.subscribe();
-        this.registerUser = new RegisterViewModel("","","");
-        this.model.push(this.registerUser);
     }
 
     ngOnInit() {
         this.accountService.logout();
     }
 
-    Registration(obj: RegisterViewModel) {
+    Registration() {
         this.loading = true;
-        this.accountService.Registration(obj)
+        this.registerUser = new RegisterViewModel(this.model.Email, this.model.Password, this.model.PasswordConfirm);
+        this.accountService.Registration(this.registerUser)
             .subscribe(result => {
                 if (result === true) {
                     this.router.navigate(['/home']);

@@ -1,14 +1,10 @@
 ﻿using LibraryAppCore.Domain.Entities.MondoDb;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Protocols;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LibraryAppCore.Domain.Concrete
 {
-    public class LibraryMongoDbContext : DbContext
+    public class LibraryMongoDbContext : IdentityDbContext
     {
         MongoClient client;
         IMongoDatabase database;

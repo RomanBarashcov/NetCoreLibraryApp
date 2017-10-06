@@ -15,8 +15,9 @@ export class AuthorService {
     constructor(private http: Http, private accoutnService: AccountService) { }
 
     getAuthors(): Observable<Author[]> {
-        
-        let headers = new Headers({ 'Authorization': 'Bearer ' + this.accoutnService.token });
+
+        let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
+        headers.append('Authorization', 'Bearer ' + this.accoutnService.token );
         let options = new RequestOptions({ headers: headers });
         
         return this.http.get(this.url, options)
@@ -36,8 +37,9 @@ export class AuthorService {
     }
 
     createAuthor(obj: Author) {
-        
-        let headers = new Headers({ 'Authorization': 'Bearer ' + this.accoutnService.token });
+
+        let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
+        headers.append('Authorization', 'Bearer ' + this.accoutnService.token);
         let options = new RequestOptions({ headers: headers });
 
         const body = JSON.stringify(obj);
@@ -53,7 +55,8 @@ export class AuthorService {
 
     updateAuthor(id: string, obj: Author) {
 
-        let headers = new Headers({ 'Authorization': 'Bearer ' + this.accoutnService.token });
+        let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
+        headers.append('Authorization', 'Bearer ' + this.accoutnService.token);
         let options = new RequestOptions({ headers: headers });
 
         const body = JSON.stringify(obj);
@@ -67,7 +70,8 @@ export class AuthorService {
 
     deleteUser(id: string) {
 
-        let headers = new Headers({ 'Authorization': 'Bearer ' + this.accoutnService.token });
+        let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
+        headers.append('Authorization', 'Bearer ' + this.accoutnService.token);
         let options = new RequestOptions({ headers: headers });
         
         return this.http.delete(this.url + '/' + id, options)

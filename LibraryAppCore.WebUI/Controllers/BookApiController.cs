@@ -25,6 +25,7 @@ namespace LibraryAppCore.WebUI.Controllers
             this.dataReqiered = dRequired;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IEnumerable<Book>> GetBooks()
         {
@@ -32,7 +33,7 @@ namespace LibraryAppCore.WebUI.Controllers
             return Books;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] Book book)
         {
@@ -49,7 +50,7 @@ namespace LibraryAppCore.WebUI.Controllers
             return ActionRes;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBook(string id, [FromBody] Book book)
         {
@@ -66,7 +67,7 @@ namespace LibraryAppCore.WebUI.Controllers
             return ActionRes;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(string id)
         {
@@ -83,6 +84,7 @@ namespace LibraryAppCore.WebUI.Controllers
             return ActionRes;
         }
 
+        [AllowAnonymous]
         [HttpGet("/BookApi/GetBookByAuthorId/{id}")]
         public async Task<IEnumerable<Book>> GetBookByAuthorId(string id)
         {

@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AccountService } from '../../services/account.service';
-import { Login } from '../../models/login';
+import { LoginViewModel } from '../../models/login';
 import { Subscription } from 'rxjs/Subscription';
 
 
@@ -14,8 +14,8 @@ import { Subscription } from 'rxjs/Subscription';
 
 export class LoginComponent implements OnDestroy {
     
-    model: Login[] = [];
-    loginUser: Login;
+    model: LoginViewModel = new LoginViewModel("","",false,"");
+    loginUser: LoginViewModel;
     loading: boolean = false;
     error = '';
     private sub: Subscription;
@@ -24,22 +24,21 @@ export class LoginComponent implements OnDestroy {
         private router: Router,
         private  accountService: AccountService,  private activateRoute: ActivatedRoute) {
         this.sub = activateRoute.params.subscribe();
-        this.loginUser = new Login("","",false,"");
-        this.model.push(this.loginUser);
     }
 
     ngOnInit() {
         this.accountService.logout();
     }
 
-    login(obj: Login) {
+    login() {
         this.loading = true;
-        obj.ReturnUrl = this.router.url;
-        this.accountService.login(obj)
-            .subscribe(result => {
-                if (result === true) {
+        this.loginUser = new LoginViewModel(this.model.Email, this.model.Password, this.model.RememberMe, this.router.url);
+        this.accountService.login(this.loginUser)
+            .subscribe((resp: Response) => {
+                console.log("LoginComponentResult: " + resp.status);
+                if (resp.status == 200) {
                     this.router.navigate(['/home']);
-                } else {
+                 } else {
                     this.error = 'Username or password is incorrect';
                     this.loading = false;
                 }

@@ -1,3 +1,3 @@
 export class RegisterViewModel{
-    constructor(public Email: string, public Password: string, public ConfitmPassword: string){}
+    constructor(public Email: string, public Password: string, public PasswordConfirm: string){}
 }

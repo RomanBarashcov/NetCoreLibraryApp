@@ -1,3 +1,3 @@
-export class Login{
-    constructor(public Email: string, public Password: string, public RememnerMe: boolean, public ReturnUrl: string){}
+export class LoginViewModel {
+    constructor(public Email: string, public Password: string, public RememberMe: boolean, public ReturnUrl: string){}
 }
