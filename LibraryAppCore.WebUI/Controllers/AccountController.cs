@@ -16,7 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LibraryAppCore.WebUI.Controllers
 {
-    //[Route("[controller]/[action]")]
+    
     [Route("/Account")]
     public class AccountController : Controller
     {
@@ -50,7 +50,7 @@ namespace LibraryAppCore.WebUI.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, false);
-                    ActionRes = Ok();
+                    ActionRes = await GenerateToken(model.Email, model.Password);
                 }
                 else
                 {
@@ -125,7 +125,7 @@ namespace LibraryAppCore.WebUI.Controllers
             return BadRequest("Could not create token");
         }
         
-        [HttpPost]
+        [HttpPost("/Account/LogOff")]
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();

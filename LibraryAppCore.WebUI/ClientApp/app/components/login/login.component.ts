@@ -5,6 +5,7 @@ import { LoginViewModel } from '../../models/login';
 import { Subscription } from 'rxjs/Subscription';
 
 
+
 @Component({
     selector: 'login',
     templateUrl: './login.component.html',
@@ -22,7 +23,7 @@ export class LoginComponent implements OnDestroy {
     
     constructor(
         private router: Router,
-        private  accountService: AccountService,  private activateRoute: ActivatedRoute) {
+        private accountService: AccountService, private activateRoute: ActivatedRoute) {
         this.sub = activateRoute.params.subscribe();
     }
 

@@ -14,13 +14,19 @@ export class AccountService {
     
     public token: string;
     private url = "/Account";
+    lStorage: any;
 
     constructor(private http: Http, private router: Router) {
-        var locStorage = localStorage.getItem('currentUser');
-        if (locStorage != null) {
-            var currentUser = JSON.parse(locStorage);
+
+        try {
+            this.lStorage = localStorage.getItem('currentUser');
+            var currentUser = JSON.parse(this.lStorage);
             this.token = currentUser && currentUser.token;
         }
+        catch (e){
+            console.log("Error: " + e);
+        }
+     
     }
 
     login(obj: LoginViewModel) {
@@ -57,11 +63,8 @@ export class AccountService {
 
         return this.http.post(this.url + "/Register", body, { headers: headers })
             .map((res: Response) => {
-            
-                console.log("createUser() Result: " + res);
 
                 if (res.status == 200) {
-                    // let login: LoginViewModel = new LoginViewModel(obj.Email, obj.Password, true, this.router.url);
                     let token = res.json() && res.json().token;
                     if (token) {
                         this.token = token;
@@ -86,39 +89,6 @@ export class AccountService {
                 });
     }
 
-    GenerateToken(obj: LoginViewModel) {
-        
-        const body = JSON.stringify(obj);
-        console.log("GenerateToken Result: " + body);
-        
-        let headers = new Headers({ 'Content-Type': 'application/json;charser=utf8' });
-
-        return this.http.post(this.url + "/Token", body, { headers: headers }).map((resp: Response) => {
-
-            console.log("GeneratedToken Result2: " + resp);
-            return resp;
-
-        }).catch(this.handleError);
-
-        //return this.http.post(this.url + "/Token", body, { headers: headers })
-        //    .map((res: Response) => {
-            
-        //        console.log("GenerateToken2 Result: " + res.status);
-        //        let token = res.json() && res.json().token;
-                
-        //        if (token) {
-        //            this.token = token;
-        //            console.log("GenerateToken3 Result: " + token);
-        //            localStorage.setItem('currentUser', JSON.stringify({ username: obj.Email, token: token }));
-        //            return true;
-        //        } else {
-        //            return false;
-        //        }
-
-        //    }).catch(this.handleError);
-
-    }
-    
     private handleError(error: any) {
         console.error(error);
         return Observable.throw(error);

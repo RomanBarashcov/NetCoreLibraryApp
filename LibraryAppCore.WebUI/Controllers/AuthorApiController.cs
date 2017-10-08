@@ -34,7 +34,7 @@ namespace LibraryAppCore.WebUI.Controllers
             return Authors;
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task<IActionResult> CreateAuthor([FromBody] Author author)
         {
@@ -51,7 +51,7 @@ namespace LibraryAppCore.WebUI.Controllers
             return ActionRes;
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAuthor(string id, [FromBody] Author author)
         {
@@ -68,7 +68,7 @@ namespace LibraryAppCore.WebUI.Controllers
             return ActionRes;
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuthor(string id)
         {

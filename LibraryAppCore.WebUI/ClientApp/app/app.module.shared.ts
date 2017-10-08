@@ -11,6 +11,7 @@ import { AuthorComponent } from './components/author/author.component';
 import { BookComponent } from './components/book/book.component';
 import { DbConnectionComponent } from './components/dbconnection/dbcon.component';
 import { LoginComponent } from './components/login/login.component';
+import { LogOutComponent } from './components/logout/logout.component';
 import { RegisterComponent } from './components/register/register.component';
 
 import { PagerService } from './services/pagination.service';
@@ -23,6 +24,7 @@ import { PagerService } from './services/pagination.service';
         AuthorComponent,
         BookComponent,
         LoginComponent,
+        LogOutComponent,
         RegisterComponent,
         DbConnectionComponent
     ],
@@ -36,6 +38,7 @@ import { PagerService } from './services/pagination.service';
             { path: 'book', component: BookComponent },
             { path: 'bookByAuthor/:id', component: BookComponent },
             { path: 'login', component: LoginComponent },
+            { path: 'logout', component: LogOutComponent },
             { path: 'registration', component: RegisterComponent },
             { path: 'dbconnection', component: DbConnectionComponent },
             { path: '**', redirectTo: 'home' }
