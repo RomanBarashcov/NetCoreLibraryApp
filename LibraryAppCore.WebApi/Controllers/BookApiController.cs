@@ -30,7 +30,7 @@ namespace LibraryAppCore.WebApi.Controllers
             return Books;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] Book book)
         {
@@ -47,7 +47,7 @@ namespace LibraryAppCore.WebApi.Controllers
             return ActionRes;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBook(string id, [FromBody] Book book)
         {
@@ -64,7 +64,7 @@ namespace LibraryAppCore.WebApi.Controllers
             return ActionRes;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(string id)
         {

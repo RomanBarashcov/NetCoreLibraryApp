@@ -3,6 +3,7 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Author } from '../models/author';
 import { Observable } from 'rxjs/Observable';
 import { AccountService } from '../services/account.service';
+import { Config } from "../config";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -10,9 +11,11 @@ import 'rxjs/add/observable/throw';
 @Injectable()
 export class AuthorService {
 
-    private url = "http://localhost:50795/AuthorApi";
+    private url: string;
 
-    constructor(private http: Http, private accoutnService: AccountService) { }
+    constructor(private http: Http, private accoutnService: AccountService, private config: Config) {
+        this.url = this.config.AuthorsApiUrl;
+    }
 
     getAuthors(): Observable<Author[]> {
 

@@ -3,16 +3,18 @@ import { Http } from '@angular/http';
 import { Response, Headers } from '@angular/http';
 import { DbConnection } from '../models/dbconnection';
 import { Observable } from 'rxjs/Observable';
+import { Config } from "../config";
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
-
 
 @Injectable()
 export class DbConnectionService {
 
-    private url = "http://localhost:50796/ConnectionStringApi/";
+    private url: string;
 
-    constructor(private http: Http) { }
+    constructor(private http: Http, private config: Config) {
+        this.url = this.config.DbConnectionApiUrl;
+    }
 
     sendConnectionString(obj: DbConnection) {
         console.log(obj);

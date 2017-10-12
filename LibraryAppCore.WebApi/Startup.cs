@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using LibraryAppCore.Domain.Concrete;
@@ -14,8 +13,6 @@ using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Concrete.ConvertData;
 using LibraryAppCore.Domain.Concrete.DataRequired;
 using LibraryAppCore.Domain.Entities.MondoDb;
-using Microsoft.AspNetCore.Identity;
-using IdentityServer4.AccessTokenValidation;
 
 namespace LibraryAppCore.WebApi
 {
@@ -39,38 +36,17 @@ namespace LibraryAppCore.WebApi
 
             services.AddDbContext<LibraryPostgreSqlContext>(options => options.UseNpgsql(connection));
 
-            services.AddIdentity<User, IdentityRole>(opts => {
-                opts.Password.RequiredLength = 6;   
-                opts.Password.RequireNonAlphanumeric = false;   
-                opts.Password.RequireLowercase = false; 
-                opts.Password.RequireUppercase = false; 
-                opts.Password.RequireDigit = false; 
-            }).AddEntityFrameworkStores<LibraryPostgreSqlContext>()
-                .AddDefaultTokenProviders();
+            services.AddMvcCore()
+                  .AddAuthorization()
+                  .AddJsonFormatters();
 
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                    .AddIdentityServerAuthentication(options =>
-                    {
-                        options.Authority = "http://localhost:52659/"; // Auth Server address 
-                        options.RequireHttpsMetadata = false;
-                        options.ApiName = "library_app_core_wep_api"; // WebAPI Resource Id
-                    });
-
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //        .AddJwtBearer(options =>
-            //        {
-            //            options.RequireHttpsMetadata = false;
-            //            options.TokenValidationParameters = new TokenValidationParameters
-            //            {
-            //                ValidateIssuer = true,
-            //                ValidIssuer = AuthOptions.ISSUER,
-            //                ValidateAudience = true,
-            //                ValidAudience = AuthOptions.AUDIENCE,
-            //                ValidateLifetime = true,
-            //                IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-            //                ValidateIssuerSigningKey = true,
-            //            };
-            //        });
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "http://localhost:52658/";
+                    options.RequireHttpsMetadata = false;
+                    options.ApiName = "library_app_core_wep_api";
+                });
 
             services.AddTransient<IAuthorRepository>(provider =>
             {
@@ -109,6 +85,18 @@ namespace LibraryAppCore.WebApi
                 options.RespectBrowserAcceptHeader = true;
             });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder
+                            .AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -119,6 +107,7 @@ namespace LibraryAppCore.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors("AllowAllOrigins");
             app.UseStaticFiles();
             app.UseAuthentication();
 
@@ -126,8 +115,9 @@ namespace LibraryAppCore.WebApi
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller}/{action}/{id?}");
-            }); 
+                    template: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "HomeApi", action = "Get" });
+        }); 
 
         }
     }

@@ -4,6 +4,7 @@ import { Response, Headers, RequestOptions } from '@angular/http';
 import { Book } from '../models/book';
 import { Observable } from 'rxjs/Observable';
 import { AccountService } from '../services/account.service';
+import { Config } from "../config";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -11,9 +12,11 @@ import 'rxjs/add/observable/throw';
 @Injectable()
 export class BookService {
 
-    private url = "http://localhost:50795/BookApi";
+    private url: string;
 
-    constructor(private http: Http, private accoutnService: AccountService) { }
+    constructor(private http: Http, private accoutnService: AccountService, private config: Config) {
+        this.url = this.config.BookApiUrl;
+    }
 
     getBooks(): Observable<Book[]> {
 

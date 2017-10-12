@@ -21,7 +21,7 @@ namespace LibraryAppCore.AuthServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<LibraryPostgreSqlContext>(options => options.UseNpgsql(connection));
 
@@ -35,12 +35,26 @@ namespace LibraryAppCore.AuthServer
                 .AddDefaultTokenProviders();
 
             services.AddIdentityServer()
-                .AddDeveloperSigningCredential()
-                .AddInMemoryPersistedGrants()
-                .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApiResources())
-                .AddInMemoryClients(Config.GetClients())
-                .AddAspNetIdentity<User>();
+               .AddDeveloperSigningCredential(filename: "tempkey.rsa")
+               .AddInMemoryIdentityResources(Config.GetIdentityResources())
+               .AddInMemoryApiResources(Config.GetApiResources())
+               .AddInMemoryClients(Config.GetClients())
+               .AddAspNetIdentity<User>();
+
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder
+                            .AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
+
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,8 +64,18 @@ namespace LibraryAppCore.AuthServer
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("AllowAllOrigins");
             app.UseIdentityServer();
-            app.UseMvc();
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "Home", action = "Get" });
+
+            });
         }
     }
 }

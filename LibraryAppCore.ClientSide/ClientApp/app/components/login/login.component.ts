@@ -18,7 +18,7 @@ export class LoginComponent implements OnDestroy {
     model: LoginViewModel = new LoginViewModel("","",false,"");
     loginUser: LoginViewModel;
     loading: boolean = false;
-    error = '';
+    error: any;
     private sub: Subscription;
     
     constructor(
@@ -39,8 +39,8 @@ export class LoginComponent implements OnDestroy {
                 console.log("LoginComponentResult: " + resp.status);
                 if (resp.status == 200) {
                     this.router.navigate(['/home']);
-                 } else {
-                    this.error = 'Username or password is incorrect';
+                } else {
+                    this.error = resp.body;//'Username or password is incorrect';
                     this.loading = false;
                 }
             });

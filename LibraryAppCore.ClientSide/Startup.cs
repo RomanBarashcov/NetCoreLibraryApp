@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
@@ -36,7 +32,7 @@ namespace LibraryAppCore_ClientSide
             .AddOpenIdConnect(options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // cookie middle setup above
-                options.Authority = "http://localhost:52659/"; // Auth Server Angular app
+                options.Authority = "http://localhost:52658/"; // Auth Server 
                 options.RequireHttpsMetadata = false; // only for development 
                 options.ClientId = "library_app_core_client_side"; // client setup in Auth Server Config
                 options.ClientSecret = "secret";
@@ -48,6 +44,7 @@ namespace LibraryAppCore_ClientSide
             });
 
             services.AddMvc();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

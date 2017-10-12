@@ -1,18 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LibraryAppCore.AuthServer.Models.InputModels;
+
 namespace LibraryAppCore.AuthServer.Models.ViewModels
 {
-    public class LoginViewModel
+    public class LoginViewModel : LoginInputModel
     {
-        [Required]
-        public string Email { get; set; }
-        
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-        
-        public bool RememberMe { get; set; }
-        
-        public string ReturnUrl { get; set; }
-        
+
     }
 }

@@ -15,6 +15,7 @@ import { LogOutComponent } from './components/logout/logout.component';
 import { RegisterComponent } from './components/register/register.component';
 
 import { PagerService } from './services/pagination.service';
+import { Config } from './config';
 
 @NgModule({
     declarations: [
@@ -44,7 +45,7 @@ import { PagerService } from './services/pagination.service';
             { path: '**', redirectTo: 'home' }
         ])
     ],
-    providers: [PagerService]
+    providers: [PagerService, Config]
     
 })
 export class AppModuleShared {

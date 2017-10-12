@@ -17,7 +17,10 @@
 
   <ItemGroup>
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
+    <Compile Remove="ClientApp\app\auth\**" />
     <Content Remove="ClientApp\**" />
+    <EmbeddedResource Remove="ClientApp\app\auth\**" />
+    <None Remove="ClientApp\app\auth\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +28,7 @@
     <None Remove="ClientApp\app\components\book\book.component.ts" />
     <None Remove="ClientApp\app\components\dbconnection\dbcon.component.ts" />
     <None Remove="ClientApp\app\components\logout\logout.component.ts" />
+    <None Remove="ClientApp\app\config.ts" />
     <None Remove="ClientApp\app\models\author.ts" />
     <None Remove="ClientApp\app\models\book.ts" />
     <None Remove="ClientApp\app\models\dbconnection.ts" />
@@ -45,6 +49,7 @@
     <TypeScriptCompile Include="ClientApp\app\components\book\book.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dbconnection\dbcon.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\logout\logout.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\config.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\author.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\book.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\dbconnection.ts" />
