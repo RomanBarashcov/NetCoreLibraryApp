@@ -2,10 +2,10 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
-import { AuthorService } from '../../services/author.service';
 import { Author } from '../../models/author';
-import { AccountService } from '../../services/account.service';
+import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs/Observable';
+import { Config } from '../../config';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
 import { PagerService } from '../../services/pagination.service';
@@ -16,7 +16,7 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     selector: 'authors-app',
     templateUrl: 'author.component.html',
     styleUrls: ['author.component.css'],
-    providers: [ AuthorService, AccountService ],
+    providers: [AuthService, Config],
     animations: [
         trigger('flyInOut', [
             state('in', style({transform: 'translateX(0)', opacity: 1})),
@@ -52,6 +52,7 @@ export class AuthorComponent implements OnDestroy, OnInit {
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
 
+    private authorApiUrl: string;
     authors: Author[] = [];
     editedAuthor: Author;
     editAuthorNull: Author;
@@ -63,9 +64,10 @@ export class AuthorComponent implements OnDestroy, OnInit {
     pager: any = {};
     error: any;
     state: string = '';
-    
-    constructor(private serv: AuthorService, private router: Router, private activateRoute: ActivatedRoute, private pagerService: PagerService) {
-        this.sub = activateRoute.params.subscribe();
+
+
+    constructor(private authService: AuthService, private config: Config, private pagerService: PagerService, private router: Router) {
+        this.authorApiUrl = this.config.AuthorsApiUrl;
     }
 
     animate() {
@@ -73,8 +75,8 @@ export class AuthorComponent implements OnDestroy, OnInit {
     }
     
     ngOnInit() {
-        this.serv.getAuthors().subscribe(data => {
-            this.authors = data;
+        this.authService.get(this.authorApiUrl).subscribe(result => {
+            this.authors = result.json();
             this.setPage(1);
             this.animate();
             this.state = "in";
@@ -109,9 +111,8 @@ export class AuthorComponent implements OnDestroy, OnInit {
 
     saveAuthor() {
         if (this.isNewRecord) {
-            this.serv.createAuthor(this.editedAuthor).subscribe((resp: Response) => {
+            this.authService.post(this.authorApiUrl, this.editedAuthor).subscribe((resp: Response) => {
                 console.log("saveAuthor() resp: = " + resp);
-
                 if (resp.status == 200) {
                     this.statusMessage = 'Saved successfully!';
                     this.editedAuthor = this.editAuthorNull;
@@ -127,7 +128,7 @@ export class AuthorComponent implements OnDestroy, OnInit {
             this.isNewRecord = false;
 
         } else {
-            this.serv.updateAuthor(this.editedAuthor.id, this.editedAuthor).subscribe((resp: Response) => {
+            this.authService.put(this.authorApiUrl + "/" + this.editedAuthor.id, this.editedAuthor).subscribe((resp: Response) => {
                 if (resp.status == 200) {
                     this.statusMessage = 'Updated successfully!';
                     this.editedAuthor = this.editAuthorNull;
@@ -147,7 +148,7 @@ export class AuthorComponent implements OnDestroy, OnInit {
     }
 
     deleteAuthor(author: Author) {
-        this.serv.deleteUser(author.id).subscribe((resp: Response) => {
+        this.authService.delete(this.authorApiUrl + "/" + author.id).subscribe((resp: Response) => {
             if (resp.status == 200) {
                 this.statusMessage = 'Deleted successfully!';
                     this.ngOnInit();

@@ -6,6 +6,7 @@ using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using IdentityApp.Services;
 
 namespace LibraryAppCore.AuthServer
 {
@@ -53,6 +54,10 @@ namespace LibraryAppCore.AuthServer
                             .AllowAnyMethod();
                     });
             });
+
+            // Add application services.
+            services.AddTransient<IEmailSender, AuthMessageSender>();
+            services.AddTransient<ISmsSender, AuthMessageSender>();
 
             services.AddMvc();
         }

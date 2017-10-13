@@ -3,9 +3,9 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
-import { BookService } from '../../services/book.service';
-import { AccountService } from '../../services/account.service';
+import { AuthService } from '../../services/auth.service';
 import { Book } from '../../models/book';
+import { Config } from '../../config';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
@@ -16,7 +16,7 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     selector: 'books-app',
     templateUrl: 'book.component.html',
     styleUrls: ['book.component.css'],
-    providers: [BookService, AccountService],
+    providers: [AuthService, Config],
     animations: [
         trigger('flyInOut', [
             state('in', style({transform: 'translateX(0)', opacity: 1})),
@@ -48,9 +48,6 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
 })
 export class BookComponent implements OnDestroy {
     
- 
-    
-    
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
 
@@ -67,9 +64,11 @@ export class BookComponent implements OnDestroy {
     pager: any = {};
     error: any;
     state: string = '';
+    private bookApiUrl: string;
 
-    constructor(private serv: BookService, private accountService: AccountService, private activateRoute: ActivatedRoute, private pagerService: PagerService) {
+    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config) {
         this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
+        this.bookApiUrl = this.config.BookApiUrl;
     }
 
     animate() {
@@ -77,8 +76,8 @@ export class BookComponent implements OnDestroy {
     }
     
     loadBooks() {
-        this.serv.getBooks().subscribe(data => {
-            this.books = data;
+        this.authService.get(this.bookApiUrl).subscribe(result => {
+            this.books = result.json();
             this.setPage(1);
             this.animate();
         },
@@ -89,8 +88,8 @@ export class BookComponent implements OnDestroy {
     }
 
     loadBookByAuthor(id: string) {
-        this.serv.getBookByAuthorId(id).subscribe((data) => {
-            this.books = data;
+        this.authService.get(this.bookApiUrl + "/" + id).subscribe(result => {
+            this.books = result.json();
             this.pagedBookItems = this.books;
             console.log("loadBookByAuthor() component result: " + this.books);
             if (this.pager.totalPages > 0) {
@@ -133,7 +132,7 @@ export class BookComponent implements OnDestroy {
 
     saveBook() {
         if (this.isNewRecord) {
-            this.serv.createBook(this.editedBook).subscribe((resp: Response) => {
+            this.authService.post(this.bookApiUrl, this.editedBook).subscribe((resp: Response) => {
                 console.log("saveBook function");
                 if (resp.status == 200) {
                     this.statusMessage = 'Saved successfully!';
@@ -150,7 +149,7 @@ export class BookComponent implements OnDestroy {
             this.editedBook = this.editedBookNull;
 
         } else {
-            this.serv.updateBook(this.editedBook.id, this.editedBook).subscribe((resp: Response) => {
+            this.authService.put(this.bookApiUrl + "/" + this.editedBook.id, this.editedBook).subscribe((resp: Response) => {
                 if (resp.status == 200) {
                     this.statusMessage = 'Updated successfully!';
                     this.loadBooks();
@@ -171,7 +170,7 @@ export class BookComponent implements OnDestroy {
     }
 
     deleteBook(book: Book) {
-        this.serv.deleteBook(book.id).subscribe((resp: Response) => {
+        this.authService.delete(book.id).subscribe((resp: Response) => {
             if (resp.status == 200) {
                 this.statusMessage = 'Deleted successfully!',
                     this.loadBooks();

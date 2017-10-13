@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace LibraryAppCore.AuthServer
 {
@@ -42,8 +43,12 @@ namespace LibraryAppCore.AuthServer
                     AllowOfflineAccess = true,
                     RequireConsent = false,
 
-                    RedirectUris = { "http://localhost:51794/login" },
-                    PostLogoutRedirectUris = { "http://localhost:51794/" },
+                    //RedirectUris = { "http://localhost:51794/login" },
+                    //PostLogoutRedirectUris = { "http://localhost:51794/" },
+
+                    RedirectUris = { "http://localhost:51794/callback" },
+                    PostLogoutRedirectUris = { "http://localhost:51794/home" },
+                    AllowedCorsOrigins = { "http://localhost:51794/" },
 
                     AllowedScopes =
                     {

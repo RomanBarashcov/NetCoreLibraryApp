@@ -8,6 +8,9 @@ import { AppComponent } from './components/app/app.component';
     imports: [
         ServerModule,
         AppModuleShared
+    ],
+    providers: [
+        AppModuleShared
     ]
 })
 export class AppModule {

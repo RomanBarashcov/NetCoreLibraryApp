@@ -64,6 +64,7 @@ namespace LibraryAppCore_ClientSide
             }
 
             app.UseStaticFiles();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

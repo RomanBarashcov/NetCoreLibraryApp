@@ -10,10 +10,10 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthorComponent } from './components/author/author.component';
 import { BookComponent } from './components/book/book.component';
 import { DbConnectionComponent } from './components/dbconnection/dbcon.component';
-import { LoginComponent } from './components/login/login.component';
-import { LogOutComponent } from './components/logout/logout.component';
-import { RegisterComponent } from './components/register/register.component';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
+import { AuthModule, OidcSecurityService } from 'angular-auth-oidc-client';
+import { AuthService } from './services/auth.service';
 import { PagerService } from './services/pagination.service';
 import { Config } from './config';
 
@@ -24,10 +24,8 @@ import { Config } from './config';
         HomeComponent,
         AuthorComponent,
         BookComponent,
-        LoginComponent,
-        LogOutComponent,
-        RegisterComponent,
-        DbConnectionComponent
+        DbConnectionComponent,
+        UnauthorizedComponent
     ],
     imports: [
         CommonModule,
@@ -38,14 +36,12 @@ import { Config } from './config';
             { path: 'author', component: AuthorComponent },
             { path: 'book', component: BookComponent },
             { path: 'bookByAuthor/:id', component: BookComponent },
-            { path: 'login', component: LoginComponent },
-            { path: 'logout', component: LogOutComponent },
-            { path: 'registration', component: RegisterComponent },
             { path: 'dbconnection', component: DbConnectionComponent },
+            { path: 'unauthorized', component: UnauthorizedComponent },
             { path: '**', redirectTo: 'home' }
         ])
     ],
-    providers: [PagerService, Config]
+    providers: [PagerService, Config, AuthService, OidcSecurityService]
     
 })
 export class AppModuleShared {

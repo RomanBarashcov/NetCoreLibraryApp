@@ -27,13 +27,10 @@
     <None Remove="ClientApp\app\components\author\author.component.ts" />
     <None Remove="ClientApp\app\components\book\book.component.ts" />
     <None Remove="ClientApp\app\components\dbconnection\dbcon.component.ts" />
-    <None Remove="ClientApp\app\components\logout\logout.component.ts" />
     <None Remove="ClientApp\app\config.ts" />
     <None Remove="ClientApp\app\models\author.ts" />
     <None Remove="ClientApp\app\models\book.ts" />
     <None Remove="ClientApp\app\models\dbconnection.ts" />
-    <None Remove="ClientApp\app\services\author.service.ts" />
-    <None Remove="ClientApp\app\services\book.service.ts" />
     <None Remove="ClientApp\app\services\dbconnection.service.ts" />
     <None Remove="ClientApp\app\services\pagination.service.ts" />
   </ItemGroup>
@@ -48,13 +45,10 @@
     <TypeScriptCompile Include="ClientApp\app\components\author\author.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\book\book.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dbconnection\dbcon.component.ts" />
-    <TypeScriptCompile Include="ClientApp\app\components\logout\logout.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\config.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\author.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\book.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\dbconnection.ts" />
-    <TypeScriptCompile Include="ClientApp\app\services\author.service.ts" />
-    <TypeScriptCompile Include="ClientApp\app\services\book.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\dbconnection.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\pagination.service.ts" />
   </ItemGroup>

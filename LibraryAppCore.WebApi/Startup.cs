@@ -13,6 +13,7 @@ using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Concrete.ConvertData;
 using LibraryAppCore.Domain.Concrete.DataRequired;
 using LibraryAppCore.Domain.Entities.MondoDb;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace LibraryAppCore.WebApi
 {
@@ -40,13 +41,26 @@ namespace LibraryAppCore.WebApi
                   .AddAuthorization()
                   .AddJsonFormatters();
 
-            services.AddAuthentication("Bearer")
-                .AddIdentityServerAuthentication(options =>
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                o.Authority = Configuration["IdentityServerAddress"];
+                o.Audience = "apiApp";
+                o.RequireHttpsMetadata = false;
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("default", policy =>
                 {
-                    options.Authority = "http://localhost:52658/";
-                    options.RequireHttpsMetadata = false;
-                    options.ApiName = "library_app_core_wep_api";
+                    policy.WithOrigins(Configuration["ClientAddress"])
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
+            });
 
             services.AddTransient<IAuthorRepository>(provider =>
             {
@@ -85,17 +99,6 @@ namespace LibraryAppCore.WebApi
                 options.RespectBrowserAcceptHeader = true;
             });
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAllOrigins",
-                    builder =>
-                    {
-                        builder
-                            .AllowAnyOrigin()
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
-            });
 
         }
 
@@ -107,9 +110,11 @@ namespace LibraryAppCore.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors("AllowAllOrigins");
-            app.UseStaticFiles();
+            app.UseCors("default");
+
             app.UseAuthentication();
+
+            app.UseStaticFiles();
 
             app.UseMvc(routes =>
             {

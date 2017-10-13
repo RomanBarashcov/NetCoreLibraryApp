@@ -18,9 +18,16 @@
                 <li><a [routerLink]="['/author']">Authors <span class="sr-only"></span></a></li>
                 <li><a [routerLink]="['/book']">Books <span class="sr-only"></span></a></li>
                 <li><a [routerLink]="['/dbconnection']">Chosing Db </a></li>
-                <li *ngIf="!isUserLogined"><a *ngIf="!isUserLogined" [routerLink]="['/login']"> Login </a></li>
-                <li *ngIf="isUserLogined"><a *ngIf="isUserLogined" [routerLink]="['/logout']"> Log Out </a></li>
-                <li><a [routerLink]="['/registration']"> Registration </a></li>
+                <li [routerLinkActive]="['link-active']">
+                    <a *ngIf="!isAuthorized" (click)="login()" [routerLink]="['/login']"><span class="glyphicon glyphicon-user"></span> Login</a>
+                </li>
+                <li [routerLinkActive]="['link-active']">
+                    <a *ngIf="isAuthorized" (click)="logout()"><span class='glyphicon glyphicon-log-out'></span> Logout</a>
+                </li>
+                <li [routerLinkActive]="['link-active']">
+                    <a *ngIf="!isAuthorized" (click)="registration()" [routerLink]="['/registration']"><span class='glyphicon glyphicon-log-out'></span> Registration </a>
+                </li>
+
 
             </ul>
         </div><!-- /.navbar-collapse -->
