@@ -28,6 +28,7 @@ import { Config } from './config';
         UnauthorizedComponent
     ],
     imports: [
+        AuthModule.forRoot(),
         CommonModule,
         HttpModule,
         FormsModule,
