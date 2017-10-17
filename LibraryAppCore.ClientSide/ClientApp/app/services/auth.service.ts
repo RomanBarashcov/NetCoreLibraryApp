@@ -10,22 +10,22 @@ export class AuthService implements OnInit, OnDestroy {
 
     isAuthorizedSubscription: Subscription;
     isAuthorized: boolean;
-    originUrl: string;
     identityUrl: string;
 
     constructor(public oidcSecurityService: OidcSecurityService,
         private http: Http,
-        private config: Config
+        @Inject('ORIGIN_URL') originUrl: string,
+        private config: Config,
     ) {
         this.identityUrl = this.config.AuthWithIdentityServerUrl;
-        this.originUrl = this.config.ClientUrl;
+
         const openIdImplicitFlowConfiguration = new OpenIDImplicitFlowConfiguration();
         openIdImplicitFlowConfiguration.stsServer = this.identityUrl;
-        openIdImplicitFlowConfiguration.redirect_url = this.originUrl + 'callback';
+        openIdImplicitFlowConfiguration.redirect_url = originUrl + 'callback';
         openIdImplicitFlowConfiguration.client_id = 'library_app_core_client_side';
         openIdImplicitFlowConfiguration.response_type = 'id_token token';
         openIdImplicitFlowConfiguration.scope = 'openid profile library_app_core_wep_api';
-        openIdImplicitFlowConfiguration.post_logout_redirect_uri = this.originUrl + 'home';
+        openIdImplicitFlowConfiguration.post_logout_redirect_uri = originUrl + 'home';
         openIdImplicitFlowConfiguration.startup_route = '/home';
         openIdImplicitFlowConfiguration.forbidden_route = '/forbidden';
         openIdImplicitFlowConfiguration.unauthorized_route = '/unauthorized';

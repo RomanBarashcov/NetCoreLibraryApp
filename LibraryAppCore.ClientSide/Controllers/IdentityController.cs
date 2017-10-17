@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using System.Net.Http;
 using IdentityModel.Client;
+using LibraryAppCore.AuthServer;
 
 namespace LibraryAppCore.ClientSide.Controllers
 {
@@ -31,18 +32,18 @@ namespace LibraryAppCore.ClientSide.Controllers
             var client = new HttpClient();
             client.SetBearerToken(accessToken);
 
-            return await client.GetAsync("http://localhost:52658/api/identity");
+            return await client.GetAsync( Config.AuthServerUrl + "/api/identity");
         }
 
         private async Task<HttpResponseMessage> ApiCallUsingClientCredentials()
         {
-            var tokenClient = new TokenClient("http://localhost:51794/connect/token", "library_app_core_client_side", "secret");
+            var tokenClient = new TokenClient(Config.AngularClientUrl + "/connect/token", "library_app_core_client_side", "secret");
             var tokenResponse = await tokenClient.RequestClientCredentialsAsync("library_app_core_wep_api");
 
             var client = new HttpClient();
             client.SetBearerToken(tokenResponse.AccessToken);
 
-            return await client.GetAsync("http://localhost:52658/api/identity");
+            return await client.GetAsync(Config.AuthServerUrl + "/api/identity");
         }
 
         public async Task Logout()

@@ -14,6 +14,7 @@ using LibraryAppCore.Domain.Concrete.ConvertData;
 using LibraryAppCore.Domain.Concrete.DataRequired;
 using LibraryAppCore.Domain.Entities.MondoDb;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using LibraryAppCore.AuthServer;
 
 namespace LibraryAppCore.WebApi
 {
@@ -47,8 +48,8 @@ namespace LibraryAppCore.WebApi
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(o =>
             {
-                o.Authority = Configuration["IdentityServerAddress"];
-                o.Audience = "apiApp";
+                o.Authority = Config.AuthServerUrl;
+                o.Audience = "library_app_core_wep_api";
                 o.RequireHttpsMetadata = false;
             });
 
@@ -56,7 +57,7 @@ namespace LibraryAppCore.WebApi
             {
                 options.AddPolicy("default", policy =>
                 {
-                    policy.WithOrigins(Configuration["ClientAddress"])
+                    policy.WithOrigins(Config.AngularClientUrl)
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -120,9 +121,8 @@ namespace LibraryAppCore.WebApi
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "HomeApi", action = "Get" });
-        }); 
+                    template: "{controller=HomeApi}/{action=Index}/{id?}");
+            });
 
         }
     }

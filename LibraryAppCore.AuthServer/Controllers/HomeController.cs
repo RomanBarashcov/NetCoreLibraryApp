@@ -1,24 +1,55 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using System.Threading.Tasks;
+using LibraryAppCore.AuthServer.Quickstart.UI;
+using IdentityServer4.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LibraryAppCore.AuthServer.Controllers
 {
-    [Route("/Home")]
+
     public class HomeController : Controller
     {
-        [AllowAnonymous]
-        [HttpGet]
-        public string Get()
+        //private readonly IIdentityServerInteractionService _interaction;
+
+        //public HomeController(IIdentityServerInteractionService interaction)
+        //{
+        //    _interaction = interaction;
+        //}
+
+        public IActionResult Index()
         {
-            return "Auth with Identity Server Run";
+            return View();
         }
 
-        internal static object Index()
+        public IActionResult About()
         {
-            throw new NotImplementedException();
+            ViewData["Message"] = "Your application description page.";
+
+            return View();
         }
+
+        public IActionResult Contact()
+        {
+            ViewData["Message"] = "Your contact page.";
+
+            return View();
+        }
+
+        //public async Task<IActionResult> Error(string errorId)
+        //{
+        //    var vm = new ErrorViewModel();
+
+        //    // retrieve error details from identityserver
+        //    var message = await _interaction.GetErrorContextAsync(errorId);
+        //    if (message != null)
+        //    {
+        //        vm.Error = message;
+        //    }
+
+        //    return View("Error", vm);
+        //}
     }
 }

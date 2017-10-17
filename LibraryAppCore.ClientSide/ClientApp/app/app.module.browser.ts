@@ -5,14 +5,14 @@ import { AppComponent } from './components/app/app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
-    bootstrap: [ AppComponent ],
+    bootstrap: [AppComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         AppModuleShared
     ],
     providers: [
-        { provide: 'BASE_URL', useFactory: getBaseUrl },
+        { provide: 'ORIGIN_URL', useFactory: getBaseUrl },
         { provide: 'API_URL', useFactory: apiUrlFactory },
         { provide: 'IDENTITY_URL', useFactory: identityUrlFactory },
         AppModuleShared
