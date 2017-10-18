@@ -1,13 +1,13 @@
 @using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
+@using LibraryAppCore.AuthServer
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <app asp-prerender-module="ClientApp/dist/main-server"
      asp-prerender-data='new {
-    apiUrl = Configuration["ApiAddress"],
-    identityUrl = Configuration["IdentityServerAddress"]
+    apiUrl = Config.ApiUrl,
+    identityUrl = Config.AuthServerUrl
 }'>Loading...</app>
 <script src="~/dist/vendor.js" asp-append-version="true"></script>
 @section scripts {

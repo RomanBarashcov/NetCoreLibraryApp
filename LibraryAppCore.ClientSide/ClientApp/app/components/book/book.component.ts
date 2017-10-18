@@ -90,11 +90,16 @@ export class BookComponent {
     loadBookByAuthor(id: string) {
         this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id).subscribe(result => {
             this.books = result.json();
-            this.pagedBookItems = this.books;
-            console.log("loadBookByAuthor() component result: " + this.books);
-            if (this.pager.totalPages > 0) {
-                this.setPage(this.pager.totalPages);
-            }
+                if (this.books != null) {
+                    this.pagedBookItems = this.books;
+                    console.log("loadBookByAuthor() component result: " + this.books);
+                        if (this.pager.totalPages > 0) {
+                            this.setPage(this.pager.totalPages);
+                        }
+                }
+                else {
+                    this.books = [];
+                }
             this.hiddenAuthorId = id;
         },
             error => {
@@ -110,6 +115,7 @@ export class BookComponent {
         else {
             this.editedBook = new Book("", 0, "", "", "");
         }
+        
         this.books.push(this.editedBook);
         this.pagedBookItems = this.books;
         this.isNewRecord = true;
