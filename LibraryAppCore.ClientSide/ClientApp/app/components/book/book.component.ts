@@ -46,7 +46,7 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
         ])
     ]
 })
-export class BookComponent implements OnDestroy {
+export class BookComponent {
     
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
@@ -88,7 +88,7 @@ export class BookComponent implements OnDestroy {
     }
 
     loadBookByAuthor(id: string) {
-        this.authService.get(this.bookApiUrl + "/" + id).subscribe(result => {
+        this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id).subscribe(result => {
             this.books = result.json();
             this.pagedBookItems = this.books;
             console.log("loadBookByAuthor() component result: " + this.books);
@@ -193,10 +193,6 @@ export class BookComponent implements OnDestroy {
         // get current page of items
         this.pagedBookItems = this.books.slice(this.pager.startIndex, this.pager.endIndex + 1);
 
-    }
-
-    ngOnDestroy() {
-        this.sub.unsubscribe();
     }
 
 }

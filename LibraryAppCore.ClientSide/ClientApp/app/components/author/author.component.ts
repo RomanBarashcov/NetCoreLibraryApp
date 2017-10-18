@@ -47,7 +47,7 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     ]
 
 })
-export class AuthorComponent implements OnDestroy, OnInit {
+export class AuthorComponent implements OnInit {
     
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
@@ -163,10 +163,6 @@ export class AuthorComponent implements OnDestroy, OnInit {
 
     routeToBooks(author: Author) {
         this.router.navigate(['/bookByAuthor', author.id]);
-    }
-
-    ngOnDestroy() {
-        this.sub.unsubscribe();
     }
 
     setPage(page: number) {

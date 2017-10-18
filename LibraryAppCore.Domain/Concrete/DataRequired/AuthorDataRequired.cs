@@ -11,10 +11,18 @@ namespace LibraryAppCore.Domain.Concrete.DataRequired
         public bool IsDataNoEmpty(Author author)
         {
             bool isDataNoEmpty = false;
-            if (!String.IsNullOrEmpty(author.Name) && !String.IsNullOrEmpty(author.Surname))
+            try
             {
-                isDataNoEmpty = true;
+                if (!String.IsNullOrEmpty(author.Name) && !String.IsNullOrEmpty(author.Surname))
+                {
+                    isDataNoEmpty = true;
+                }
             }
+            catch
+            {
+                return isDataNoEmpty = false;
+            }
+
             return isDataNoEmpty;
         }
     }

@@ -85,7 +85,11 @@ namespace LibraryAppCore.WebApi.Controllers
         [HttpGet("/BookApi/GetBookByAuthorId/{id}")]
         public async Task<IEnumerable<Book>> GetBookByAuthorId(string id)
         {
-            IEnumerable<Book> Books = await repository.GetBookByAuthorId(id);
+            IEnumerable<Book> Books = null;
+            if (!String.IsNullOrEmpty(id))
+            {
+                Books = await repository.GetBookByAuthorId(id);
+            }
             return Books;
         }
     }

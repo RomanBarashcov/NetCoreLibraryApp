@@ -33,19 +33,15 @@ namespace LibraryAppCore.WebApi
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             var optionsBuilder = new DbContextOptionsBuilder<LibraryPostgreSqlContext>();
-            //optionsBuilder.UseNpgsql(connection);
             optionsBuilder.UseNpgsql(connection);
 
             services.AddDbContext<LibraryPostgreSqlContext>(options => options.UseNpgsql(connection));
-
-            services.AddMvcCore()
-                  .AddAuthorization()
-                  .AddJsonFormatters();
 
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
             }).AddJwtBearer(o =>
             {
                 o.Authority = Config.AuthServerUrl;
@@ -59,9 +55,11 @@ namespace LibraryAppCore.WebApi
                 {
                     policy.WithOrigins(Config.AngularClientUrl)
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .WithExposedHeaders();
                 });
             });
+
 
             services.AddTransient<IAuthorRepository>(provider =>
             {
@@ -95,10 +93,8 @@ namespace LibraryAppCore.WebApi
                 }
             });
 
-            services.AddMvc(options =>
-            {
-                options.RespectBrowserAcceptHeader = true;
-            });
+            services.AddMvc().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling =
+                                                            Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 
         }
@@ -121,8 +117,16 @@ namespace LibraryAppCore.WebApi
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=HomeApi}/{action=Index}/{id?}");
+                    template: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "HomeApi", action = "Index" });
+
+
+                routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "HomeApi", action = "Index" });
+
             });
+
 
         }
     }

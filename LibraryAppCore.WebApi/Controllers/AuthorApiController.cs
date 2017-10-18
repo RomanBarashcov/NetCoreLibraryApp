@@ -9,6 +9,7 @@ using System.Net;
 using LibraryAppCore.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,7 +37,7 @@ namespace LibraryAppCore.WebApi.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateAuthor([FromBody] Author author)
+        public async Task<IActionResult> CreateAuthor([FromBody]Author author)
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
@@ -53,7 +54,7 @@ namespace LibraryAppCore.WebApi.Controllers
 
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAuthor(string id, [FromBody] Author author)
+        public async Task<IActionResult> UpdateAuthor(string id, [FromBody]Author author)
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();

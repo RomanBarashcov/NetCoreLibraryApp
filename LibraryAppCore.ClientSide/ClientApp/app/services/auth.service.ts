@@ -6,7 +6,7 @@ import { Config } from '../config';
 import { OidcSecurityService, OpenIDImplicitFlowConfiguration } from 'angular-auth-oidc-client';
 
 @Injectable()
-export class AuthService implements OnInit, OnDestroy {
+export class AuthService implements OnInit{
 
     isAuthorizedSubscription: Subscription;
     isAuthorized: boolean;
@@ -52,11 +52,6 @@ export class AuthService implements OnInit, OnDestroy {
             });
     }
 
-    ngOnDestroy(): void {
-        this.isAuthorizedSubscription.unsubscribe();
-        this.oidcSecurityService.onModuleSetup.unsubscribe();
-    }
-
     getIsAuthorized(): Observable<boolean> {
         return this.oidcSecurityService.getIsAuthorized();
     }
@@ -97,7 +92,8 @@ export class AuthService implements OnInit, OnDestroy {
 
     post(url: string, data: any, options?: RequestOptions): Observable<Response> {
         const body = JSON.stringify(data);
-        return this.http.post(url, body, this.setRequestOptions(options));
+        console.log("AuthServer: result data" + body);
+        return this.http.post(url, body, this.setRequestOptions(options)).catch(this.handleError);
     }
 
     private setRequestOptions(options?: RequestOptions | null) {
@@ -105,14 +101,14 @@ export class AuthService implements OnInit, OnDestroy {
             this.appendAuthHeader(options.headers);
         }
         else {
-            options = new RequestOptions({ headers: this.getHeaders(), body: "" });
+            options = new RequestOptions({ headers: this.getHeaders() });
         }
         return options;
     }
 
     private getHeaders() {
         const headers = new Headers();
-        headers.append('Content-Type', 'application/json');
+        headers.append('Content-Type', 'application/json'); 
         this.appendAuthHeader(headers);
         return headers;
     }
@@ -128,4 +124,10 @@ export class AuthService implements OnInit, OnDestroy {
         const tokenValue = 'Bearer ' + token;
         headers.append('Authorization', tokenValue);
     }
+
+    private handleError(error: any) {
+        console.error(error);
+        return Observable.throw(error);
+    }
+
 }
