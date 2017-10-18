@@ -12,6 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Migrations\20171018111948_init.cs" />
+    <Compile Include="Migrations\20171018111948_init.Designer.cs" />
+    <Compile Include="Migrations\LibraryPostgreSqlContextModelSnapshot.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
