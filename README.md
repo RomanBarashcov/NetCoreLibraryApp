@@ -6,8 +6,8 @@
 
 3) npm install (or Restore packajes)
 
-4) - Update-Database (windows) 
-   - $ sudo dotnet ef database update (linux).
+4) - >cd /path to project/LibraryAppCore.WebApi (windows) then >dotnet ef database update.
+   - >cd /path to project/LibraryAppCore.WebApi then >$ sudo dotnet ef database update (linux).
    
 5) check posgreSql and mongoDb connection
 
