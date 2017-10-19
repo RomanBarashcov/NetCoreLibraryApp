@@ -16,9 +16,17 @@
         </thead>
         <tbody>
             <tr [@flyInOut]="state" *ngFor="let book of pagedBookItems">
-                <ng-template [ngTemplateOutlet]="loadTemplate(book)"
-                             [ngOutletContext]="{ $implicit: book}">
-                </ng-template>
+                <td>{{book.id}}</td>
+                <td>{{book.year}}</td>
+                <td>{{book.name}}</td>
+                <td>{{book.description}}</td>
+                <td>{{book.authorId}}</td>
+                <td>
+                    <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book)" />
+                </td>
+                <td>
+                    <input type="button" value="Delete" class="btn btn-danger" (click)="deleteBook(book)" />
+                </td>
             </tr>
         </tbody>
     </table>
@@ -46,22 +54,8 @@
 <div>{{statusMessage}}</div>
 
 
-<ng-template #readOnlyTemplate let-book>
-    <td>{{book.id}}</td>
-    <td>{{book.year}}</td>
-    <td>{{book.name}}</td>
-    <td>{{book.description}}</td>
-    <td>{{book.authorId}}</td>
-    <td>
-        <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book)" />
-    </td>
-    <td>
-        <input type="button" value="Delete" class="btn btn-danger" (click)="deleteBook(book)" />
-    </td>
-</ng-template>
 
-
-<ng-template #editTemplate>
+<!--<ng-template #editTemplate>
     <td>
         <input type="text" [(ngModel)]="editedBook.id" readonly disabled class="form-control" />
     </td>
@@ -87,4 +81,4 @@
     <td>
         <button (click)="cancel()" class="btn btn-warning">Cencel</button>
     </td>
-</ng-template>
+</ng-template>-->

@@ -1,9 +1,7 @@
 ﻿using LibraryAppCore.Domain.Abstracts;
 using LibraryAppCore.Domain.Entities;
-using LibraryAppCore.Domain.Entities.MsSql;
-using System;
+using LibraryAppCore.Domain.Entities.PostgreSql;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LibraryAppCore.Domain.Concrete.ConvertData
 {
@@ -24,7 +22,21 @@ namespace LibraryAppCore.Domain.Concrete.ConvertData
         {
             foreach (BookPostgreSql b in Books)
             {
-                BookPostgreSql = new BookPostgreSql { Id = b.Id, Name = b.Name, Year = b.Year, Description = b.Description, AuthorId = b.AuthorId };
+                BookPostgreSql = new BookPostgreSql
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    Year = b.Year,
+                    Language = b.Language,
+                    Binding = b.Binding,
+                    Weight = b.Weight,
+                    Pages = b.Pages,
+                    Subscription = b.Subscription,
+                    Price = b.Price,
+                    Description = b.Description,
+                    ImageBook = b.ImageBook,
+                    AuthorId = b.AuthorId
+                };
                 booksNode = new Book(BookPostgreSql);
                 ListBook.Add(booksNode);
                 result = ListBook;

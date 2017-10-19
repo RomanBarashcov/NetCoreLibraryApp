@@ -1,8 +1,6 @@
 ﻿using LibraryAppCore.Domain.Entities.MondoDb;
-using LibraryAppCore.Domain.Entities.MsSql;
+using LibraryAppCore.Domain.Entities.PostgreSql;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LibraryAppCore.Domain.Entities
 {
@@ -11,7 +9,14 @@ namespace LibraryAppCore.Domain.Entities
         public string Id { get; set; }
         public string Name { get; set; }
         public int Year { get; set; }
+        public string Language { get; set; }
+        public string Binding { get; set; }
+        public int Weight { get; set; }
+        public int Pages { get; set; }
+        public string Subscription { get; set; }
+        public string Price { get; set; }
         public string Description { get; set; }
+        public byte[] ImageBook { get; set; }
         public string AuthorId { get; set; }
 
         private BookPostgreSql bookPostgreSql { get; set; }
@@ -22,7 +27,18 @@ namespace LibraryAppCore.Domain.Entities
             Id = Convert.ToString(book.Id);
             Name = book.Name;
             Year = book.Year;
+            Language = book.Language;
+            Binding = book.Binding;
+            Pages = book.Pages;
+            Weight = book.Weight;
+
+            if(!DBNull.Value.Equals(book.Subscription))
+                Subscription = Convert.ToString(book.Subscription);
+            if (!DBNull.Value.Equals(book.Price))
+                Subscription = Convert.ToString(book.Price);
+
             Description = book.Description;
+            ImageBook = book.ImageBook;
             AuthorId = Convert.ToString(book.AuthorId);
             bookPostgreSql = book;
         }

@@ -1,5 +1,5 @@
 ﻿using LibraryAppCore.Domain.Entities;
-using LibraryAppCore.Domain.Entities.MsSql;
+using LibraryAppCore.Domain.Entities.PostgreSql;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,5 +16,6 @@ namespace LibraryAppCore.Domain.Concrete
 
         public DbSet<AuthorPostgreSql> Authors { get; set; }
         public DbSet<BookPostgreSql> Books { get; set; }
+        public DbSet<SectionsPostgreSql> Sections { get; set; }
     }
 }

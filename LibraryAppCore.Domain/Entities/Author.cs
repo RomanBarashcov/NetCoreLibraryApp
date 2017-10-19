@@ -1,8 +1,6 @@
 ﻿using LibraryAppCore.Domain.Entities.MondoDb;
-using LibraryAppCore.Domain.Entities.MsSql;
+using LibraryAppCore.Domain.Entities.PostgreSql;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LibraryAppCore.Domain.Entities
 {

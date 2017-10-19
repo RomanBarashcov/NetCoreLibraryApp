@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LibraryAppCore.Domain.Entities.MsSql
+namespace LibraryAppCore.Domain.Entities.PostgreSql
 {
     public class AuthorPostgreSql
     {

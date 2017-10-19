@@ -1,5 +1,4 @@
-﻿import { TemplateRef, ViewChild } from '@angular/core';
-import { Component, OnDestroy } from '@angular/core';
+﻿import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
@@ -46,15 +45,9 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
         ])
     ]
 })
-export class BookComponent {
-    
-    @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
-    @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
+export class BookComponent {    
 
     books: Book[] = [];
-    editedBook: Book;
-    editedBookNull: Book;
-    isNewRecord: boolean;
     statusMessage: string;
     hiddenAuthorId: string;
     private sub: Subscription;
@@ -66,7 +59,7 @@ export class BookComponent {
     state: string = '';
     private bookApiUrl: string;
 
-    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config) {
+    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config, private router: Router) {
         this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
         this.bookApiUrl = this.config.BookApiUrl;
     }
@@ -110,83 +103,79 @@ export class BookComponent {
 
     addBook(authorId: string) {
         if (authorId != undefined) {
-            this.editedBook = new Book("", 0, "", "", authorId);
-        }
-        else {
-            this.editedBook = new Book("", 0, "", "", "");
-        }
-        
-        this.books.push(this.editedBook);
-        this.pagedBookItems = this.books;
-        this.isNewRecord = true;
-        if (this.pager.totalPages > 0) {
-            this.setPage(this.pager.totalPages);
+            this.router.navigate(['/AddBook', authorId]);
         }
     }
 
-    editBook(book: Book) {
-        this.editedBook = new Book(book.id, book.year, book.name, book.description, book.authorId);
-    }
-
-    loadTemplate(book: Book) {
-        if (this.editedBook && this.editedBook.id == book.id) {
-            return this.editTemplate;
-        } else {
-            return this.readOnlyTemplate;
+    editBook(bookId: string, authorId: string) {
+        if (bookId != undefined && authorId != undefined) {
+            this.router.navigate(['/EditBook', bookId, authorId]);
         }
     }
 
-    saveBook() {
-        if (this.isNewRecord) {
-            this.authService.post(this.bookApiUrl, this.editedBook).subscribe((resp: Response) => {
-                console.log("saveBook function");
-                if (resp.status == 200) {
-                    this.statusMessage = 'Saved successfully!';
-                    this.loadBooks();
-                }
-            },
-                error => {
-                    this.statusMessage = error + ' Check all your data, and try again! ';
-                    console.log(error);
-                    this.loadBooks();
-                });
+    //editBook(book: Book) {
+    //   // this.editedBook = new Book(book.id, book.year, book.name, book.description, book.authorId);
+    //}
 
-            this.isNewRecord = false;
-            this.editedBook = this.editedBookNull;
+    //loadTemplate(book: Book) {
+    //    if (this.editedBook && this.editedBook.id == book.id) {
+    //        return this.editTemplate;
+    //    } else {
+    //        return this.readOnlyTemplate;
+    //    }
+    //}
 
-        } else {
-            this.authService.put(this.bookApiUrl + "/" + this.editedBook.id, this.editedBook).subscribe((resp: Response) => {
-                if (resp.status == 200) {
-                    this.statusMessage = 'Updated successfully!';
-                    this.loadBooks();
-                }
-            },
-                error => {
-                    this.statusMessage = error + ' Check all your data, and try again! ';
-                    console.log(error);
-                    this.loadBooks();
-                });
+    //saveBook() {
+    //    if (this.isNewRecord) {
+    //        this.authService.post(this.bookApiUrl, this.editedBook).subscribe((resp: Response) => {
+    //            console.log("saveBook function");
+    //            if (resp.status == 200) {
+    //                this.statusMessage = 'Saved successfully!';
+    //                this.loadBooks();
+    //            }
+    //        },
+    //            error => {
+    //                this.statusMessage = error + ' Check all your data, and try again! ';
+    //                console.log(error);
+    //                this.loadBooks();
+    //            });
 
-            this.editedBook = this.editedBookNull;
-        }
-    }
+    //        this.isNewRecord = false;
+    //        this.editedBook = this.editedBookNull;
 
-    cancel() {
-        this.editedBook = this.editedBookNull;
-    }
+    //    } else {
+    //        this.authService.put(this.bookApiUrl + "/" + this.editedBook.id, this.editedBook).subscribe((resp: Response) => {
+    //            if (resp.status == 200) {
+    //                this.statusMessage = 'Updated successfully!';
+    //                this.loadBooks();
+    //            }
+    //        },
+    //            error => {
+    //                this.statusMessage = error + ' Check all your data, and try again! ';
+    //                console.log(error);
+    //                this.loadBooks();
+    //            });
 
-    deleteBook(book: Book) {
-        this.authService.delete(book.id).subscribe((resp: Response) => {
-            if (resp.status == 200) {
-                this.statusMessage = 'Deleted successfully!',
-                    this.loadBooks();
-            }
-        },
-            error => {
-                this.statusMessage = error;
-                console.log(error);
-            });
-    }
+    //        this.editedBook = this.editedBookNull;
+    //    }
+    //}
+
+    //cancel() {
+    //    this.editedBook = this.editedBookNull;
+    //}
+
+    //deleteBook(book: Book) {
+    //    this.authService.delete(book.id).subscribe((resp: Response) => {
+    //        if (resp.status == 200) {
+    //            this.statusMessage = 'Deleted successfully!',
+    //                this.loadBooks();
+    //        }
+    //    },
+    //        error => {
+    //            this.statusMessage = error;
+    //            console.log(error);
+    //        });
+    //}
 
     setPage(page: number) {
         if (page < 1 || page > this.pager.totalPages) {

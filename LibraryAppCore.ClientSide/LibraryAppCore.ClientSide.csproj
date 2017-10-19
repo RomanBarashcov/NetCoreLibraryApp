@@ -29,6 +29,7 @@
     <None Remove="ClientApp\app\components\dbconnection\dbcon.component.ts" />
     <None Remove="ClientApp\app\config.ts" />
     <None Remove="ClientApp\app\models\author.ts" />
+    <None Remove="ClientApp\app\models\book-sections.ts" />
     <None Remove="ClientApp\app\models\book.ts" />
     <None Remove="ClientApp\app\models\dbconnection.ts" />
     <None Remove="ClientApp\app\services\dbconnection.service.ts" />
@@ -45,8 +46,10 @@
     <TypeScriptCompile Include="ClientApp\app\components\author\author.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\book\book.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dbconnection\dbcon.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\update-or-create-book\update-or-create-book.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\config.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\author.ts" />
+    <TypeScriptCompile Include="ClientApp\app\models\book-sections.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\book.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\dbconnection.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\dbconnection.service.ts" />

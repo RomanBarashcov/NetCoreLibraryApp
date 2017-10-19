@@ -9,6 +9,7 @@ import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthorComponent } from './components/author/author.component';
 import { BookComponent } from './components/book/book.component';
+import { UpOrCrBookComponent } from './components/update-or-create-book/update-or-create-book.component';
 import { DbConnectionComponent } from './components/dbconnection/dbcon.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
@@ -24,6 +25,7 @@ import { Config } from './config';
         HomeComponent,
         AuthorComponent,
         BookComponent,
+        UpOrCrBookComponent,
         DbConnectionComponent,
         UnauthorizedComponent
     ],
@@ -37,6 +39,8 @@ import { Config } from './config';
             { path: 'author', component: AuthorComponent },
             { path: 'book', component: BookComponent },
             { path: 'bookByAuthor/:id', component: BookComponent },
+            { path: 'AddBook/:authorId', component: UpOrCrBookComponent },
+            { path: 'EditBook/:bookId/:authorId', component: UpOrCrBookComponent },
             { path: 'dbconnection', component: DbConnectionComponent },
             { path: 'unauthorized', component: UnauthorizedComponent },
             { path: '**', redirectTo: 'home' }
