@@ -11,9 +11,10 @@ using System;
 namespace LibraryAppCore.WebApi.Migrations
 {
     [DbContext(typeof(LibraryPostgreSqlContext))]
-    partial class LibraryPostgreSqlContextModelSnapshot : ModelSnapshot
+    [Migration("20171020093714_add_sections_book")]
+    partial class add_sections_book
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

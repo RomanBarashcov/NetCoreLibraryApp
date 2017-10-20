@@ -11,8 +11,8 @@ using System;
 namespace LibraryAppCore.WebApi.Migrations
 {
     [DbContext(typeof(LibraryPostgreSqlContext))]
-    [Migration("20171018111948_init")]
-    partial class init
+    [Migration("20171020095809_add_sections_book")]
+    partial class add_sections_book
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace LibraryAppCore.WebApi.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 .HasAnnotation("ProductVersion", "2.0.0-rtm-26452");
 
-            modelBuilder.Entity("LibraryAppCore.Domain.Entities.MsSql.AuthorPostgreSql", b =>
+            modelBuilder.Entity("LibraryAppCore.Domain.Entities.PostgreSql.AuthorPostgreSql", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -35,16 +35,30 @@ namespace LibraryAppCore.WebApi.Migrations
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("LibraryAppCore.Domain.Entities.MsSql.BookPostgreSql", b =>
+            modelBuilder.Entity("LibraryAppCore.Domain.Entities.PostgreSql.BookPostgreSql", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AuthorId");
 
+                    b.Property<string>("Binding");
+
                     b.Property<string>("Description");
 
+                    b.Property<byte[]>("ImageBook");
+
+                    b.Property<string>("Language");
+
                     b.Property<string>("Name");
+
+                    b.Property<int>("Pages");
+
+                    b.Property<decimal>("Price");
+
+                    b.Property<decimal>("Subscription");
+
+                    b.Property<int>("Weight");
 
                     b.Property<int>("Year");
 
@@ -53,6 +67,31 @@ namespace LibraryAppCore.WebApi.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("LibraryAppCore.Domain.Entities.PostgreSql.SectionsPostgreSql", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("BookId");
+
+                    b.Property<bool>("Fiction");
+
+                    b.Property<bool>("ForBusness");
+
+                    b.Property<bool>("ForFamily");
+
+                    b.Property<bool>("New");
+
+                    b.Property<bool>("Technical");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId")
+                        .IsUnique();
+
+                    b.ToTable("Sections");
                 });
 
             modelBuilder.Entity("LibraryAppCore.Domain.Entities.User", b =>
@@ -212,11 +251,19 @@ namespace LibraryAppCore.WebApi.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("LibraryAppCore.Domain.Entities.MsSql.BookPostgreSql", b =>
+            modelBuilder.Entity("LibraryAppCore.Domain.Entities.PostgreSql.BookPostgreSql", b =>
                 {
-                    b.HasOne("LibraryAppCore.Domain.Entities.MsSql.AuthorPostgreSql", "Author")
+                    b.HasOne("LibraryAppCore.Domain.Entities.PostgreSql.AuthorPostgreSql", "Author")
                         .WithMany("books")
                         .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("LibraryAppCore.Domain.Entities.PostgreSql.SectionsPostgreSql", b =>
+                {
+                    b.HasOne("LibraryAppCore.Domain.Entities.PostgreSql.BookPostgreSql", "book")
+                        .WithOne("Section")
+                        .HasForeignKey("LibraryAppCore.Domain.Entities.PostgreSql.SectionsPostgreSql", "BookId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

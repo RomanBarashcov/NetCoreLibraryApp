@@ -70,7 +70,13 @@ export class BookComponent {
     
     loadBooks() {
         this.authService.get(this.bookApiUrl).subscribe(result => {
-            this.books = result.json();
+            try {
+                this.books = result.json();
+            }
+            catch (e) {
+                console.log("error: " + e);
+            }
+
             this.setPage(1);
             this.animate();
         },
@@ -101,9 +107,12 @@ export class BookComponent {
             });
     }
 
-    addBook(authorId: string) {
+    addBook(authorId?: string) {
         if (authorId != undefined) {
             this.router.navigate(['/AddBook', authorId]);
+        }
+        else {
+            this.router.navigate(['/AddBook']);
         }
     }
 

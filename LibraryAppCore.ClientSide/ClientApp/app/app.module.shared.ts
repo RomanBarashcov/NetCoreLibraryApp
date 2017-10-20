@@ -39,6 +39,7 @@ import { Config } from './config';
             { path: 'author', component: AuthorComponent },
             { path: 'book', component: BookComponent },
             { path: 'bookByAuthor/:id', component: BookComponent },
+            { path: 'AddBook', component: UpOrCrBookComponent },
             { path: 'AddBook/:authorId', component: UpOrCrBookComponent },
             { path: 'EditBook/:bookId/:authorId', component: UpOrCrBookComponent },
             { path: 'dbconnection', component: DbConnectionComponent },

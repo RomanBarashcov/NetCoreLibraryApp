@@ -1,6 +1,6 @@
 ﻿using LibraryAppCore.Domain.Abstracts;
 using LibraryAppCore.Domain.Entities;
-using LibraryAppCore.Domain.Entities.MsSql;
+using LibraryAppCore.Domain.Entities.PostgreSql;
 using System;
 using System.Collections.Generic;
 using System.Text;

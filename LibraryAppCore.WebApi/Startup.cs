@@ -8,13 +8,14 @@ using LibraryAppCore.WebApi.Services;
 using LibraryAppCore.Domain.Abstracts;
 using LibraryAppCore.Domain.Concrete.MsSql;
 using LibraryAppCore.Domain.Concrete.MongoDb;
-using LibraryAppCore.Domain.Entities.MsSql;
 using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Concrete.ConvertData;
 using LibraryAppCore.Domain.Concrete.DataRequired;
 using LibraryAppCore.Domain.Entities.MondoDb;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using LibraryAppCore.AuthServer;
+using LibraryAppCore.Domain.Entities.PostgreSql;
+using LibraryAppCore.Domain.Concrete.PostgreSql;
 
 namespace LibraryAppCore.WebApi
 {

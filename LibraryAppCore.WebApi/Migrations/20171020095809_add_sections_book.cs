@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LibraryAppCore.WebApi.Migrations
 {
-    public partial class init : Migration
+    public partial class add_sections_book : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -175,8 +175,15 @@ namespace LibraryAppCore.WebApi.Migrations
                     Id = table.Column<int>(type: "int4", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     AuthorId = table.Column<int>(type: "int4", nullable: false),
+                    Binding = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    ImageBook = table.Column<byte[]>(type: "bytea", nullable: true),
+                    Language = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: true),
+                    Pages = table.Column<int>(type: "int4", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Subscription = table.Column<decimal>(type: "numeric", nullable: false),
+                    Weight = table.Column<int>(type: "int4", nullable: false),
                     Year = table.Column<int>(type: "int4", nullable: false)
                 },
                 constraints: table =>
@@ -186,6 +193,30 @@ namespace LibraryAppCore.WebApi.Migrations
                         name: "FK_Books_Authors_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "Authors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sections",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int4", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    BookId = table.Column<int>(type: "int4", nullable: false),
+                    Fiction = table.Column<bool>(type: "bool", nullable: false),
+                    ForBusness = table.Column<bool>(type: "bool", nullable: false),
+                    ForFamily = table.Column<bool>(type: "bool", nullable: false),
+                    New = table.Column<bool>(type: "bool", nullable: false),
+                    Technical = table.Column<bool>(type: "bool", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sections_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -231,6 +262,12 @@ namespace LibraryAppCore.WebApi.Migrations
                 name: "IX_Books_AuthorId",
                 table: "Books",
                 column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sections_BookId",
+                table: "Sections",
+                column: "BookId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -251,13 +288,16 @@ namespace LibraryAppCore.WebApi.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Books");
+                name: "Sections");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Books");
 
             migrationBuilder.DropTable(
                 name: "Authors");

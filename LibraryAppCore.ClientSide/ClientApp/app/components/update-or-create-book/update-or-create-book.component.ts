@@ -4,6 +4,7 @@ import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 import { AuthService } from '../../services/auth.service';
 import { Book } from '../../models/book';
+import { Author } from '../../models/author';
 import { BookSections } from '../../models/book-sections';
 import { Config } from '../../config';
 import { Observable } from 'rxjs/Observable';
@@ -48,35 +49,48 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
 })
 export class UpOrCrBookComponent {
 
+    authorApiUrl: string;
     bookApiUrl: string;
+
     private sub: Subscription;
-    editedBook: Book;
+    public editedBook: Book;
     editedBookNull: Book;
-    editedBookSections: BookSections;
+    public editedBookSections: BookSections;
     createNewBook: boolean;
     statusMessage: any;
+    updateOrCreate: string;
+    public authors: Author;
     authorId: string;
 
-    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config) {
+
+    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config, private router: Router) {
         this.sub = activateRoute.params.subscribe((params) => {
+
+            this.bookApiUrl = this.config.BookApiUrl;
+            this.authorApiUrl = this.config.AuthorsApiUrl;
             params['bookId'] != null && params['authorId'] != null ? this.editBook(params['bookId'], params['authorId']) : this.addBook(params['authorId'])
+
         });
-        this.bookApiUrl = this.config.BookApiUrl;
+        
     }
 
     editBook(bookId: string, authorId: string): void {
+        this.updateOrCreate = "Update ";
         this.authorId = authorId;
         this.createNewBook = false;
         this.editedBook = new Book("", 0, "", "", "", 0, 0, "0", "0", "", "", authorId);
         this.editedBookSections = new BookSections("", false, false, false, false, false, "");
+
         this.GetBookByBookId(bookId);
         this.GetSectionsByBookId(bookId);
     }
 
-    addBook(authorId: string): void {
-        this.authorId = authorId;
+    addBook(authorId?: string): void {
+        this.updateOrCreate = "Add new ";
+        this.authorId = authorId != undefined ? authorId: "";
         this.createNewBook = true;
-        this.editedBook = new Book("", 0, "", "", "", 0, 0, "0", "0", "", "", authorId);
+        this.getAuthors();
+        this.editedBook = new Book("", 0, "", "", "", 0, 0, "0", "0", "", "", this.authorId);
         this.editedBookSections = new BookSections("", false, false, false, false, false, "");
     }
 
@@ -100,7 +114,7 @@ export class UpOrCrBookComponent {
             });
     }
 
-    saveBook() {
+    saveBook(): void {
         if (this.createNewBook) {
 
             this.authService.post(this.bookApiUrl + "/CreateBook" , this.editedBook).subscribe((resp: Response) => {
@@ -109,6 +123,7 @@ export class UpOrCrBookComponent {
                     let seccess: boolean = this.saveSectionsBook(this.authorId);
                     if (seccess) {
                         this.statusMessage = 'Saved successfully!';
+                        this.router.navigate(['/book']);
                     }
                     else {
                         this.statusMessage = 'Error, check all your data , and try again!';
@@ -125,8 +140,13 @@ export class UpOrCrBookComponent {
 
         } else {
             this.authService.put(this.bookApiUrl + "/UpdateBook/" + this.editedBook.id, this.editedBook).subscribe((resp: Response) => {
-                if (resp.status == 200) {
-                    this.statusMessage = 'Updated successfully!';
+                let seccess: boolean = this.saveSectionsBook(undefined, this.editedBook.id);
+                if (seccess) {
+                    this.statusMessage = 'Saved successfully!';
+                    this.router.navigate(['/book']);
+                }
+                else {
+                    this.statusMessage = 'Error, check all your data , and try again!';
                 }
             },
                 error => {
@@ -141,8 +161,9 @@ export class UpOrCrBookComponent {
     saveSectionsBook(authorId?: string, bookId?: string): boolean {
 
         if (authorId != undefined) {
-
+            console.log("EDITED BOOK NAME:" + this.editedBook.name);
             this.authService.put(this.bookApiUrl + "/BookApi/AddSectionsBook/" + authorId + "/" + this.editedBook.name, this.editedBook).subscribe((resp: Response) => {
+                console.log("saveSectionsBook Result:" + resp);
                 if (resp.status == 200) {
                     return true;
                 }
@@ -157,5 +178,25 @@ export class UpOrCrBookComponent {
         }
 
        return false;
+    }
+
+    getAuthors() {
+        this.authService.get(this.authorApiUrl).subscribe(result => {
+            this.authors = result.json();
+        },
+            error => {
+                this.statusMessage = error;
+                console.log(error);
+            });
+    }
+
+    onAuthorSelect(authorId: string) {
+        this.editedBook.authorId = authorId;
+        console.log("AAAAAAAAAAAAAAAAAAAAAUTHOR ID:" + authorId);
+        console.log("editedBook.authorId:" + this.editedBook.authorId);
+    }
+
+    cancel(): void {
+        this.router.navigate(['/book']);
     }
 }

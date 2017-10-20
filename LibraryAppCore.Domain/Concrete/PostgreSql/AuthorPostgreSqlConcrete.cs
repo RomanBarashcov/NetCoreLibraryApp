@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using LibraryAppCore.Domain.Entities;
 using System.Threading.Tasks;
-using LibraryAppCore.Domain.Entities.MsSql;
 using Microsoft.EntityFrameworkCore;
+using LibraryAppCore.Domain.Entities.PostgreSql;
 
 namespace LibraryAppCore.Domain.Concrete.MsSql
 {

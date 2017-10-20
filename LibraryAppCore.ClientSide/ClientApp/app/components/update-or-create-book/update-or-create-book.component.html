@@ -1,10 +1,103 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title></title>
-</head>
-<body>
+﻿<h3>{{updateOrCreate}}book</h3>
+<div class="col-md-9 up-or-cr-book-form">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="bookImage" class="control-label col-xs-4">Image:</label>
+            <div class="col-xs-5">
+                <input type="file" name="bookImage" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="authorId" class="control-label col-xs-4">Author:</label>
+            <div class="col-xs-5">
+                <select class="form-control" (change)="onAuthorSelect($event.target.value)" name="authorId" >
+                    <option value="{{a.id}}" *ngFor="let a of authors">
+                        {{a.name + " " + a.surname}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bookName" class="control-label col-xs-4">Name:</label>
+            <div class="col-xs-5">
+                <input type="text" name="bookName" [(ngModel)]="editedBook.name" class="form-control" #bookName="ngModel" required />
+                <p [hidden]="bookName.valid || bookName.untouched" class="danger">Enter the Name!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bookYear" class="control-label col-xs-4">Year:</label>
+            <div class="col-xs-5">
+                <input type="number" name="bookYear" [(ngModel)]="editedBook.year" class="form-control" #bookYear="ngModel" required pattern="[0-9]{4}" />
+                <p [hidden]="bookYear.valid || bookYear.untouched || editedBook.year != 0" class="danger">Enter the correct year!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bookLanguage" class="control-label col-xs-4">Language:</label>
+            <div class="col-xs-5">
+                <input type="text" name="bookLanguage" [(ngModel)]="editedBook.language" class="form-control" #bookLanguage="ngModel" required />
+                <p [hidden]="bookLanguage.valid || bookLanguage.untouched" class="danger">Enter the book language please!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bookWeight" class="control-label col-xs-4">Weight:</label>
+            <div class="col-xs-5">
+                <input type="number" name="bookWeight" [(ngModel)]="editedBook.weight" class="form-control" #bookWeight="ngModel" required />
+                <p [hidden]="bookWeight.valid || bookWeight.untouched" class="danger">Enter the book weight please!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bookPages" class="control-label col-xs-4">Pages:</label>
+            <div class="col-xs-5">
+                <input type="number" name="bookPages" [(ngModel)]="editedBook.pages" class="form-control" #bookPages="ngModel" required />
+                <p [hidden]="bookPages.valid || bookPages.untouched" class="danger">Enter the book pages please!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bookMonthSubscription" class="control-label col-xs-4">Month Subscription:</label>
+            <div class="col-xs-5">
+                <input type="number" name="bookMonthSubscription" [(ngModel)]="editedBook.subscription" class="form-control" #bookMonthSubscription="ngModel" required />
+                <p [hidden]="bookMonthSubscription.valid || bookMonthSubscription.untouched" class="danger">Enter the book month subscription please!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bookPrice" class="control-label col-xs-4">Book Price:</label>
+            <div class="col-xs-5">
+                <input type="number" name="bookPrice" [(ngModel)]="editedBook.price" class="form-control" #bookPrice="ngModel" required />
+                <p [hidden]="bookPrice.valid || bookPrice.untouched" class="danger">Enter the book price please!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bookDescription" class="control-label col-xs-4">Description:</label>
+            <div class="col-xs-5">
+                <textarea type="text" name="bookDescription" [(ngModel)]="editedBook.description" class="form-control" #bookDescription="ngModel" required>Enter text here...</textarea>
+                <p [hidden]="bookDescription.valid || bookDescription.untouched" class="danger">Enter the Description!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="newBook" class="control-label col-xs-4">Book Sections:</label>
+            <div class="checkbox col-xs-6">
+                <label><input type="checkbox" name="newBook" [(ngModel)]="editedBookSections.New" #newBook="ngModel" />- New book </label>
+                <label><input type="checkbox" name="forFamily" [(ngModel)]="editedBookSections.ForFamily" #forFamily="ngModel" />- For family book </label>
+                <label><input type="checkbox" name="technicalBook" [(ngModel)]="editedBookSections.Technical" #technicalBook="ngModel" />- Technical book </label>
+            </div>
+            <div class="col-xs-4"></div>
+            <div class="checkbox col-xs-6">
+                <label><input type="checkbox" name="fictionBook" [(ngModel)]="editedBookSections.Fiction" #fictionBook="ngModel" />- Fiction book </label>
+                <label><input type="checkbox" name="forBusnessBook" [(ngModel)]="editedBookSections.ForBusness" #forBusnessBook="ngModel" />- For busness book </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4"></div>
+            <div class="col-md-3">
+                <button (click)="cancel()" class="btn btn-warning">Cencel</button>
+                <button [disabled]="bookPrice.invalid || bookDescription.invalid" (click)="saveBook()" class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </form>
+    <div>{{statusMessage}}</div>
+</div>
 
-</body>
-</html>
+
+
+
+

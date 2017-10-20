@@ -108,5 +108,35 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             }
             return result;
         }
+
+        public Task<IEnumerable<Book>> GetBookById(string bookId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Section>> GetSectionsByBookId(string bookId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Section>> GetAllBookSections()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetBookIdByBNameAndAId(string bookName, int authorId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> AddBookSection(string bookName, string authorId, Section section)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> UpdateBookSections(string bookId, Section section)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
