@@ -1,5 +1,5 @@
 ﻿<h1>Books List</h1>
-<input type="button" value="Add Book" class="btn btn-success" (click)="addBook(hiddenAuthorId)" />
+<input type="button" value="Add Book" class="btn btn-success" (click)="addBook(hiddenAuthorId)" *ngIf="isAuthorized" />
 
 <div class="table-responsive padding-top-table">
     <table class="table table-striped table-hover">
@@ -53,10 +53,10 @@
     <td>{{book.description}}</td>
     <td>{{book.authorId}}</td>
     <td>
-        <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book)" />
+        <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book)" *ngIf="isAuthorized" />
     </td>
     <td>
-        <input type="button" value="Delete" class="btn btn-danger" (click)="deleteBook(book)" />
+        <input type="button" value="Delete" class="btn btn-danger" (click)="deleteBook(book)" *ngIf="isAuthorized" />
     </td>
 </ng-template>
 

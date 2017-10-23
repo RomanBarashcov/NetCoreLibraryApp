@@ -64,7 +64,9 @@ export class AuthorComponent implements OnInit {
     pager: any = {};
     error: any;
     state: string = '';
-
+    
+    isAuthorized: boolean;
+    private isAuthorizedSubscription: Subscription;
 
     constructor(private authService: AuthService, private config: Config, private pagerService: PagerService, private router: Router) {
         this.authorApiUrl = this.config.AuthorsApiUrl;
@@ -75,6 +77,12 @@ export class AuthorComponent implements OnInit {
     }
     
     ngOnInit() {
+        
+        this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe(
+            (isAuthorized: boolean) => {
+                this.isAuthorized = isAuthorized;
+            });
+        
         this.authService.get(this.authorApiUrl).subscribe(result => {
             this.authors = result.json();
             this.setPage(1);
@@ -88,17 +96,27 @@ export class AuthorComponent implements OnInit {
     }
 
     addAuthor() {
-        this.editedAuthor = new Author("", "", "");
-        this.authors.push(this.editedAuthor);
-        this.pagedAuthorItems = this.authors;
-        this.isNewRecord = true;
-        if (this.pager.totalPages > 0) {
-            this.setPage(this.pager.totalPages);
+        if (this.isAuthorized) {
+            this.editedAuthor = new Author("", "", "");
+            this.authors.push(this.editedAuthor);
+            this.pagedAuthorItems = this.authors;
+            this.isNewRecord = true;
+            if (this.pager.totalPages > 0) {
+                this.setPage(this.pager.totalPages);
+            }
+        }
+        else{
+            this.statusMessage = "Please log in!";
         }
     }
 
     editAuthor(author: Author) {
-        this.editedAuthor = new Author(author.id, author.name, author.surname);
+        if (this.isAuthorized){
+            this.editedAuthor = new Author(author.id, author.name, author.surname);   
+        }
+        else {
+            this.statusMessage = "Please log in!";
+        }
     }
 
     loadTemplate(author: Author) {
@@ -148,17 +166,22 @@ export class AuthorComponent implements OnInit {
     }
 
     deleteAuthor(author: Author) {
-        this.authService.delete(this.authorApiUrl + "/" + author.id).subscribe((resp: Response) => {
-            if (resp.status == 200) {
-                this.statusMessage = 'Deleted successfully!';
+        if (this.isAuthorized) {
+            this.authService.delete(this.authorApiUrl + "/" + author.id).subscribe((resp: Response) => {
+                    if (resp.status == 200) {
+                        this.statusMessage = 'Deleted successfully!';
+                        this.ngOnInit();
+                    }
+                },
+                error => {
+                    this.statusMessage = error;
+                    console.log(error);
                     this.ngOnInit();
-            }
-        },
-            error => {
-                this.statusMessage = error;
-                console.log(error);
-                this.ngOnInit();
-            });
+                });
+        }
+        else {
+            this.statusMessage = "Please log in!";
+        }
     }
 
     routeToBooks(author: Author) {

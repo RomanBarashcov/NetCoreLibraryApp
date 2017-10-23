@@ -1,7 +1,7 @@
 ﻿
 <h1>Authors List</h1>
 
-<input type="button" value="Add Author" class="btn btn-success" (click)="addAuthor()" />
+<input type="button" value="Add Author" class="btn btn-success" (click)="addAuthor()" *ngIf="isAuthorized" />
 
 <div class="table-responsive padding-top-table">
     <table class="table table-striped table-hover">
@@ -56,10 +56,10 @@
         <input type="button" value="Books by Author" class="btn btn-default" (click)="routeToBooks(author)" />
     </td>
     <td>
-        <input type="button" value="Edit" class="btn btn-warning" (click)="editAuthor(author)" />
+        <input type="button" value="Edit" class="btn btn-warning" (click)="editAuthor(author)" *ngIf="isAuthorized" />
     </td>
     <td>
-        <input type="button" value="Delete" class="btn btn-danger" (click)="deleteAuthor(author)" />
+        <input type="button" value="Delete" class="btn btn-danger" (click)="deleteAuthor(author)" *ngIf="isAuthorized" />
     </td>
     <td></td>
 </ng-template>

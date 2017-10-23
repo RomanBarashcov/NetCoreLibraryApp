@@ -65,7 +65,10 @@ export class BookComponent {
     error: any;
     state: string = '';
     private bookApiUrl: string;
-
+    
+    isAuthorized: boolean;
+    private isAuthorizedSubscription: Subscription;
+    
     constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config) {
         this.bookApiUrl = this.config.BookApiUrl;
         this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() })
@@ -76,6 +79,12 @@ export class BookComponent {
     }
     
     loadBooks() {
+        
+        this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe(
+            (isAuthorized: boolean) => {
+                this.isAuthorized = isAuthorized;
+            });
+        
         this.authService.get(this.bookApiUrl).subscribe(result => {
             this.books = result.json();
             this.setPage(1);
@@ -109,23 +118,32 @@ export class BookComponent {
     }
 
     addBook(authorId: string) {
-        if (authorId != undefined) {
-            this.editedBook = new Book("", 0, "", "", authorId);
+        if (this.isAuthorized) {
+            if (authorId != undefined) {
+                this.editedBook = new Book("", 0, "", "", authorId);
+            }
+            else {
+                this.editedBook = new Book("", 0, "", "", "");
+            }
+
+            this.books.push(this.editedBook);
+            this.pagedBookItems = this.books;
+            this.isNewRecord = true;
+            if (this.pager.totalPages > 0) {
+                this.setPage(this.pager.totalPages);
+            }
         }
-        else {
-            this.editedBook = new Book("", 0, "", "", "");
-        }
-        
-        this.books.push(this.editedBook);
-        this.pagedBookItems = this.books;
-        this.isNewRecord = true;
-        if (this.pager.totalPages > 0) {
-            this.setPage(this.pager.totalPages);
+        else{
+            this.statusMessage = "Please log in!";
         }
     }
 
     editBook(book: Book) {
-        this.editedBook = new Book(book.id, book.year, book.name, book.description, book.authorId);
+        if (this.isAuthorized) {
+            this.editedBook = new Book(book.id, book.year, book.name, book.description, book.authorId);
+        }else{
+            this.statusMessage = "Please log in!";
+        }
     }
 
     loadTemplate(book: Book) {
@@ -136,7 +154,7 @@ export class BookComponent {
         }
     }
 
-    saveBook() {
+    saveBook(){
         if (this.isNewRecord) {
             this.authService.post(this.bookApiUrl, this.editedBook).subscribe((resp: Response) => {
                 console.log("saveBook function");
@@ -176,16 +194,21 @@ export class BookComponent {
     }
 
     deleteBook(book: Book) {
-        this.authService.delete(book.id).subscribe((resp: Response) => {
-            if (resp.status == 200) {
-                this.statusMessage = 'Deleted successfully!',
-                    this.loadBooks();
-            }
-        },
-            error => {
-                this.statusMessage = error;
-                console.log(error);
-            });
+        if (this.isAuthorized) {
+            this.authService.delete(book.id).subscribe((resp: Response) => {
+                    if (resp.status == 200) {
+                        this.statusMessage = 'Deleted successfully!';
+                            this.loadBooks();
+                    }
+                },
+                error => {
+                    this.statusMessage = error;
+                    console.log(error);
+                });
+        }
+        else{
+            this.statusMessage = "Please log in!";
+        }
     }
 
     setPage(page: number) {
