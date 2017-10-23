@@ -61,12 +61,21 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
         public async Task<int> UpdateBook(string id, Book book)
         {
             int DbResult = 0;
-            int oldDataBookId, newDataBookId = 0;
+            int oldDataBookId, newDataBookId, authorId = 0;
 
             if (!String.IsNullOrEmpty(id) && dataReqiered.IsDataNoEmpty(book))
             {
-                oldDataBookId = Convert.ToInt32(id);
-                newDataBookId = Convert.ToInt32(book.Id);
+                try
+                {
+                    oldDataBookId = Convert.ToInt32(id);
+                    newDataBookId = Convert.ToInt32(book.Id);
+                    authorId = Convert.ToInt32(book.AuthorId);
+                }
+                catch
+                {
+                    return DbResult;
+                }
+
                 BookPostgreSql updatingBook = null;
                 updatingBook = await db.Books.FindAsync(oldDataBookId);
 
@@ -75,6 +84,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                     updatingBook.Year = book.Year;
                     updatingBook.Name = book.Name;
                     updatingBook.Description = book.Description;
+                    updatingBook.AuthorId = authorId;
                     db.Entry(updatingBook).State = EntityState.Modified;
                     try
                     {

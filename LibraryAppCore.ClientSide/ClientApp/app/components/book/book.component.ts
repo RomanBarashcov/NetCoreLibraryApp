@@ -5,6 +5,7 @@ import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 import { AuthService } from '../../services/auth.service';
 import { Book } from '../../models/book';
+import { Author } from '../../models/author';
 import { Config } from '../../config';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
@@ -23,22 +24,22 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
             transition('void => *', [
                 style({transform: 'translateX(0px)', opacity: 0}),
                 group([
-                    animate('1s 0.1s ease', style({
+                    animate('0.5s 0.1s ease', style({
                         transform: 'translateX(0)',
 
                     })),
-                    animate('1s ease', style({
+                    animate('0.5s ease', style({
                         opacity: 1
                     }))
                 ])
             ]),
             transition('* => void', [
                 group([
-                    animate('1s ease', style({
+                    animate('0.5s ease', style({
                         transform: 'translateX(0px)',
 
                     })),
-                    animate('1s 0.2s ease', style({
+                    animate('0.5s 0.2s ease', style({
                         opacity: 0
                     }))
                 ])
@@ -52,7 +53,9 @@ export class BookComponent {
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
 
     books: Book[] = [];
+    authors: Author[] = [];
     editedBook: Book;
+    authorData: Author;
     editedBookNull: Book;
     isNewRecord: boolean;
     statusMessage: string;
@@ -65,13 +68,16 @@ export class BookComponent {
     error: any;
     state: string = '';
     private bookApiUrl: string;
-    
+    private authorApiUrl: string;
+
     isAuthorized: boolean;
     private isAuthorizedSubscription: Subscription;
     
     constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config) {
+        this.authorApiUrl = this.config.AuthorsApiUrl;
         this.bookApiUrl = this.config.BookApiUrl;
-        this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() })
+
+        this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
     }
 
     animate() {
@@ -79,7 +85,7 @@ export class BookComponent {
     }
     
     loadBooks() {
-        
+
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe(
             (isAuthorized: boolean) => {
                 this.isAuthorized = isAuthorized;
@@ -87,7 +93,13 @@ export class BookComponent {
         
         this.authService.get(this.bookApiUrl).subscribe(result => {
             this.books = result.json();
-            this.setPage(1);
+            if (this.books != null) {
+                this.setPage(1);
+            } else {
+                this.setPage(0);
+                this.books = [];
+            }
+            this.getAuthors();
             this.animate();
         },
             error => {
@@ -97,9 +109,18 @@ export class BookComponent {
     }
 
     loadBookByAuthor(id: string) {
+
+        this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe(
+            (isAuthorized: boolean) => {
+                this.isAuthorized = isAuthorized;
+            });
+
+        this.getAuthors();
+
         this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id).subscribe(result => {
             this.books = result.json();
-                if (this.books != null) {
+
+            if (this.books != null) {
                     this.pagedBookItems = this.books;
                     console.log("loadBookByAuthor() component result: " + this.books);
                         if (this.pager.totalPages > 0) {
@@ -140,6 +161,8 @@ export class BookComponent {
 
     editBook(book: Book) {
         if (this.isAuthorized) {
+            if (this.authors == null) {
+            }
             this.editedBook = new Book(book.id, book.year, book.name, book.description, book.authorId);
         }else{
             this.statusMessage = "Please log in!";
@@ -154,13 +177,13 @@ export class BookComponent {
         }
     }
 
-    saveBook(){
+    saveBook() {
         if (this.isNewRecord) {
             this.authService.post(this.bookApiUrl, this.editedBook).subscribe((resp: Response) => {
-                console.log("saveBook function");
                 if (resp.status == 200) {
                     this.statusMessage = 'Saved successfully!';
                     this.loadBooks();
+                    
                 }
             },
                 error => {
@@ -190,12 +213,22 @@ export class BookComponent {
     }
 
     cancel() {
+        if (this.isNewRecord) {
+            this.books.pop();
+            this.isNewRecord = false;
+        }
+        else {
+            this.books.pop();
+        }
+        this.activateRoute.params.subscribe((params) => {
+            params['id'] != null ? this.loadBookByAuthor(this.editedBook.authorId) : this.loadBooks()
+        });
         this.editedBook = this.editedBookNull;
     }
 
     deleteBook(book: Book) {
         if (this.isAuthorized) {
-            this.authService.delete(book.id).subscribe((resp: Response) => {
+            this.authService.delete(this.bookApiUrl + "/" + book.id).subscribe((resp: Response) => {
                     if (resp.status == 200) {
                         this.statusMessage = 'Deleted successfully!';
                             this.loadBooks();
@@ -209,6 +242,25 @@ export class BookComponent {
         else{
             this.statusMessage = "Please log in!";
         }
+    }
+
+    getAuthors(){
+        this.authService.get(this.authorApiUrl).subscribe(result => {
+            this.authors = result.json();
+
+            if (this.authors == null) {
+                this.authors = [];
+            }
+            
+        },
+            error => {
+                this.statusMessage = error;
+                console.log(error);
+            });
+    }
+
+    onAuthorSelect(authorId: string) {
+        this.editedBook.authorId = authorId;
     }
 
     setPage(page: number) {

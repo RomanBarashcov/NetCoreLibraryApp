@@ -23,22 +23,22 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
             transition('void => *', [
                 style({transform: 'translateX(0px)', opacity: 0}),
                 group([
-                    animate('1s 0.1s ease', style({
+                    animate('0.5s 0.1s ease', style({
                         transform: 'translateX(0)',
                         
                     })),
-                    animate('1s ease', style({
+                    animate('0.5s ease', style({
                         opacity: 1
                     }))
                 ])
             ]),
             transition('* => void', [
                 group([
-                    animate('1s ease', style({
+                    animate('0.5s ease', style({
                         transform: 'translateX(0px)',
           
                     })),
-                    animate('1s 0.2s ease', style({
+                    animate('0.5s 0.2s ease', style({
                         opacity: 0
                     }))
                 ])
@@ -84,10 +84,16 @@ export class AuthorComponent implements OnInit {
             });
         
         this.authService.get(this.authorApiUrl).subscribe(result => {
+
             this.authors = result.json();
-            this.setPage(1);
-            this.animate();
-            this.state = "in";
+            if (this.authors != null) {
+                this.setPage(1);
+            } else {
+                this.setPage(0);
+                this.authors = [];
+            }
+                this.animate();
+                this.state = "in";
         },
             error => {
                 this.statusMessage = error;
@@ -130,7 +136,6 @@ export class AuthorComponent implements OnInit {
     saveAuthor() {
         if (this.isNewRecord) {
             this.authService.post(this.authorApiUrl, this.editedAuthor).subscribe((resp: Response) => {
-                console.log("saveAuthor() resp: = " + resp);
                 if (resp.status == 200) {
                     this.statusMessage = 'Saved successfully!';
                     this.editedAuthor = this.editAuthorNull;
@@ -162,15 +167,24 @@ export class AuthorComponent implements OnInit {
     }
 
     cancel() {
+        if (this.isNewRecord) {
+            this.authors.pop();
+            this.isNewRecord = false;
+        }
+        else {
+            this.authors.pop();
+        }
+        this.ngOnInit();
         this.editedAuthor = this.editAuthorNull;
     }
 
     deleteAuthor(author: Author) {
+
         if (this.isAuthorized) {
             this.authService.delete(this.authorApiUrl + "/" + author.id).subscribe((resp: Response) => {
-                    if (resp.status == 200) {
-                        this.statusMessage = 'Deleted successfully!';
-                        this.ngOnInit();
+                if (resp.status == 200) {
+                    this.statusMessage = 'Deleted successfully!';
+                    this.ngOnInit();
                     }
                 },
                 error => {

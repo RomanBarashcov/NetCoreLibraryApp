@@ -10,22 +10,22 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
             transition('void => *', [
                 style({transform: 'translateX(0px)', opacity: 0}),
                 group([
-                    animate('1s 0.1s ease', style({
+                    animate('0.5s 0.1s ease', style({
                         transform: 'translateX(0)',
 
                     })),
-                    animate('1s ease', style({
+                    animate('0.5s ease', style({
                         opacity: 1
                     }))
                 ])
             ]),
             transition('* => void', [
                 group([
-                    animate('1s ease', style({
+                    animate('0.5s ease', style({
                         transform: 'translateX(0px)',
 
                     })),
-                    animate('1s 0.2s ease', style({
+                    animate('0.5s 0.2s ease', style({
                         opacity: 0
                     }))
                 ])

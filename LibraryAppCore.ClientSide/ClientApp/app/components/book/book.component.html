@@ -14,7 +14,7 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody *ngIf="books.length > 0">
             <tr [@flyInOut]="state" *ngFor="let book of pagedBookItems">
                 <ng-template [ngTemplateOutlet]="loadTemplate(book)"
                              [ngOutletContext]="{ $implicit: book}">
@@ -25,7 +25,7 @@
 </div>
 <div>
     <!-- pagination -->
-    <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+    <ul *ngIf="pager.pages && pager.pages.length && books.length > 0" [@flyInOut]="state" class="pagination">
         <li [ngClass]="{disabled:pager.currentPage === 1}">
             <a (click)="setPage(1)">First</a>
         </li>
@@ -67,22 +67,27 @@
     </td>
     <td>
         <input type="text" name="bookYear" [(ngModel)]="editedBook.year" class="form-control" #bookYear="ngModel" required pattern="[0-9]{4}" />
-        <p [hidden]="bookYear.valid || bookYear.untouched || editedBook.year != 0" class="danger">Enter the correct year!</p>
+        <p [hidden]="bookYear.valid || bookYear === 0" class="danger">Year must be have four numbers !</p>
     </td>
     <td>
-        <input type="text" name="bookName" [(ngModel)]="editedBook.name" class="form-control" #bookName="ngModel" required />
-        <p [hidden]="bookName.valid || bookName.untouched" class="danger">Enter the Name!</p>
+        <input type="text" name="bookName" [(ngModel)]="editedBook.name" class="form-control"  #bookName="ngModel" required  />
+        <p [hidden]="bookName.valid" class="danger">Enter the Name!</p>
     </td>
     <td>
         <input type="text" name="bookDescription" [(ngModel)]="editedBook.description" class="form-control" #bookDescription="ngModel" required />
-        <p [hidden]="bookDescription.valid || bookDescription.untouched" class="danger">Enter the Description!</p>
+        <p [hidden]="bookDescription.valid" class="danger">Enter the Description!</p> 
     </td>
     <td>
-        <input type="text" name="authorId" [(ngModel)]="editedBook.authorId" class="form-control" #authorId="ngModel" required />
-        <p [hidden]="authorId.valid || authorId.untouched" class="danger">Enter the authorId!</p>
+        <select class="form-control" (change)="onAuthorSelect($event.target.value)" name="authorId">
+            <option value="0"> Selected - </option>
+            <option value="{{a.id}}" *ngFor="let a of authors">
+                {{a.id}} - {{a.name + " " + a.surname}}
+            </option>
+        </select>
+        <p [hidden]="authorId > 0" class="danger">Chose author please!</p> 
     </td>
     <td>
-        <button [disabled]="bookYear.invalid || bookName.invalid || bookDescription.invalid || authorId.invalid" (click)="saveBook()" class="btn btn-success">Save</button>
+        <button [disabled]="authorId == 0 || bookYear.invalid || bookName.invalid || bookDescription.invalid" (click)="saveBook()" class="btn btn-success">Save</button>
     </td>
     <td>
         <button (click)="cancel()" class="btn btn-warning">Cencel</button>

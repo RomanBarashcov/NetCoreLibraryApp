@@ -92,7 +92,6 @@ export class AuthService implements OnInit{
 
     post(url: string, data: any, options?: RequestOptions): Observable<Response> {
         const body = JSON.stringify(data);
-        console.log("AuthServer: result data" + body);
         return this.http.post(url, body, this.setRequestOptions(options)).catch(this.handleError);
     }
 
