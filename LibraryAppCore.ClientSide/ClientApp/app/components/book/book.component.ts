@@ -67,8 +67,8 @@ export class BookComponent {
     private bookApiUrl: string;
 
     constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config) {
-        this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
         this.bookApiUrl = this.config.BookApiUrl;
+        this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() })
     }
 
     animate() {
