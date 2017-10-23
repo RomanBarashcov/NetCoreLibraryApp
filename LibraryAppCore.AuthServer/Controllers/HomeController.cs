@@ -12,13 +12,6 @@ namespace LibraryAppCore.AuthServer.Controllers
 
     public class HomeController : Controller
     {
-        //private readonly IIdentityServerInteractionService _interaction;
-
-        //public HomeController(IIdentityServerInteractionService interaction)
-        //{
-        //    _interaction = interaction;
-        //}
-
         public IActionResult Index()
         {
             return View();

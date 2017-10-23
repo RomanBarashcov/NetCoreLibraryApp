@@ -78,7 +78,7 @@ export class UpOrCrBookComponent {
         this.updateOrCreate = "Update ";
         this.authorId = authorId;
         this.createNewBook = false;
-        this.editedBook = new Book("", 0, "", "", "", 0, 0, "0", "0", "", "", authorId);
+        this.editedBook = new Book("", 0, "0", "0", "", 0, 0, "0", "0", "", "", authorId);
         this.editedBookSections = new BookSections("", false, false, false, false, false, "");
 
         this.GetBookByBookId(bookId);
@@ -161,8 +161,8 @@ export class UpOrCrBookComponent {
     saveSectionsBook(authorId?: string, bookId?: string): boolean {
 
         if (authorId != undefined) {
-            console.log("EDITED BOOK NAME:" + this.editedBook.name);
-            this.authService.put(this.bookApiUrl + "/BookApi/AddSectionsBook/" + authorId + "/" + this.editedBook.name, this.editedBook).subscribe((resp: Response) => {
+            console.log("EDITED BOOK NAME:" + this.editedBook.bookName);
+            this.authService.put(this.bookApiUrl + "/BookApi/AddSectionsBook/" + authorId + "/" + this.editedBook.bookName, this.editedBook).subscribe((resp: Response) => {
                 console.log("saveSectionsBook Result:" + resp);
                 if (resp.status == 200) {
                     return true;

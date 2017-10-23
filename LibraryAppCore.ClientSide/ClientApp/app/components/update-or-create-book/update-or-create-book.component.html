@@ -20,7 +20,7 @@
         <div class="form-group">
             <label for="bookName" class="control-label col-xs-4">Name:</label>
             <div class="col-xs-5">
-                <input type="text" name="bookName" [(ngModel)]="editedBook.name" class="form-control" #bookName="ngModel" required />
+                <input type="text" name="bookName" [(ngModel)]="editedBook.bookName" class="form-control" #bookName="ngModel" required />
                 <p [hidden]="bookName.valid || bookName.untouched" class="danger">Enter the Name!</p>
             </div>
         </div>
