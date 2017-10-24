@@ -3,3 +3,6 @@
 .padding-top-table{
     padding-top:24px;
 }
+.pointer {
+    cursor: pointer;
+}
