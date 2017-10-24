@@ -1,21 +1,40 @@
 ﻿<h1>Books List</h1>
-<input type="button" value="Add Book" class="btn btn-success" (click)="addBook()" *ngIf="isAuthorized" />
+<div>
+    <p>
+        <input type="button" value="Add Book" class="btn btn-success" (click)="addBook()" *ngIf="isAuthorized" />
+    </p>
+</div>
 
 <div class="table-responsive padding-top-table">
     <table class="table table-striped table-hover">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Year</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Author Name</th>
+                <th class="pointer" (click)="sort('id')">
+					Id
+					<i class="fa" [ngClass]="{'fa-sort': column != 'id', 'fa-sort-asc': (column == 'id' && isDesc), 'fa-sort-desc': (column == 'id' && !isDesc) }" aria-hidden="true"> </i>
+				</th>
+                <th class="pointer" (click)="sort('year')">
+					Year
+					<i class="fa" [ngClass]="{'fa-sort': column != 'year', 'fa-sort-asc': (column == 'year' && isDesc), 'fa-sort-desc': (column == 'year' && !isDesc) }" aria-hidden="true"> </i>
+				</th>
+                <th class="pointer" (click)="sort('name')">
+					Name
+					<i class="fa" [ngClass]="{'fa-sort': column != 'name', 'fa-sort-asc': (column == 'name' && isDesc), 'fa-sort-desc': (column == 'name' && !isDesc) }" aria-hidden="true"> </i>
+				</th>
+                <th class="pointer" (click)="sort('description')">
+					Description
+					<i class="fa" [ngClass]="{'fa-sort': column != 'description', 'fa-sort-asc': (column == 'description' && isDesc), 'fa-sort-desc': (column == 'description' && !isDesc) }" aria-hidden="true"> </i>
+				</th>
+                <th class="pointer" (click)="sort('authorId')">
+					Author Name
+					<i class="fa" [ngClass]="{'fa-sort': column != 'authorId', 'fa-sort-asc': (column == 'authorId' && isDesc), 'fa-sort-desc': (column == 'authorId' && !isDesc) }" aria-hidden="true"> </i>
+				</th>
                 <th></th>
                 <th></th>
             </tr>
         </thead>
         <tbody *ngIf="booksViewModel.length > 0">
-            <tr [@flyInOut]="state" *ngFor="let book of pagedBookItems">
+            <tr [@flyInOut]="state" *ngFor="let book of pagedBookItems | category: searchText | orderBy: {property: column, direction: direction}">
                 <ng-template [ngTemplateOutlet]="loadTemplate(book)"
                              [ngOutletContext]="{ $implicit: book}">
                 </ng-template>
@@ -24,8 +43,8 @@
     </table>
 </div>
 <div>
-    <!-- pagination -->
-    <ul *ngIf="pager.pages && pager.pages.length && books.length > 0" [@flyInOut]="state" class="pagination">
+     <!--pagination--> 
+    <ul *ngIf="pager.pages && pager.pages.length && booksViewModel.length > 0" [@flyInOut]="state" class="pagination">
         <li [ngClass]="{disabled:pager.currentPage === 1}">
             <a (click)="setPage(1)">First</a>
         </li>

@@ -18,7 +18,7 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     selector: 'books-app',
     templateUrl: 'book.component.html',
     styleUrls: ['book.component.css'],
-    providers: [AuthService, Config],
+    providers: [AuthService, Config], 
     animations: [
         trigger('flyInOut', [
             state('in', style({transform: 'translateX(0)', opacity: 1})),
@@ -78,6 +78,10 @@ export class BookComponent {
 
     isAuthorized: boolean;
     private isAuthorizedSubscription: Subscription;
+
+    isDesc: boolean = false;
+    column: string = 'id';
+    direction: number;
     
     constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config) {
 
@@ -91,7 +95,14 @@ export class BookComponent {
     animate() {
         this.state = (this.state === '' ? 'in' : '');
     }
-    
+
+
+    sort(property: string) {
+        this.isDesc = !this.isDesc; 
+        this.column = property;
+        this.direction = this.isDesc ? 1 : -1;
+    };
+
     loadBooks() {
 
         this.booksViewModel = [];
@@ -180,7 +191,7 @@ export class BookComponent {
     }
 
     addBook() {
-
+     
         this.isNewRecord = true;
 
         if (this.isAuthorized) {

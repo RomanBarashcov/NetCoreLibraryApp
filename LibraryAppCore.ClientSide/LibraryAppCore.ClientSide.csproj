@@ -24,10 +24,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\app\category.pipe.ts" />
     <None Remove="ClientApp\app\components\author\author.component.ts" />
     <None Remove="ClientApp\app\components\book\book.component.ts" />
     <None Remove="ClientApp\app\components\dbconnection\dbcon.component.ts" />
     <None Remove="ClientApp\app\config.ts" />
+    <None Remove="ClientApp\app\filter\orderby.pipe.ts" />
     <None Remove="ClientApp\app\models\author.ts" />
     <None Remove="ClientApp\app\models\book.ts" />
     <None Remove="ClientApp\app\models\bookViewModel.ts" />
@@ -43,10 +45,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\filter\category.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\author\author.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\book\book.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dbconnection\dbcon.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\config.ts" />
+    <TypeScriptCompile Include="ClientApp\app\filter\orderby.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\author.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\book.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\bookViewModel.ts" />
