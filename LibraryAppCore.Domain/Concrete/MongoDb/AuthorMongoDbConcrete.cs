@@ -35,6 +35,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
                 mongoDbDataConvert.InitData(CollectionResult);
                 result = mongoDbDataConvert.GetIEnumerubleDbResult();
             }
+
             return result;
         }
 
@@ -54,6 +55,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
                     return DbResult;
                 }
             }
+
             return DbResult;
         }
 
@@ -77,6 +79,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
                     }
                 }
             }
+
             return DbResult;
         }
 
@@ -95,7 +98,9 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
                     DbResult = 1;
                 }
             }
+
             return DbResult;
         }
+
     }
 }

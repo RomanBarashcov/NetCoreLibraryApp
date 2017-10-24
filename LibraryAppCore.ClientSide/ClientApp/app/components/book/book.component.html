@@ -1,5 +1,5 @@
 ﻿<h1>Books List</h1>
-<input type="button" value="Add Book" class="btn btn-success" (click)="addBook(hiddenAuthorId)" *ngIf="isAuthorized" />
+<input type="button" value="Add Book" class="btn btn-success" (click)="addBook()" *ngIf="isAuthorized" />
 
 <div class="table-responsive padding-top-table">
     <table class="table table-striped table-hover">
@@ -9,12 +9,12 @@
                 <th>Year</th>
                 <th>Name</th>
                 <th>Description</th>
-                <th>AuthorId</th>
+                <th>Author Name</th>
                 <th></th>
                 <th></th>
             </tr>
         </thead>
-        <tbody *ngIf="books.length > 0">
+        <tbody *ngIf="booksViewModel.length > 0">
             <tr [@flyInOut]="state" *ngFor="let book of pagedBookItems">
                 <ng-template [ngTemplateOutlet]="loadTemplate(book)"
                              [ngOutletContext]="{ $implicit: book}">
@@ -51,7 +51,7 @@
     <td>{{book.year}}</td>
     <td>{{book.name}}</td>
     <td>{{book.description}}</td>
-    <td>{{book.authorId}}</td>
+    <td>{{book.authorName + " " + book.authorSurname}}</td>
     <td>
         <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book)" *ngIf="isAuthorized" />
     </td>
@@ -79,12 +79,13 @@
     </td>
     <td>
         <select class="form-control" (change)="onAuthorSelect($event.target.value)" name="authorId">
-            <option value="0"> Selected - </option>
+            <option value="editedBook.authorId"> {{ editedBook.authorId + " - " + editedBook.authorName + " " + editedBook.authorSurname + " (Selected) " }} </option>
+            <option> ___Others Authors____ </option>
             <option value="{{a.id}}" *ngFor="let a of authors">
                 {{a.id}} - {{a.name + " " + a.surname}}
             </option>
         </select>
-        <p [hidden]="authorId > 0" class="danger">Chose author please!</p> 
+        <p [hidden]="editedBook.authorId > 0" class="danger">Chose author please!</p> 
     </td>
     <td>
         <button [disabled]="authorId == 0 || bookYear.invalid || bookName.invalid || bookDescription.invalid" (click)="saveBook()" class="btn btn-success">Save</button>

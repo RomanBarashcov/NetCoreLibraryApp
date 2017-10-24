@@ -30,6 +30,7 @@
     <None Remove="ClientApp\app\config.ts" />
     <None Remove="ClientApp\app\models\author.ts" />
     <None Remove="ClientApp\app\models\book.ts" />
+    <None Remove="ClientApp\app\models\bookViewModel.ts" />
     <None Remove="ClientApp\app\models\dbconnection.ts" />
     <None Remove="ClientApp\app\services\dbconnection.service.ts" />
     <None Remove="ClientApp\app\services\pagination.service.ts" />
@@ -48,6 +49,7 @@
     <TypeScriptCompile Include="ClientApp\app\config.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\author.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\book.ts" />
+    <TypeScriptCompile Include="ClientApp\app\models\bookViewModel.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\dbconnection.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\dbconnection.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\pagination.service.ts" />
