@@ -6,6 +6,7 @@ using LibraryAppCore.Domain.Entities;
 using System.Threading.Tasks;
 using LibraryAppCore.Domain.Entities.MsSql;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace LibraryAppCore.Domain.Concrete.MsSql
 {
@@ -33,6 +34,32 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                 result = PostgreSqlDataConvert.GetIEnumerubleDbResult();
             }
             return result;
+        }
+
+        public async Task<int> GetAuthorIdByFullName(string firstName, string lastName)
+        {
+            int authorId = 0;
+            List<AuthorPostgreSql> author = await db.Authors.Where(a => a.Name == firstName && (a.Surname == lastName)).ToListAsync();
+            foreach(AuthorPostgreSql a in author)
+            {
+                authorId = a.Id;
+            }
+            return authorId;
+        }
+
+        public async Task<Author> GetAuthorById(string authorId)
+        {
+            Author Author = new Author();
+
+            if (!String.IsNullOrEmpty(authorId))
+            {
+                AuthorPostgreSql authorDbResult = await db.Authors.FindAsync(authorId);
+
+                Author.Id = authorDbResult.Id.ToString();
+                Author.Name = authorDbResult.Name;
+                Author.Surname = authorDbResult.Surname;
+            }
+            return Author;
         }
 
         public async Task<int> CreateAuthor(Author author)

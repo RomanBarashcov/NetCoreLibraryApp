@@ -102,5 +102,14 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             return DbResult;
         }
 
+        public Task<int> GetAuthorIdByFullName(string firstName, string lastName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Author> GetAuthorById(string authorId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

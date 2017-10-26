@@ -1,7 +1,7 @@
 ﻿import { TemplateRef, ViewChild } from '@angular/core';
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Response } from '@angular/http';
+import { Response, RequestOptions, Http } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 import { AuthService } from '../../services/auth.service';
 import { Book } from '../../models/book';
@@ -18,12 +18,12 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     selector: 'books-app',
     templateUrl: 'book.component.html',
     styleUrls: ['book.component.css'],
-    providers: [AuthService, Config], 
+    providers: [AuthService, Config],
     animations: [
         trigger('flyInOut', [
-            state('in', style({transform: 'translateX(0)', opacity: 1})),
+            state('in', style({ transform: 'translateX(0)', opacity: 1 })),
             transition('void => *', [
-                style({transform: 'translateX(0px)', opacity: 0}),
+                style({ transform: 'translateX(0px)', opacity: 0 }),
                 group([
                     animate('0.5s 0.1s ease', style({
                         transform: 'translateX(0)',
@@ -49,9 +49,10 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     ]
 })
 export class BookComponent {
-    
+
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
+    @ViewChild("fileInput") fileInput: any;
 
     books: Book[] = [];
     authors: Author[] = [];
@@ -75,6 +76,7 @@ export class BookComponent {
 
     private bookApiUrl: string;
     private authorApiUrl: string;
+    private documentApiUrl: string;
 
     isAuthorized: boolean;
     private isAuthorizedSubscription: Subscription;
@@ -82,12 +84,13 @@ export class BookComponent {
     isDesc: boolean = false;
     column: string = 'id';
     direction: number;
-    
-    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config) {
+
+    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config, private http: Http) {
 
         this.authorApiUrl = this.config.AuthorsApiUrl;
         this.loadAuthors();
         this.bookApiUrl = this.config.BookApiUrl;
+        this.documentApiUrl = this.config.DocumentApiUrl;
 
         this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
     }
@@ -98,7 +101,7 @@ export class BookComponent {
 
 
     sort(property: string) {
-        this.isDesc = !this.isDesc; 
+        this.isDesc = !this.isDesc;
         this.column = property;
         this.direction = this.isDesc ? 1 : -1;
     };
@@ -113,37 +116,37 @@ export class BookComponent {
 
         this.authService.get(this.bookApiUrl).subscribe(result => {
 
-              this.books = result.json();
+            this.books = result.json();
 
-                if (this.books != null && this.authors != null) {
+            if (this.books != null && this.authors != null) {
 
-                    for (let a of this.authors) {
+                for (let a of this.authors) {
 
-                        for (let b of this.books) {
+                    for (let b of this.books) {
 
-                            if (a.id == b.authorId) {
-                                this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
-                            }
-
+                        if (a.id == b.authorId) {
+                            this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
                         }
+
                     }
-
-                    this.setPage(1);
-
-                } else {
-
-                    this.setPage(0);
-                    this.books = [];
-
                 }
 
-                this.animate();
-            },
+                this.setPage(1);
+
+            } else {
+
+                this.setPage(0);
+                this.books = [];
+
+            }
+
+            this.animate();
+        },
             error => {
                 this.statusMessage = error;
                 console.log(error);
             });
-    
+
     }
 
     loadBookByAuthor(id: string) {
@@ -151,47 +154,47 @@ export class BookComponent {
         this.booksViewModel = [];
 
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe((isAuthorized: boolean) => {
-             this.isAuthorized = isAuthorized;
+            this.isAuthorized = isAuthorized;
         });
 
         this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id).subscribe(result => {
-        
-        this.books = result.json();
 
-        if (this.books != null && this.authors != null) {
+            this.books = result.json();
 
-                    for (let a of this.authors) {
+            if (this.books != null && this.authors != null) {
 
-                        for (let b of this.books) {
+                for (let a of this.authors) {
 
-                            if (a.id == b.authorId) {
-                                this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
-                            }
+                    for (let b of this.books) {
+
+                        if (a.id == b.authorId) {
+                            this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
                         }
                     }
-
-                    this.pagedBookItems = this.booksViewModel;
-                    console.log("loadBookByAuthor() component result: " + this.books);
-
-                    if (this.pager.totalPages > 0) {
-
-                        this.setPage(this.pager.totalPages);
-
-                    }
                 }
-                else {
-                     this.booksViewModel = [];
+
+                this.pagedBookItems = this.booksViewModel;
+                console.log("loadBookByAuthor() component result: " + this.books);
+
+                if (this.pager.totalPages > 0) {
+
+                    this.setPage(this.pager.totalPages);
+
                 }
+            }
+            else {
+                this.booksViewModel = [];
+            }
             this.hiddenAuthorId = id;
         },
-        error => {
-            this.statusMessage = error;
-            console.log(error);
-         });
+            error => {
+                this.statusMessage = error;
+                console.log(error);
+            });
     }
 
     addBook() {
-     
+
         this.isNewRecord = true;
 
         if (this.isAuthorized) {
@@ -205,7 +208,7 @@ export class BookComponent {
                 }
             }
             else {
-                this.editedBook = new BookViewModel("", 0, "", "", "0","","");
+                this.editedBook = new BookViewModel("", 0, "", "", "0", "", "");
             }
 
             this.booksViewModel.push(this.editedBook);
@@ -216,7 +219,7 @@ export class BookComponent {
                 this.setPage(this.pager.totalPages);
             }
         }
-        else{
+        else {
             this.statusMessage = "Please log in!";
         }
     }
@@ -262,7 +265,7 @@ export class BookComponent {
 
                     this.statusMessage = 'Saved successfully!';
                     this.loadBooks();
-                    
+
                 }
             },
                 error => {
@@ -323,16 +326,16 @@ export class BookComponent {
 
                 if (resp.status == 200) {
 
-                        this.statusMessage = 'Deleted successfully!';
-                            this.loadBooks();
-                    }
-                },
+                    this.statusMessage = 'Deleted successfully!';
+                    this.loadBooks();
+                }
+            },
                 error => {
                     this.statusMessage = error;
                     console.log(error);
                 });
         }
-        else{
+        else {
             this.statusMessage = "Please log in!";
         }
     }
@@ -344,7 +347,7 @@ export class BookComponent {
         this.authService.get(this.authorApiUrl).subscribe(result => {
 
             this.authors = result.json();
-            
+
             if (this.authors == null) {
                 this.authors = [];
             }
@@ -359,7 +362,7 @@ export class BookComponent {
 
     loadAuthorById(authorId: string): Author {
 
-       let result: Author = new Author("","","");
+        let result: Author = new Author("", "", "");
 
         if (this.authors != null) {
 
@@ -377,6 +380,24 @@ export class BookComponent {
     onAuthorSelect(authorId: string) {
         this.editedBook.authorId = authorId;
     }
+
+
+    addFile(): void {
+
+        let fi = this.fileInput.nativeElement;
+        if (fi.files && fi.files[0]) {
+
+            let fileToUpload = fi.files[0];
+            let data = new FormData();
+            data.append("file", fileToUpload);
+
+
+            this.http.post(this.documentApiUrl + "/Upload/", data)
+                .subscribe(res => {
+                    console.log(res);
+                });
+        }
+    } 
 
     setPage(page: number) {
         if (page < 1 || page > this.pager.totalPages) {

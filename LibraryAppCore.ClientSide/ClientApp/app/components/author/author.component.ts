@@ -68,6 +68,10 @@ export class AuthorComponent implements OnInit {
     isAuthorized: boolean;
     private isAuthorizedSubscription: Subscription;
 
+    isDesc: boolean = false;
+    column: string = 'id';
+    direction: number;
+
     constructor(private authService: AuthService, private config: Config, private pagerService: PagerService, private router: Router) {
         this.authorApiUrl = this.config.AuthorsApiUrl;
     }
@@ -75,7 +79,13 @@ export class AuthorComponent implements OnInit {
     animate() {
         this.state = (this.state === '' ? 'in' : '');
     }
-    
+
+    sort(property: string) {
+        this.isDesc = !this.isDesc;
+        this.column = property;
+        this.direction = this.isDesc ? 1 : -1;
+    };
+
     ngOnInit() {
         
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe(

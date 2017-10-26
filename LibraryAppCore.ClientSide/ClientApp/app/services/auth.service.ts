@@ -95,6 +95,17 @@ export class AuthService implements OnInit{
         return this.http.post(url, body, this.setRequestOptions(options)).catch(this.handleError);
     }
 
+    postFormData(url: string, data: any, options?: RequestOptions): Observable<Response>{
+        return this.http.post(url, data, this.setRequestOptionsFormData(options)).catch(this.handleError);
+    }
+
+    private setRequestOptionsFormData(options?: RequestOptions | null) {
+         
+        options = new RequestOptions({ headers: this.getHeadersFormData() });
+        
+        return options;
+    }
+
     private setRequestOptions(options?: RequestOptions | null) {
         if (options) {
             this.appendAuthHeader(options.headers);
@@ -108,6 +119,13 @@ export class AuthService implements OnInit{
     private getHeaders() {
         const headers = new Headers();
         headers.append('Content-Type', 'application/json'); 
+        this.appendAuthHeader(headers);
+        return headers;
+    }
+
+    private getHeadersFormData() {
+        const headers = new Headers();
+        headers.append('Content-Type', 'multipart/form-data');
         this.appendAuthHeader(headers);
         return headers;
     }

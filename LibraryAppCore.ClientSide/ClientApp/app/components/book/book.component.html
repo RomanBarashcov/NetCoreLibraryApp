@@ -43,25 +43,33 @@
     </table>
 </div>
 <div>
-     <!--pagination--> 
-    <ul *ngIf="pager.pages && pager.pages.length && booksViewModel.length > 0" [@flyInOut]="state" class="pagination">
-        <li class="pointer" [ngClass]="{disabled:pager.currentPage === 1}">
-            <a (click)="setPage(1)">First</a>
-        </li>
-        <li class="pointer" [ngClass]="{disabled:pager.currentPage === 1}">
-            <a (click)="setPage(pager.currentPage - 1)">Previous</a>
-        </li>
-        <li class="pointer" *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
-            <a (click)="setPage(page)">{{page}}</a>
-        </li>
-        <li class="pointer" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-            <a (click)="setPage(pager.currentPage + 1)">Next</a>
-        </li>
-        <li class="pointer" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-            <a (click)="setPage(pager.totalPages)">Last</a>
-        </li>
-    </ul>
-</div>
+    <div class="col-md-10">
+        <!--pagination-->
+        <ul *ngIf="pager.pages && pager.pages.length && booksViewModel.length > 0" [@flyInOut]="state" class="pagination">
+            <li class="pointer" [ngClass]="{disabled:pager.currentPage === 1}">
+                <a (click)="setPage(1)">First</a>
+            </li>
+            <li class="pointer" [ngClass]="{disabled:pager.currentPage === 1}">
+                <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+            </li>
+            <li class="pointer" *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+                <a (click)="setPage(page)">{{page}}</a>
+            </li>
+            <li class="pointer" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                <a (click)="setPage(pager.currentPage + 1)">Next</a>
+            </li>
+            <li class="pointer" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                <a (click)="setPage(pager.totalPages)">Last</a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-2">
+        <label class="btn btn-default btn-file">
+            Upload <input #fileInput type="file" style="display: none;" accept=".xls,.xlsx" />
+        </label>
+        <button class="btn btn-success" (click)="addFile()" >Send File</button>
+    </div>
+    </div>
 <div>{{statusMessage}}</div>
 
 
@@ -99,7 +107,7 @@
     <td>
         <select class="form-control" (change)="onAuthorSelect($event.target.value)" name="authorId">
             <option value="editedBook.authorId"> {{ editedBook.authorId + " - " + editedBook.authorName + " " + editedBook.authorSurname + " (Selected) " }} </option>
-            <option> ___Others Authors____ </option>
+            <option> ___All__Authors____ </option>
             <option value="{{a.id}}" *ngFor="let a of authors">
                 {{a.id}} - {{a.name + " " + a.surname}}
             </option>

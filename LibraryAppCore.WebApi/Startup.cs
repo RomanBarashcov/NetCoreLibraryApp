@@ -78,6 +78,7 @@ namespace LibraryAppCore.WebApi
 
             services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
             services.AddTransient<IDataRequired<Book>, BookDataRequired>();
+            services.AddTransient<IDocumentRepository, DocumentRepository>();
 
             services.AddTransient<IBookRepository>(provider =>
             {
