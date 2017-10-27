@@ -36,14 +36,17 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             return result;
         }
 
-        public async Task<int> GetAuthorIdByFullName(string firstName, string lastName)
+        public async Task<string> GetAuthorIdByName(string firstName, string surName)
         {
-            int authorId = 0;
-            List<AuthorPostgreSql> author = await db.Authors.Where(a => a.Name == firstName && (a.Surname == lastName)).ToListAsync();
+            string authorId = "";
+            List<AuthorPostgreSql> author = await db.Authors.Where(a => a.Name == firstName && (a.Surname == surName)).ToListAsync();
+
             foreach(AuthorPostgreSql a in author)
             {
-                authorId = a.Id;
+                authorId = Convert.ToString(a.Id);
+                break;
             }
+
             return authorId;
         }
 
@@ -55,19 +58,26 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             {
                 AuthorPostgreSql authorDbResult = await db.Authors.FindAsync(authorId);
 
-                Author.Id = authorDbResult.Id.ToString();
-                Author.Name = authorDbResult.Name;
-                Author.Surname = authorDbResult.Surname;
+                if(authorDbResult != null)
+                {
+                    Author.Id = authorDbResult.Id.ToString();
+                    Author.Name = authorDbResult.Name;
+                    Author.Surname = authorDbResult.Surname;
+                }
+                
             }
+
             return Author;
         }
 
         public async Task<int> CreateAuthor(Author author)
         {
             int DbResult = 0;
+
             if (dataReqiered.IsDataNoEmpty(author))
             {
                 AuthorPostgreSql newAuthor = new AuthorPostgreSql { Name = author.Name, Surname = author.Surname };
+
                 db.Authors.Add(newAuthor);
                 try
                 {
@@ -78,24 +88,29 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                     return DbResult;
                 }
             }
+
             return DbResult;
         }
 
         public async Task<int> UpdateAuthor(string authorId, Author author)
         {
             int DbResult = 0;
+
             if (!String.IsNullOrEmpty(authorId) && dataReqiered.IsDataNoEmpty(author))
             {
                 int oldDataAuthorId = Convert.ToInt32(authorId);
                 int newDataAuthorId = Convert.ToInt32(author.Id);
                 AuthorPostgreSql updatingAuthor = null;
+
                 updatingAuthor = await db.Authors.FindAsync(oldDataAuthorId);
 
                 if (oldDataAuthorId == newDataAuthorId)
                 {
                     updatingAuthor.Name = author.Name;
                     updatingAuthor.Surname = author.Surname;
+
                     db.Entry(updatingAuthor).State = EntityState.Modified;
+
                     try
                     {
                         DbResult = await db.SaveChangesAsync();
@@ -106,15 +121,18 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                     }
                 }
             }
+
             return DbResult;
         }
 
         public async Task<int> DeleteAuthor(string authorId)
         {
             int DbResult = 0;
+
             if (!String.IsNullOrEmpty(authorId))
             {
                 int delAuthorId = Convert.ToInt32(authorId);
+
                 AuthorPostgreSql author = await db.Authors.FindAsync(delAuthorId);
 
                 if (author != null)
@@ -123,6 +141,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                     DbResult = await db.SaveChangesAsync();
                 }
             }
+
             return DbResult;
         }
 

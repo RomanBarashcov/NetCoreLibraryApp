@@ -34,9 +34,12 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     ]
 })
 export class HomeComponent {
+
     state: string = '';
 
     animate() {
+
         this.state = (this.state === '' ? 'in' : '');
+
     }
 }

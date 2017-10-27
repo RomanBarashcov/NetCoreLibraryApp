@@ -16,6 +16,7 @@ namespace LibraryAppCore.WebApi.Controllers
     {
         private IAuthorRepository repository;
         private IDataRequired<Author> dataReqiered;
+
         public AuthorApiController(IAuthorRepository authorRepository, IDataRequired<Author> dReqiered)
         {
             this.repository = authorRepository;
@@ -36,14 +37,17 @@ namespace LibraryAppCore.WebApi.Controllers
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
+
             if (dataReqiered.IsDataNoEmpty(author))
             {
                 DbResult = await repository.CreateAuthor(author);
+
                 if (DbResult != 0)
                 {
                     ActionRes = Ok(author);
                 }
             }
+
             return ActionRes;
         }
 
@@ -53,14 +57,17 @@ namespace LibraryAppCore.WebApi.Controllers
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
+
             if (!String.IsNullOrEmpty(id) && dataReqiered.IsDataNoEmpty(author))
             {
                 DbResult = await repository.UpdateAuthor(id, author);
+
                 if (DbResult != 0)
                 {
                     ActionRes = Ok(author);
                 }
             }
+
             return ActionRes;
         }
 
@@ -70,14 +77,17 @@ namespace LibraryAppCore.WebApi.Controllers
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
+
             if (!String.IsNullOrEmpty(id))
             {
                 DbResult = await repository.DeleteAuthor(id);
+
                 if (DbResult != 0)
                 {
                     ActionRes = Ok();
                 }
             }
+
             return ActionRes;
         }
     }

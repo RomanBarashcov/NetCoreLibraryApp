@@ -78,7 +78,6 @@ namespace LibraryAppCore.WebApi
 
             services.AddTransient<IDataRequired<Author>, AuthorDataRequired>();
             services.AddTransient<IDataRequired<Book>, BookDataRequired>();
-            services.AddTransient<IDocumentRepository, DocumentRepository>();
 
             services.AddTransient<IBookRepository>(provider =>
             {
@@ -91,6 +90,34 @@ namespace LibraryAppCore.WebApi
                 {
                     services.AddTransient<IConvertDataHelper<BookMongoDb, Book>, BookMongoDbConvert>();
                     return new BookMongoDbConcrete(new LibraryMongoDbContext(), new BookMongoDbConvert(), new BookDataRequired());
+                }
+            });
+
+            services.AddTransient<IDocumentRepository>(proveder =>
+            {
+                if (ConnectionDB.ConnectionString == "DefaultConnection")
+                {
+                    return new DocumentPostgreSqlConcrete(
+                        new AuthorPostgreSqlConcrete(
+                            new LibraryPostgreSqlContext(optionsBuilder.Options),
+                            new AuthorPostgreSqlConvert(),
+                            new AuthorDataRequired()),
+                        new BookPostgreSqlConcrete(
+                            new LibraryPostgreSqlContext(optionsBuilder.Options),
+                            new BookPostgreSqlConvert(),
+                            new BookDataRequired()));
+                }
+                else
+                {
+                    return new DocumentMongoDbConcrete(
+                        new AuthorMongoDbConcrete(
+                            new LibraryMongoDbContext(),
+                            new AuthorMongoDbConvert(),
+                            new AuthorDataRequired()),
+                        new BookMongoDbConcrete(
+                            new LibraryMongoDbContext(),
+                            new BookMongoDbConvert(),
+                            new BookDataRequired()));
                 }
             });
 

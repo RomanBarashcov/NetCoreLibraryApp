@@ -36,14 +36,17 @@ namespace LibraryAppCore.WebApi.Controllers
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
+
             if (dataReqiered.IsDataNoEmpty(book))
             {
                 DbResult = await repository.CreateBook(book);
+
                 if (DbResult != 0)
                 {
                     ActionRes = Ok();
                 }
             }
+
             return ActionRes;
         }
 
@@ -53,14 +56,17 @@ namespace LibraryAppCore.WebApi.Controllers
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
+
             if (!String.IsNullOrEmpty(id) && dataReqiered.IsDataNoEmpty(book))
             {
                 DbResult = await repository.UpdateBook(id, book);
+
                 if (DbResult != 0)
                 {
                     ActionRes = Ok();
                 }
             }
+
             return ActionRes;
         }
 
@@ -70,14 +76,17 @@ namespace LibraryAppCore.WebApi.Controllers
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
+
             if (!String.IsNullOrEmpty(id))
             {
                 DbResult = await repository.DeleteBook(id);
+
                 if (DbResult != 0)
                 {
                     ActionRes = Ok();
                 }
             }
+
             return ActionRes;
         }
 
@@ -86,10 +95,12 @@ namespace LibraryAppCore.WebApi.Controllers
         public async Task<IEnumerable<Book>> GetBookByAuthorId(string id)
         {
             IEnumerable<Book> Books = null;
+
             if (!String.IsNullOrEmpty(id))
             {
                 Books = await repository.GetBookByAuthorId(id);
             }
+
             return Books;
         }
     }

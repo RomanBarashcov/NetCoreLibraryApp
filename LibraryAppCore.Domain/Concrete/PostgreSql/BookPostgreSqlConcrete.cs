@@ -33,6 +33,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                 PostgreSqlDataConvert.InitData(BookList);
                 result = PostgreSqlDataConvert.GetIEnumerubleDbResult();
             }
+
             return result;
         }
 
@@ -40,22 +41,54 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
         {
             int DbResult = 0;
             int authorId = 0;
+
+            if (dataReqiered.IsDataNoEmpty(book))
+            {
+                bool isNewBook = CheckingBookOnDuplicate(book);
+
+                if (isNewBook)
+                {
+                    authorId = Convert.ToInt32(book.AuthorId);
+                    BookPostgreSql newBook = new BookPostgreSql { Name = book.Name, Description = book.Description, Year = book.Year, AuthorId = authorId };
+
+                    db.Books.Add(newBook);
+
+                    try
+                    {
+                        DbResult = await db.SaveChangesAsync();
+                    }
+                    catch
+                    {
+                        return DbResult;
+                    }
+                }
+            }
+
+            return DbResult;
+        }
+
+        private bool CheckingBookOnDuplicate(Book book)
+        {
+            int authorId = 0;
+            bool isNewBook = false;
+
             if (dataReqiered.IsDataNoEmpty(book))
             {
                 authorId = Convert.ToInt32(book.AuthorId);
-                BookPostgreSql newBook = new BookPostgreSql { Name = book.Name, Description = book.Description, Year = book.Year, AuthorId = authorId };
-                db.Books.Add(newBook);
 
-                try
+                var createdBook = db.Books.Where(b => b.AuthorId == authorId && (b.Name == book.Name && b.Description == book.Description));
+
+                if (createdBook != null)
                 {
-                    DbResult = await db.SaveChangesAsync();
+                    isNewBook = false;
                 }
-                catch
+                else
                 {
-                    return DbResult;
+                    isNewBook = true;
                 }
             }
-            return DbResult;
+
+            return isNewBook;
         }
 
         public async Task<int> UpdateBook(string id, Book book)
@@ -85,7 +118,9 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                     updatingBook.Name = book.Name;
                     updatingBook.Description = book.Description;
                     updatingBook.AuthorId = authorId;
+
                     db.Entry(updatingBook).State = EntityState.Modified;
+
                     try
                     {
                         DbResult = await db.SaveChangesAsync();
@@ -96,6 +131,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                     }
                 }
             }
+
             return DbResult;
         }
 
@@ -103,6 +139,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
         {
             int DbResult = 0;
             BookPostgreSql book = null;
+
             if (!String.IsNullOrEmpty(id))
             {
                 int delBookId = Convert.ToInt32(id);
@@ -114,6 +151,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                     DbResult = await db.SaveChangesAsync();
                 }
             }
+
             return DbResult;
         }
 
@@ -130,6 +168,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                     result = PostgreSqlDataConvert.GetIEnumerubleDbResult();
                 }
             }
+
             return result;
         }
     }

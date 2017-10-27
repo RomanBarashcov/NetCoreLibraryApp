@@ -25,22 +25,22 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
             transition('void => *', [
                 style({ transform: 'translateX(0px)', opacity: 0 }),
                 group([
-                    animate('0.5s 0.1s ease', style({
+                    animate('1s  ease', style({
                         transform: 'translateX(0)',
 
                     })),
-                    animate('0.5s ease', style({
+                    animate('1s ease', style({
                         opacity: 1
                     }))
                 ])
             ]),
             transition('* => void', [
                 group([
-                    animate('0.5s ease', style({
+                    animate('0s ease', style({
                         transform: 'translateX(0px)',
 
                     })),
-                    animate('0.5s 0.2s ease', style({
+                    animate('0s  ease', style({
                         opacity: 0
                     }))
                 ])
@@ -96,14 +96,18 @@ export class BookComponent {
     }
 
     animate() {
+
         this.state = (this.state === '' ? 'in' : '');
+
     }
 
 
     sort(property: string) {
+
         this.isDesc = !this.isDesc;
         this.column = property;
         this.direction = this.isDesc ? 1 : -1;
+
     };
 
     loadBooks() {
@@ -111,7 +115,9 @@ export class BookComponent {
         this.booksViewModel = [];
 
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe((isAuthorized: boolean) => {
+
             this.isAuthorized = isAuthorized;
+
         });
 
         this.authService.get(this.bookApiUrl).subscribe(result => {
@@ -125,7 +131,9 @@ export class BookComponent {
                     for (let b of this.books) {
 
                         if (a.id == b.authorId) {
+
                             this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
+
                         }
 
                     }
@@ -141,10 +149,13 @@ export class BookComponent {
             }
 
             this.animate();
+
         },
             error => {
+
                 this.statusMessage = error;
                 console.log(error);
+
             });
 
     }
@@ -154,7 +165,9 @@ export class BookComponent {
         this.booksViewModel = [];
 
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe((isAuthorized: boolean) => {
+
             this.isAuthorized = isAuthorized;
+
         });
 
         this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id).subscribe(result => {
@@ -168,7 +181,9 @@ export class BookComponent {
                     for (let b of this.books) {
 
                         if (a.id == b.authorId) {
+
                             this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
+
                         }
                     }
                 }
@@ -183,13 +198,19 @@ export class BookComponent {
                 }
             }
             else {
+
                 this.booksViewModel = [];
+
             }
+
             this.hiddenAuthorId = id;
+
         },
             error => {
+
                 this.statusMessage = error;
                 console.log(error);
+
             });
     }
 
@@ -202,13 +223,17 @@ export class BookComponent {
             if (this.hiddenAuthorId != undefined) {
 
                 let author: Author = this.loadAuthorById(this.hiddenAuthorId);
+
                 if (author.id != null && author.name != null && author.surname != null) {
 
                     this.editedBook = new BookViewModel("", 0, "", "", this.hiddenAuthorId, author.name, author.surname);
+
                 }
             }
             else {
+
                 this.editedBook = new BookViewModel("", 0, "", "", "0", "", "");
+
             }
 
             this.booksViewModel.push(this.editedBook);
@@ -220,7 +245,9 @@ export class BookComponent {
             }
         }
         else {
+
             this.statusMessage = "Please log in!";
+
         }
     }
 
@@ -233,11 +260,13 @@ export class BookComponent {
             if (author.id != null && author.name != null && author.surname != null) {
 
                 this.editedBook = new BookViewModel(book.id, book.year, book.name, book.description, book.authorId, book.authorName, book.authorSurname);
+
             }
 
         } else {
 
             this.statusMessage = "Please log in!";
+
         }
     }
 
@@ -269,9 +298,11 @@ export class BookComponent {
                 }
             },
                 error => {
+
                     this.statusMessage = error + ' Check all your data, and try again! ';
                     console.log(error);
                     this.loadBooks();
+
                 });
 
             this.isNewRecord = false;
@@ -287,12 +318,15 @@ export class BookComponent {
 
                     this.statusMessage = 'Updated successfully!';
                     this.loadBooks();
+
                 }
             },
                 error => {
+
                     this.statusMessage = error + ' Check all your data, and try again! ';
                     console.log(error);
                     this.loadBooks();
+
                 });
 
             this.editedBook = this.editedBookNull;
@@ -305,9 +339,12 @@ export class BookComponent {
 
             this.booksViewModel.pop();
             this.isNewRecord = false;
+
         }
         else {
+
             this.booksViewModel.pop();
+
         }
 
         this.activateRoute.params.subscribe((params) => {
@@ -322,21 +359,27 @@ export class BookComponent {
     deleteBook(book: Book) {
 
         if (this.isAuthorized) {
+
             this.authService.delete(this.bookApiUrl + "/" + book.id).subscribe((resp: Response) => {
 
                 if (resp.status == 200) {
 
                     this.statusMessage = 'Deleted successfully!';
                     this.loadBooks();
+
                 }
             },
                 error => {
+
                     this.statusMessage = error;
                     console.log(error);
+
                 });
         }
         else {
+
             this.statusMessage = "Please log in!";
+
         }
     }
 
@@ -349,13 +392,17 @@ export class BookComponent {
             this.authors = result.json();
 
             if (this.authors == null) {
+
                 this.authors = [];
+
             }
 
         },
             error => {
+
                 this.statusMessage = error;
                 console.log(error);
+
             });
 
     }
@@ -369,7 +416,9 @@ export class BookComponent {
             for (let a of this.authors) {
 
                 if (a.id == authorId) {
+
                     result = new Author(a.id, a.name, a.surname);
+
                 }
             }
         }
@@ -378,13 +427,16 @@ export class BookComponent {
     }
 
     onAuthorSelect(authorId: string) {
+
         this.editedBook.authorId = authorId;
+
     }
 
 
     addFile(): void {
 
         let fi = this.fileInput.nativeElement;
+
         if (fi.files && fi.files[0]) {
 
             let fileToUpload = fi.files[0];
@@ -394,14 +446,23 @@ export class BookComponent {
 
             this.http.post(this.documentApiUrl + "/Upload/", data)
                 .subscribe(res => {
+
+                    if (res.status == 200) {
+
+                        this.loadBooks();
+
+                    }
                     console.log(res);
                 });
         }
     } 
 
     setPage(page: number) {
+
         if (page < 1 || page > this.pager.totalPages) {
+
             return;
+
         }
 
         // get pager object from service

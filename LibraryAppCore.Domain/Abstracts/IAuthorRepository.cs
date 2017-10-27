@@ -9,7 +9,7 @@ namespace LibraryAppCore.Domain.Abstracts
     public interface IAuthorRepository
     {
         Task<IEnumerable<Author>> GetAllAuthors();
-        Task<int> GetAuthorIdByFullName(string firstName, string lastName);
+        Task<string> GetAuthorIdByName(string firstName, string surName);
         Task<Author> GetAuthorById(string authorId);
         Task<int> CreateAuthor(Author author);
         Task<int> UpdateAuthor(string authorId, Author author);

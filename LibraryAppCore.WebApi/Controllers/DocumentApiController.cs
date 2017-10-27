@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using LibraryAppCore.Domain.Entities.MsSql;
 using System.Threading.Tasks;
+using LibraryAppCore.Domain.Entities;
 
 namespace LibraryAppCore.WebApi.Controllers
 {
@@ -31,13 +32,15 @@ namespace LibraryAppCore.WebApi.Controllers
             if (file == null) return BadRequest("File is null");
             if (file.Length == 0) return BadRequest("File is empty");
 
-            List<BookPostgreSql> books = repository.ReadDocument(file);
+            List<Book> books = await repository.ReadDocumentAsync(file);
 
             if(books != null)
             {
                 bool result = await repository.SaveData(books);
                 if (result)
                     return Ok("Data added successfully");
+                else
+                    return Ok("All data is dublicating!");
             }
 
             return BadRequest("Error");

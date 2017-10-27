@@ -51,23 +51,34 @@ export class DbConnectionComponent implements OnDestroy {
     state: string = '';
     
     constructor(private serv: DbConnectionService, private activatedRoute: ActivatedRoute, private router: Router) {
+
         this.sub = activatedRoute.params.subscribe();
+
     }
     
     animateMe() {
+
         this.state = (this.state === '' ? 'in' : '');
+
     }
     
     choseDb(conString: string) {
+
         this.conStringDb = new DbConnection(conString);
         console.log("Chosed Db Connection: " + this.conStringDb);
+
         this.serv.sendConnectionString(this.conStringDb).subscribe(error => { this.error = error; console.log(error); });
+
         if (this.error != null) {
+
             this.chosedDb = " Chosed " + conString + " Db successful! You can chose any tab!";
+
         }
     }
 
     ngOnDestroy() {
+
         this.sub.unsubscribe();
+
     }
 }

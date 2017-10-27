@@ -1,4 +1,5 @@
-﻿using LibraryAppCore.Domain.Entities.MsSql;
+﻿using LibraryAppCore.Domain.Entities;
+using LibraryAppCore.Domain.Entities.MsSql;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace LibraryAppCore.Domain.Abstracts
 {
     public interface IDocumentRepository
     {
-        List<BookPostgreSql> ReadDocument(IFormFile file);
-        Task<bool> SaveData(List<BookPostgreSql> books);
+        Task <List<Book>> ReadDocumentAsync(IFormFile file);
+        Task<bool> SaveData(List<Book> books);
     }
 }

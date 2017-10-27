@@ -19,26 +19,26 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     providers: [AuthService, Config],
     animations: [
         trigger('flyInOut', [
-            state('in', style({transform: 'translateX(0)', opacity: 1})),
+            state('in', style({ transform: 'translateX(0)', opacity: 1 })),
             transition('void => *', [
-                style({transform: 'translateX(0px)', opacity: 0}),
+                style({ transform: 'translateX(0px)', opacity: 0 }),
                 group([
-                    animate('0.5s 0.1s ease', style({
+                    animate('1s  ease', style({
                         transform: 'translateX(0)',
-                        
+
                     })),
-                    animate('0.5s ease', style({
+                    animate('1s ease', style({
                         opacity: 1
                     }))
                 ])
             ]),
             transition('* => void', [
                 group([
-                    animate('0.5s ease', style({
+                    animate('0s ease', style({
                         transform: 'translateX(0px)',
-          
+
                     })),
-                    animate('0.5s 0.2s ease', style({
+                    animate('0s  ease', style({
                         opacity: 0
                     }))
                 ])
@@ -73,153 +73,219 @@ export class AuthorComponent implements OnInit {
     direction: number;
 
     constructor(private authService: AuthService, private config: Config, private pagerService: PagerService, private router: Router) {
+
         this.authorApiUrl = this.config.AuthorsApiUrl;
+
     }
 
     animate() {
+
         this.state = (this.state === '' ? 'in' : '');
+
     }
 
     sort(property: string) {
+
         this.isDesc = !this.isDesc;
         this.column = property;
         this.direction = this.isDesc ? 1 : -1;
+
     };
 
     ngOnInit() {
         
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe(
+
             (isAuthorized: boolean) => {
+
                 this.isAuthorized = isAuthorized;
+
             });
         
         this.authService.get(this.authorApiUrl).subscribe(result => {
 
             this.authors = result.json();
             if (this.authors != null) {
+
                 this.setPage(1);
+
             } else {
+
                 this.setPage(0);
                 this.authors = [];
+
             }
                 this.animate();
                 this.state = "in";
         },
             error => {
+
                 this.statusMessage = error;
                 console.log(error);
+
             });
     }
 
     addAuthor() {
+
         if (this.isAuthorized) {
+
             this.editedAuthor = new Author("", "", "");
             this.authors.push(this.editedAuthor);
             this.pagedAuthorItems = this.authors;
             this.isNewRecord = true;
+
             if (this.pager.totalPages > 0) {
+
                 this.setPage(this.pager.totalPages);
+
             }
         }
-        else{
+        else {
+
             this.statusMessage = "Please log in!";
+
         }
     }
 
     editAuthor(author: Author) {
-        if (this.isAuthorized){
+
+        if (this.isAuthorized) {
+
             this.editedAuthor = new Author(author.id, author.name, author.surname);   
+
         }
         else {
+
             this.statusMessage = "Please log in!";
+
         }
     }
 
     loadTemplate(author: Author) {
+
         if (this.editedAuthor && this.editedAuthor.id == author.id) {
+
             return this.editTemplate;
+
         } else {
+
             return this.readOnlyTemplate;
+
         }
     }
 
     saveAuthor() {
+
         if (this.isNewRecord) {
+
             this.authService.post(this.authorApiUrl, this.editedAuthor).subscribe((resp: Response) => {
+
                 if (resp.status == 200) {
+
                     this.statusMessage = 'Saved successfully!';
                     this.editedAuthor = this.editAuthorNull;
                     this.ngOnInit();
+
                 }
             },
                 error => {
+
                     this.statusMessage = error + ' Check all your data, and try again! ';
                     console.log(error);
                     this.ngOnInit();
+
                 });
 
             this.isNewRecord = false;
 
         } else {
+
             this.authService.put(this.authorApiUrl + "/" + this.editedAuthor.id, this.editedAuthor).subscribe((resp: Response) => {
+
                 if (resp.status == 200) {
+
                     this.statusMessage = 'Updated successfully!';
                     this.editedAuthor = this.editAuthorNull;
                     this.ngOnInit();
+
                 }
             },
                 error => {
+
                     this.statusMessage = error + ' Check all your data, and try again! ';
                     console.log(error);
                     this.ngOnInit();
+
                 });
         }
     }
 
     cancel() {
+
         if (this.isNewRecord) {
+
             this.authors.pop();
             this.isNewRecord = false;
+
         }
         else {
+
             this.authors.pop();
+
         }
+
         this.ngOnInit();
         this.editedAuthor = this.editAuthorNull;
+
     }
 
     deleteAuthor(author: Author) {
 
         if (this.isAuthorized) {
+
             this.authService.delete(this.authorApiUrl + "/" + author.id).subscribe((resp: Response) => {
+
                 if (resp.status == 200) {
-                    this.statusMessage = 'Deleted successfully!';
-                    this.ngOnInit();
-                    }
+
+                      this.statusMessage = 'Deleted successfully!';
+                      this.ngOnInit();
+
+                   }
                 },
                 error => {
+
                     this.statusMessage = error;
                     console.log(error);
                     this.ngOnInit();
+
                 });
         }
         else {
+
             this.statusMessage = "Please log in!";
+
         }
     }
 
     routeToBooks(author: Author) {
+
         this.router.navigate(['/bookByAuthor', author.id]);
+
     }
 
     setPage(page: number) {
+
         if (page < 1 || page > this.pager.totalPages) {
+
             return;
+
         }
         // get pager object from service
         this.pager = this.pagerService.getPager(this.authors.length, page);
 
         // get current page of items
         this.pagedAuthorItems = this.authors.slice(this.pager.startIndex, this.pager.endIndex + 1);
+
     }
 }
