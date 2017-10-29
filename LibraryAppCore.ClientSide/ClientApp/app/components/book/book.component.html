@@ -63,14 +63,14 @@
             </li>
         </ul>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2" *ngIf="isAuthorized">
         <label class="btn btn-default btn-file">
             Upload <input #fileInput type="file" style="display: none;" accept=".xls,.xlsx" />
         </label>
         <button class="btn btn-success" (click)="addFile()" >Send File</button>
     </div>
     </div>
-<div>{{statusMessage}}</div>
+<div class="status-message danger">{{statusMessage}}</div>
 
 
 <ng-template #readOnlyTemplate let-book>
@@ -107,7 +107,7 @@
     <td>
         <select class="form-control" (change)="onAuthorSelect($event.target.value)" name="authorId">
             <option value="editedBook.authorId"> {{ editedBook.authorId + " - " + editedBook.authorName + " " + editedBook.authorSurname + " (Selected) " }} </option>
-            <option> ___All__Authors____ </option>
+            <option> ____All____Authors____ </option>
             <option value="{{a.id}}" *ngFor="let a of authors">
                 {{a.id}} - {{a.name + " " + a.surname}}
             </option>

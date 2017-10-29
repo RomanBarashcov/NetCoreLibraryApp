@@ -25,7 +25,7 @@ namespace LibraryAppCore.WebApi.Controllers
             return Ok("Connection success!");
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("/DocumentApi/Upload/")]
         public async Task<IActionResult> Upload([FromForm] IFormFile file)
         {

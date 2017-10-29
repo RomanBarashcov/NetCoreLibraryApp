@@ -44,7 +44,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
             if (dataReqiered.IsDataNoEmpty(book))
             {
-                bool isNewBook = CheckingBookOnDuplicate(book);
+                bool isNewBook = await CheckingBookOnDuplicate(book);
 
                 if (isNewBook)
                 {
@@ -67,7 +67,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             return DbResult;
         }
 
-        private bool CheckingBookOnDuplicate(Book book)
+        private async Task<bool> CheckingBookOnDuplicate(Book book)
         {
             int authorId = 0;
             bool isNewBook = false;
@@ -76,9 +76,9 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             {
                 authorId = Convert.ToInt32(book.AuthorId);
 
-                var createdBook = db.Books.Where(b => b.AuthorId == authorId && (b.Name == book.Name && b.Description == book.Description));
+                var createdBook = await db.Books.Where(b => b.AuthorId == authorId && (b.Name == book.Name && b.Description == book.Description)).ToListAsync();
 
-                if (createdBook != null)
+                if (createdBook.Count > 0)
                 {
                     isNewBook = false;
                 }

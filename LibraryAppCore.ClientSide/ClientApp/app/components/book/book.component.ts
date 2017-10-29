@@ -101,7 +101,6 @@ export class BookComponent {
 
     }
 
-
     sort(property: string) {
 
         this.isDesc = !this.isDesc;
@@ -124,13 +123,13 @@ export class BookComponent {
 
             this.books = result.json();
 
-            if (this.books != null && this.authors != null) {
+            if (this.books.length > 0 && this.authors.length > 0) {
 
-                for (let a of this.authors) {
+                for (let b of this.books) {
 
-                    for (let b of this.books) {
+                    for (let a of this.authors) {
 
-                        if (a.id == b.authorId) {
+                        if (a.id === b.authorId) {
 
                             this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
 
@@ -139,11 +138,14 @@ export class BookComponent {
                     }
                 }
 
+                console.log("loadBooks() component result: " + this.booksViewModel);
+
                 this.setPage(1);
 
             } else {
 
                 this.setPage(0);
+
                 this.books = [];
 
             }
@@ -174,13 +176,13 @@ export class BookComponent {
 
             this.books = result.json();
 
-            if (this.books != null && this.authors != null) {
+            if (this.books.length > 0 && this.authors.length > 0) {
 
-                for (let a of this.authors) {
+                for (let b of this.books) {
 
-                    for (let b of this.books) {
+                    for (let a of this.authors) {
 
-                        if (a.id == b.authorId) {
+                        if (a.id === b.authorId) {
 
                             this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
 
@@ -189,7 +191,7 @@ export class BookComponent {
                 }
 
                 this.pagedBookItems = this.booksViewModel;
-                console.log("loadBookByAuthor() component result: " + this.books);
+                console.log("loadBookByAuthor() component result: " + this.booksViewModel);
 
                 if (this.pager.totalPages > 0) {
 
@@ -411,7 +413,7 @@ export class BookComponent {
 
         let result: Author = new Author("", "", "");
 
-        if (this.authors != null) {
+        if (this.authors.length > 0) {
 
             for (let a of this.authors) {
 
@@ -444,15 +446,27 @@ export class BookComponent {
             data.append("file", fileToUpload);
 
 
-            this.http.post(this.documentApiUrl + "/Upload/", data)
+            this.authService.postFormData(this.documentApiUrl + "/Upload/", data)
                 .subscribe(res => {
 
-                    if (res.status == 200) {
+                    if (res.status == 200 && res.text() == "Data added successfully") {
 
                         this.loadBooks();
 
                     }
+                    else if (res.status == 200 && res.text() == "All data is dublicating!") {
+
+                        this.statusMessage = res.text();
+
+                    }
+                    else {
+
+                        this.statusMessage = res.text();
+
+                    }
+
                     console.log(res);
+
                 });
         }
     } 
