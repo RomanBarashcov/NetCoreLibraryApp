@@ -131,9 +131,6 @@ export class BookComponent implements OnDestroy {
 
                 this.books = result.json();
 
-                console.log(" Books Result: " + this.books);
-                console.log(" Authors Result: " + this.authors);
-
                 if (this.books.length > 0 && this.authors.length > 0) {
 
                     for (let b of this.books) {
@@ -148,8 +145,6 @@ export class BookComponent implements OnDestroy {
 
                         }
                     }
-
-                    console.log("loadBooks() component result: " + this.booksViewModel);
 
                     this.setPage(1);
 
@@ -205,7 +200,6 @@ export class BookComponent implements OnDestroy {
                     }
 
                     this.pagedBookItems = this.booksViewModel;
-                    console.log("loadBookByAuthor() component result: " + this.booksViewModel);
 
                     this.setPage(1);
                 }
@@ -409,9 +403,9 @@ export class BookComponent implements OnDestroy {
             if (this.authors == null) {
 
                 this.authors = [];
-                console.log("Authors have null result!!!");
+
             }
-            console.log("Authors have result!!!!!!!!!!!!!!: " + this.authors);
+
         },
             error => {
 
