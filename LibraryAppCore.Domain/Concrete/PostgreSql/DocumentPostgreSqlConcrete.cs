@@ -130,7 +130,6 @@ namespace LibraryAppCore.Domain.Concrete
 
                     if(dbresult == 1)
                     {
-                        operationSuccess = true;
                         operationSuccessCount = + 1;
                     }
                 }

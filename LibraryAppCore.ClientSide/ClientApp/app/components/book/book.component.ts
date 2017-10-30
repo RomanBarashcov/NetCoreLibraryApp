@@ -48,7 +48,7 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
         ])
     ]
 })
-export class BookComponent {
+export class BookComponent implements OnDestroy {
 
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
@@ -95,6 +95,12 @@ export class BookComponent {
         this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
     }
 
+    ngOnDestroy() {
+
+        this.sub.unsubscribe();
+
+    }
+
     animate() {
 
         this.state = (this.state === '' ? 'in' : '');
@@ -119,47 +125,53 @@ export class BookComponent {
 
         });
 
-        this.authService.get(this.bookApiUrl).subscribe(result => {
+        setTimeout(() => {
 
-            this.books = result.json();
+            this.authService.get(this.bookApiUrl).subscribe(result => {
 
-            if (this.books.length > 0 && this.authors.length > 0) {
+                this.books = result.json();
 
-                for (let b of this.books) {
+                console.log(" Books Result: " + this.books);
+                console.log(" Authors Result: " + this.authors);
 
-                    for (let a of this.authors) {
+                if (this.books.length > 0 && this.authors.length > 0) {
 
-                        if (a.id === b.authorId) {
+                    for (let b of this.books) {
 
-                            this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
+                        for (let a of this.authors) {
+
+                            if (a.id === b.authorId) {
+
+                                this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
+
+                            }
 
                         }
-
                     }
+
+                    console.log("loadBooks() component result: " + this.booksViewModel);
+
+                    this.setPage(1);
+
+                } else {
+
+                    this.setPage(0);
+
+                    this.books = [];
+
                 }
 
-                console.log("loadBooks() component result: " + this.booksViewModel);
+                this.animate();
 
-                this.setPage(1);
+            },
+                error => {
 
-            } else {
+                    this.statusMessage = error;
+                    console.log(error);
 
-                this.setPage(0);
+                });
 
-                this.books = [];
-
-            }
-
-            this.animate();
-
-        },
-            error => {
-
-                this.statusMessage = error;
-                console.log(error);
-
-            });
-
+        }, 200);
     }
 
     loadBookByAuthor(id: string) {
@@ -172,48 +184,49 @@ export class BookComponent {
 
         });
 
-        this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id).subscribe(result => {
+        setTimeout(() => {
 
-            this.books = result.json();
+            this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id).subscribe(result => {
 
-            if (this.books.length > 0 && this.authors.length > 0) {
+                this.books = result.json();
 
-                for (let b of this.books) {
+                if (this.books.length > 0 && this.authors.length > 0) {
 
-                    for (let a of this.authors) {
+                    for (let b of this.books) {
 
-                        if (a.id === b.authorId) {
+                        for (let a of this.authors) {
 
-                            this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
+                            if (a.id === b.authorId) {
 
+                                this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
+
+                            }
                         }
                     }
+
+                    this.pagedBookItems = this.booksViewModel;
+                    console.log("loadBookByAuthor() component result: " + this.booksViewModel);
+
+                    this.setPage(1);
+                }
+                else {
+
+                    this.booksViewModel = [];
+
+                    this.setPage(0);
+
                 }
 
-                this.pagedBookItems = this.booksViewModel;
-                console.log("loadBookByAuthor() component result: " + this.booksViewModel);
+                this.hiddenAuthorId = id;
 
-                if (this.pager.totalPages > 0) {
+            },
+                error => {
 
-                    this.setPage(this.pager.totalPages);
+                    this.statusMessage = error;
+                    console.log(error);
 
-                }
-            }
-            else {
-
-                this.booksViewModel = [];
-
-            }
-
-            this.hiddenAuthorId = id;
-
-        },
-            error => {
-
-                this.statusMessage = error;
-                console.log(error);
-
-            });
+                });
+        }, 200);
     }
 
     addBook() {
@@ -388,7 +401,7 @@ export class BookComponent {
     loadAuthors() {
 
         this.authors = [];
-
+        
         this.authService.get(this.authorApiUrl).subscribe(result => {
 
             this.authors = result.json();
@@ -396,9 +409,9 @@ export class BookComponent {
             if (this.authors == null) {
 
                 this.authors = [];
-
+                console.log("Authors have null result!!!");
             }
-
+            console.log("Authors have result!!!!!!!!!!!!!!: " + this.authors);
         },
             error => {
 
