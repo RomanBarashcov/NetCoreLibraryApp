@@ -171,7 +171,7 @@ export class BookComponent implements OnDestroy {
 
                 });
 
-        }, 200);
+        }, 250);
     }
 
     loadBookByAuthor(id: string) {
@@ -226,7 +226,7 @@ export class BookComponent implements OnDestroy {
                     console.log(error);
 
                 });
-        }, 200);
+        }, 250);
     }
 
     addBook() {
