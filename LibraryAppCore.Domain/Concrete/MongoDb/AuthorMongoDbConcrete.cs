@@ -28,7 +28,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             this.pagination = paging;
         }
 
-        public async Task<PagedResults<Author>> GetAllAuthors(int page, string orderBy, bool ascending)
+        public async Task<PagedResults<Author>> GetAllAuthors(int page, int pageSize, string orderBy, bool ascending)
         {
             var builder = Builders<AuthorMongoDb>.Filter;
             var filters = new List<FilterDefinition<AuthorMongoDb>>();
@@ -36,7 +36,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             IEnumerable<AuthorMongoDb> CollectionResult = db.Authors.Find(builder.Empty).ToEnumerable();
             IQueryable<AuthorMongoDb> authorsQueryResult = CollectionResult.AsQueryable();
 
-            PagedResults<AuthorMongoDb> authorPagedResult = await pagination.CreatePagedResultsAsync(authorsQueryResult, page, 10, orderBy, ascending);
+            PagedResults<AuthorMongoDb> authorPagedResult = await pagination.CreatePagedResultsAsync(authorsQueryResult, page, pageSize, orderBy, ascending);
 
             if (authorPagedResult != null)
             {

@@ -27,11 +27,11 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             this.pagination = pagin;
         }
 
-        public async Task<PagedResults<Author>> GetAllAuthors(int page, string orderBy, bool ascending)
+        public async Task<PagedResults<Author>> GetAllAuthors(int page, int pageSize, string orderBy, bool ascending)
         {
             IQueryable<AuthorPostgreSql> authorsQueryResult = db.Authors.AsQueryable();
 
-            PagedResults<AuthorPostgreSql> authorPagedResult = await pagination.CreatePagedResultsAsync(authorsQueryResult, page, 10, orderBy, ascending);
+            PagedResults<AuthorPostgreSql> authorPagedResult = await pagination.CreatePagedResultsAsync(authorsQueryResult, page, pageSize, orderBy, ascending);
 
             if (authorPagedResult != null)
             {

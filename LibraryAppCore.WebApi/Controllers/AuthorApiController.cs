@@ -24,9 +24,9 @@ namespace LibraryAppCore.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<PagedResults<Author>> GetAuthors(int page, string orderBy, bool ascending)
+        public async Task<PagedResults<Author>> GetAuthors(int page, int pageSize, string orderBy, bool ascending)
         {
-            PagedResults<Author> Authors = await repository.GetAllAuthors(page, orderBy, ascending);
+            PagedResults<Author> Authors = await repository.GetAllAuthors(page, pageSize, orderBy, ascending);
             return Authors;
         }
 

@@ -23,9 +23,9 @@ namespace LibraryAppCore.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<PagedResults<Book>> GetBooks(int page, string orderBy, bool ascending)
+        public async Task<PagedResults<Book>> GetBooks(int page, int pageSize, string orderBy, bool ascending)
         {
-            PagedResults<Book> Books = await repository.GetAllBooks(page, orderBy, ascending);
+            PagedResults<Book> Books = await repository.GetAllBooks(page, pageSize, orderBy, ascending);
             return Books;
         }
 
@@ -91,13 +91,13 @@ namespace LibraryAppCore.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet("/BookApi/GetBookByAuthorId/{id}")]
-        public async Task<PagedResults<Book>> GetBookByAuthorId(string id, int page, string orderBy, bool ascending)
+        public async Task<PagedResults<Book>> GetBookByAuthorId(string id, int page, int pageSize, string orderBy, bool ascending)
         {
             PagedResults<Book> Books = null;
 
             if (!String.IsNullOrEmpty(id))
             {
-                Books = await repository.GetBookByAuthorId(id, page,orderBy, ascending);
+                Books = await repository.GetBookByAuthorId(id, page, pageSize, orderBy, ascending);
             }
 
             return Books;

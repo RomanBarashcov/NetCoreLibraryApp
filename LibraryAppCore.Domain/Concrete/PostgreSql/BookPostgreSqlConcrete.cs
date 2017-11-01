@@ -27,11 +27,11 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             this.pagination = pagin;
         }
 
-        public async Task<PagedResults<Book>> GetAllBooks(int page, string orderBy, bool ascending)
+        public async Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending)
         {
             IQueryable<BookPostgreSql> BookQuery =  db.Books.AsQueryable();
 
-            PagedResults<BookPostgreSql> BookPagedResult = await pagination.CreatePagedResultsAsync(BookQuery, page, 10, orderBy, ascending);
+            PagedResults<BookPostgreSql> BookPagedResult = await pagination.CreatePagedResultsAsync(BookQuery, page, pageSize, orderBy, ascending);
 
             if (BookPagedResult != null)
             {
@@ -160,7 +160,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             return DbResult;
         }
 
-        public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, string orderBy, bool ascending)
+        public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, int pageSize, string orderBy, bool ascending)
         {
             if (!String.IsNullOrEmpty(authorId))
             {
@@ -168,7 +168,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
                 IQueryable<BookPostgreSql> bookQueryResult = db.Books.Where(x => x.AuthorId == author_Id).AsQueryable();
 
-                PagedResults<BookPostgreSql> bookPagedResult = await pagination.CreatePagedResultsAsync(bookQueryResult, page, 10, orderBy, ascending);
+                PagedResults<BookPostgreSql> bookPagedResult = await pagination.CreatePagedResultsAsync(bookQueryResult, page, pageSize, orderBy, ascending);
 
                 if (bookPagedResult != null)
                 {

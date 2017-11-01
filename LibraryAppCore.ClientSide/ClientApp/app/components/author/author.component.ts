@@ -70,12 +70,15 @@ export class AuthorComponent {
     currentOrderBy: string;
     currentAscending: boolean;
     pageSize: number;
+    rowCount: number[] = [5, 10, 20];
+    selectedRowCount: number;
     totalNumberOfPages: number[];
     totalNumberOfRecords: number;
 
     constructor(private authService: AuthService, private config: Config, private router: Router) {
 
         this.authorApiUrl = this.config.AuthorsApiUrl;
+        this.selectedRowCount = 5;
         this.loadAuthors(1, "Id", true);
     }
 
@@ -92,6 +95,13 @@ export class AuthorComponent {
 
     };
 
+    onRowCountSelected(rowCoutn: number) {
+
+        this.selectedRowCount = rowCoutn;
+        this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
+
+    }
+
     loadAuthors(page: number, orderBy: string, ascending: boolean) {
 
         this.currentPage = page;
@@ -106,7 +116,7 @@ export class AuthorComponent {
 
             });
         
-        this.authService.get(this.authorApiUrl + "?page=" + page + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
+        this.authService.get(this.authorApiUrl + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
 
             this.authorPagedResult = result.json();
 

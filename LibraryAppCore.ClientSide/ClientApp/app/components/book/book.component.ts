@@ -84,6 +84,8 @@ export class BookComponent implements OnDestroy {
     currentOrderBy: string;
     currentAscending: boolean;
     pageSize: number;
+    rowCount: number[] = [5, 10, 20];
+    selectedRowCount: number;
     totalNumberOfPages: number[];
     totalNumberOfRecords: number;
 
@@ -93,7 +95,7 @@ export class BookComponent implements OnDestroy {
         this.loadAuthors();
         this.bookApiUrl = this.config.BookApiUrl;
         this.documentApiUrl = this.config.DocumentApiUrl;
-
+        this.selectedRowCount = 5;
         this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id'], 1, "Id", true) : this.loadBooks(1, "Id", true) });
     }
 
@@ -116,6 +118,12 @@ export class BookComponent implements OnDestroy {
 
     };
 
+    onRowCountSelected(rowCoutn: number) {
+
+        this.selectedRowCount = rowCoutn;
+        this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
+    }
+
     loadBooks(page: number, orderBy: string, ascending: boolean) {
 
         this.currentPage = page;
@@ -131,7 +139,7 @@ export class BookComponent implements OnDestroy {
 
         setTimeout(() => {
 
-            this.authService.get(this.bookApiUrl + "?page=" + page + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
+            this.authService.get(this.bookApiUrl + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
 
                 this.bookPagedResult = result.json();
                 this.pageSize = this.bookPagedResult.pageSize;
@@ -188,7 +196,7 @@ export class BookComponent implements OnDestroy {
 
         setTimeout(() => {
 
-            this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id + "?page=" + page + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
+            this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
 
                 this.bookPagedResult = result.json();
 

@@ -25,9 +25,10 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             this.db = context;
             this.mongoDbDataConvert = mDbDataConvert;
             this.dataReqiered = dReqiered;
+            this.pagination = paging;
         }
 
-        public async Task<PagedResults<Book>> GetAllBooks(int page, string orderBy, bool ascending)
+        public async Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending)
         {
             var builder = Builders<BookMongoDb>.Filter;
             var filters = new List<FilterDefinition<BookMongoDb>>();
@@ -35,7 +36,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             IEnumerable<BookMongoDb> CollectionResult =  db.Books.Find(builder.Empty).ToEnumerable();
             IQueryable<BookMongoDb> booksQueryResult = CollectionResult.AsQueryable();
 
-            PagedResults<BookMongoDb> booksPagedResult = await pagination.CreatePagedResultsAsync(booksQueryResult, page, 10, orderBy, ascending);
+            PagedResults<BookMongoDb> booksPagedResult = await pagination.CreatePagedResultsAsync(booksQueryResult, page, pageSize, orderBy, ascending);
 
             if (booksPagedResult != null)
             {
@@ -152,14 +153,14 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             return DbResult;
         }
 
-        public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, string orderBy, bool ascending)
+        public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, int pageSize, string orderBy, bool ascending)
         {
             if (!String.IsNullOrEmpty(authorId))
             {
                 IEnumerable<BookMongoDb> BooksByAuthor = db.Books.Find(new BsonDocument("AuthorId", authorId)).ToEnumerable();
                 IQueryable<BookMongoDb> booksQueryResult = BooksByAuthor.AsQueryable();
 
-                PagedResults<BookMongoDb> booksPagedResult = await pagination.CreatePagedResultsAsync(booksQueryResult, page, 10, orderBy, ascending);
+                PagedResults<BookMongoDb> booksPagedResult = await pagination.CreatePagedResultsAsync(booksQueryResult, page, pageSize, orderBy, ascending);
 
                 if (booksPagedResult != null)
                 {

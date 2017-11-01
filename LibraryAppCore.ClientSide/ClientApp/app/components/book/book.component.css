@@ -15,3 +15,8 @@
 .text-area {
     resize: none;
 }
+.row-count {
+    display: unset;
+    width: 94px;
+    padding: 6px 1px;
+}

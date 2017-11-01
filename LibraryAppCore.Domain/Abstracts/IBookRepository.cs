@@ -9,10 +9,10 @@ namespace LibraryAppCore.Domain.Abstracts
 {
     public interface IBookRepository
     {
-        Task<PagedResults<Book>> GetAllBooks(int page, string orderBy, bool ascending);
+        Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending);
         Task<int> CreateBook(Book book);
         Task<int> UpdateBook(string bookId, Book book);
         Task<int> DeleteBook(string bookId);
-        Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, string orderBy, bool ascending);
+        Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, int pageSize, string orderBy, bool ascending);
     }
 }
