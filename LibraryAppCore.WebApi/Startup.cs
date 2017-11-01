@@ -15,6 +15,7 @@ using LibraryAppCore.Domain.Concrete.DataRequired;
 using LibraryAppCore.Domain.Entities.MondoDb;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using LibraryAppCore.AuthServer;
+using LibraryAppCore.Domain.Pagination.Concrete;
 
 namespace LibraryAppCore.WebApi
 {
@@ -56,6 +57,7 @@ namespace LibraryAppCore.WebApi
                     policy.WithOrigins(Config.AngularClientUrl)
                         .AllowAnyHeader()
                         .AllowAnyMethod()
+                        .AllowCredentials()
                         .WithExposedHeaders();
                 });
             });
@@ -66,12 +68,20 @@ namespace LibraryAppCore.WebApi
                 if (ConnectionDB.ConnectionString == "DefaultConnection")
                 {
                     services.AddTransient<IConvertDataHelper<AuthorPostgreSql, Author>, AuthorPostgreSqlConvert>();
-                    return new AuthorPostgreSqlConcrete(new LibraryPostgreSqlContext(optionsBuilder.Options), new AuthorPostgreSqlConvert(), new AuthorDataRequired());
+                    return new AuthorPostgreSqlConcrete(
+                        new LibraryPostgreSqlContext(optionsBuilder.Options),
+                        new AuthorPostgreSqlConvert(),
+                        new AuthorDataRequired(), 
+                        new Pagination<AuthorPostgreSql>());
                 }
                 else
                 {
                     services.AddTransient<IConvertDataHelper<AuthorMongoDb, Author>, AuthorMongoDbConvert>();
-                    return new AuthorMongoDbConcrete(new LibraryMongoDbContext(), new AuthorMongoDbConvert(), new AuthorDataRequired());
+                    return new AuthorMongoDbConcrete(
+                        new LibraryMongoDbContext(), 
+                        new AuthorMongoDbConvert(),
+                        new AuthorDataRequired(), 
+                        new Pagination<AuthorMongoDb>());
                 }
 
             });
@@ -84,12 +94,20 @@ namespace LibraryAppCore.WebApi
                 if (ConnectionDB.ConnectionString == "DefaultConnection")
                 {
                     services.AddTransient<IConvertDataHelper<BookPostgreSql, Book>, BookPostgreSqlConvert>();
-                    return new BookPostgreSqlConcrete(new LibraryPostgreSqlContext(optionsBuilder.Options), new BookPostgreSqlConvert(), new BookDataRequired());
+                    return new BookPostgreSqlConcrete(
+                        new LibraryPostgreSqlContext(optionsBuilder.Options),
+                        new BookPostgreSqlConvert(), 
+                        new BookDataRequired(), 
+                        new Pagination<BookPostgreSql>());
                 }
                 else
                 {
                     services.AddTransient<IConvertDataHelper<BookMongoDb, Book>, BookMongoDbConvert>();
-                    return new BookMongoDbConcrete(new LibraryMongoDbContext(), new BookMongoDbConvert(), new BookDataRequired());
+                    return new BookMongoDbConcrete(
+                        new LibraryMongoDbContext(), 
+                        new BookMongoDbConvert(), 
+                        new BookDataRequired(), 
+                        new Pagination<BookMongoDb>());
                 }
             });
 
@@ -101,11 +119,13 @@ namespace LibraryAppCore.WebApi
                         new AuthorPostgreSqlConcrete(
                             new LibraryPostgreSqlContext(optionsBuilder.Options),
                             new AuthorPostgreSqlConvert(),
-                            new AuthorDataRequired()),
+                            new AuthorDataRequired(),
+                            new Pagination<AuthorPostgreSql>()),
                         new BookPostgreSqlConcrete(
                             new LibraryPostgreSqlContext(optionsBuilder.Options),
                             new BookPostgreSqlConvert(),
-                            new BookDataRequired()));
+                            new BookDataRequired(),
+                            new Pagination<BookPostgreSql>()));
                 }
                 else
                 {
@@ -113,11 +133,13 @@ namespace LibraryAppCore.WebApi
                         new AuthorMongoDbConcrete(
                             new LibraryMongoDbContext(),
                             new AuthorMongoDbConvert(),
-                            new AuthorDataRequired()),
+                            new AuthorDataRequired(), 
+                            new Pagination<AuthorMongoDb>()),
                         new BookMongoDbConcrete(
                             new LibraryMongoDbContext(),
                             new BookMongoDbConvert(),
-                            new BookDataRequired()));
+                            new BookDataRequired(),
+                            new Pagination<BookMongoDb>()));
                 }
             });
 

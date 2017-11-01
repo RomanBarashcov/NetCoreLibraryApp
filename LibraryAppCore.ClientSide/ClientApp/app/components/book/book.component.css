@@ -12,3 +12,6 @@
 .status-message {
     margin-top: 30px;
 }
+.text-area {
+    resize: none;
+}

@@ -1,36 +1,52 @@
 ﻿using LibraryAppCore.Domain.Abstracts;
 using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Entities.MondoDb;
-using System;
+using LibraryAppCore.Domain.Pagination;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LibraryAppCore.Domain.Concrete.ConvertData
 {
     public class BookMongoDbConvert : IConvertDataHelper<BookMongoDb, Book>
     {
         private List<BookMongoDb> Books = new List<BookMongoDb>();
-        private BookMongoDb BookMongoDB = new BookMongoDb();
-        private Book booksNode = new Book();
+        private Book formatedBooks = new Book();
         private List<Book> ListBook = new List<Book>();
-        private IEnumerable<Book> result = null;
+        private PagedResults<Book> pagedResultFormated = new PagedResults<Book>();
 
-        public void InitData(List<BookMongoDb> books)
+        public void InitData(PagedResults<BookMongoDb> books)
         {
-            Books = books;
+            Books = books.Results;
+            initPaginationInfo(books);
         }
 
-        public IEnumerable<Book> GetIEnumerubleDbResult()
+        private void initPaginationInfo(PagedResults<BookMongoDb> booksPagInfo)
         {
-            foreach (BookMongoDb b in Books)
+            pagedResultFormated.PageNumber = booksPagInfo.PageNumber;
+            pagedResultFormated.PageSize = booksPagInfo.PageSize;
+            pagedResultFormated.TotalNumberOfPages = booksPagInfo.TotalNumberOfPages;
+            pagedResultFormated.TotalNumberOfRecords = booksPagInfo.TotalNumberOfRecords;
+        }
+
+        public PagedResults<Book> GetFormatedPagedResults()
+        {
+            foreach (BookMongoDb bMongoDb in Books)
             {
-                BookMongoDB = new BookMongoDb { Id = b.Id, Name = b.Name, Year = b.Year, Description = b.Description, AuthorId = b.AuthorId };
-                booksNode = new Book(BookMongoDB);
-                ListBook.Add(booksNode);
-                result = ListBook;
+                formatedBooks = new Book(bMongoDb);
+                ListBook.Add(formatedBooks);
             }
 
-            return result;
+            pagedResultFormated.Results = ListBook;
+            return pagedResultFormated;
+        }
+
+        public void InitData(List<BookMongoDb> data)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<Book> GetFormatedEnumResult()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using LibraryAppCore.Domain.Abstracts;
 using LibraryAppCore.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using LibraryAppCore.Domain.Pagination;
 
 namespace LibraryAppCore.WebApi.Controllers
 {
@@ -25,6 +24,14 @@ namespace LibraryAppCore.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        public async Task<PagedResults<Author>> GetAuthors(int page, string orderBy, bool ascending)
+        {
+            PagedResults<Author> Authors = await repository.GetAllAuthors(page, orderBy, ascending);
+            return Authors;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("/AuthorApi/GetAuthors")]
         public async Task<IEnumerable<Author>> GetAuthors()
         {
             IEnumerable<Author> Authors = await repository.GetAllAuthors();

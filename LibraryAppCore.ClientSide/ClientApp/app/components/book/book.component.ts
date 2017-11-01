@@ -6,12 +6,13 @@ import { Subscription } from 'rxjs/Subscription';
 import { AuthService } from '../../services/auth.service';
 import { Book } from '../../models/book';
 import { BookViewModel } from '../../models/bookViewModel';
+import { BookPagedResult } from '../../models/bookPagedResult';
+import { AuthorPagedResult } from '../../models/authorPagedResult';
 import { Author } from '../../models/author';
 import { Config } from '../../config';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
-import { PagerService } from '../../services/pagination.service';
 import { trigger, state, style, animate, transition, group } from '@angular/animations';
 
 @Component({
@@ -57,20 +58,18 @@ export class BookComponent implements OnDestroy {
     books: Book[] = [];
     authors: Author[] = [];
     booksNull: Book;
+    bookPagedResult: BookPagedResult;
+    authorPagedResult: AuthorPagedResult;
     editedBook: BookViewModel;
     authorData: Author;
     editedBookNull: BookViewModel;
     booksViewModel: BookViewModel[] = [];
-
 
     isNewRecord: boolean;
     statusMessage: string;
     hiddenAuthorId: string;
     private sub: Subscription;
     private id: number;
-    private allItems: any[];
-    pagedBookItems: any[];
-    pager: any = {};
     error: any;
     state: string = '';
 
@@ -81,18 +80,21 @@ export class BookComponent implements OnDestroy {
     isAuthorized: boolean;
     private isAuthorizedSubscription: Subscription;
 
-    isDesc: boolean = false;
-    column: string = 'id';
-    direction: number;
+    currentPage: number;
+    currentOrderBy: string;
+    currentAscending: boolean;
+    pageSize: number;
+    totalNumberOfPages: number[];
+    totalNumberOfRecords: number;
 
-    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config, private http: Http) {
+    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private config: Config, private http: Http) {
 
         this.authorApiUrl = this.config.AuthorsApiUrl;
         this.loadAuthors();
         this.bookApiUrl = this.config.BookApiUrl;
         this.documentApiUrl = this.config.DocumentApiUrl;
 
-        this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
+        this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id'], 1, "Id", true) : this.loadBooks(1, "Id", true) });
     }
 
     ngOnDestroy() {
@@ -107,16 +109,18 @@ export class BookComponent implements OnDestroy {
 
     }
 
-    sort(property: string) {
+    sort(orderBy: string, ascending: boolean) {
 
-        this.isDesc = !this.isDesc;
-        this.column = property;
-        this.direction = this.isDesc ? 1 : -1;
+        ascending = ascending ? false : true;
+        this.loadBooks(this.currentPage, orderBy, ascending);
 
     };
 
-    loadBooks() {
+    loadBooks(page: number, orderBy: string, ascending: boolean) {
 
+        this.currentPage = page;
+        this.currentOrderBy = orderBy;
+        this.currentAscending = ascending;
         this.booksViewModel = [];
 
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe((isAuthorized: boolean) => {
@@ -127,13 +131,16 @@ export class BookComponent implements OnDestroy {
 
         setTimeout(() => {
 
-            this.authService.get(this.bookApiUrl).subscribe(result => {
+            this.authService.get(this.bookApiUrl + "?page=" + page + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
 
-                this.books = result.json();
+                this.bookPagedResult = result.json();
+                this.pageSize = this.bookPagedResult.pageSize;
+                this.totalNumberOfRecords = this.bookPagedResult.totalNumberOfRecords;
+                this.totalNumberOfPages = this.bookPagedResult.totalNumberOfPages;
 
-                if (this.books.length > 0 && this.authors.length > 0) {
+                if (this.bookPagedResult.results != null && this.authors.length > 0) {
 
-                    for (let b of this.books) {
+                    for (let b of this.bookPagedResult.results) {
 
                         for (let a of this.authors) {
 
@@ -146,17 +153,14 @@ export class BookComponent implements OnDestroy {
                         }
                     }
 
-                    this.setPage(1);
-
                 } else {
-
-                    this.setPage(0);
 
                     this.books = [];
 
                 }
 
                 this.animate();
+                this.state = "in";
 
             },
                 error => {
@@ -169,8 +173,11 @@ export class BookComponent implements OnDestroy {
         }, 250);
     }
 
-    loadBookByAuthor(id: string) {
+    loadBookByAuthor(id: string, page: number, orderBy: string, ascending: boolean) {
 
+        this.currentPage = page;
+        this.currentOrderBy = orderBy;
+        this.currentAscending = ascending;
         this.booksViewModel = [];
 
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe((isAuthorized: boolean) => {
@@ -181,13 +188,13 @@ export class BookComponent implements OnDestroy {
 
         setTimeout(() => {
 
-            this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id).subscribe(result => {
+            this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id + "?page=" + page + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
 
-                this.books = result.json();
+                this.bookPagedResult = result.json();
 
-                if (this.books.length > 0 && this.authors.length > 0) {
+                if (this.bookPagedResult.results != null && this.authors.length > 0) {
 
-                    for (let b of this.books) {
+                    for (let b of this.bookPagedResult.results) {
 
                         for (let a of this.authors) {
 
@@ -196,22 +203,18 @@ export class BookComponent implements OnDestroy {
                                 this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
 
                             }
+
                         }
                     }
-
-                    this.pagedBookItems = this.booksViewModel;
-
-                    this.setPage(1);
                 }
                 else {
 
                     this.booksViewModel = [];
-
-                    this.setPage(0);
-
                 }
 
                 this.hiddenAuthorId = id;
+                this.animate();
+                this.state = "in";
 
             },
                 error => {
@@ -246,12 +249,7 @@ export class BookComponent implements OnDestroy {
             }
 
             this.booksViewModel.push(this.editedBook);
-            this.pagedBookItems = this.booksViewModel;
 
-            if (this.pager.totalPages > 0) {
-
-                this.setPage(this.pager.totalPages);
-            }
         }
         else {
 
@@ -302,7 +300,7 @@ export class BookComponent implements OnDestroy {
                 if (resp.status == 200) {
 
                     this.statusMessage = 'Saved successfully!';
-                    this.loadBooks();
+                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 }
             },
@@ -310,7 +308,7 @@ export class BookComponent implements OnDestroy {
 
                     this.statusMessage = error + ' Check all your data, and try again! ';
                     console.log(error);
-                    this.loadBooks();
+                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 });
 
@@ -326,7 +324,7 @@ export class BookComponent implements OnDestroy {
                 if (resp.status == 200) {
 
                     this.statusMessage = 'Updated successfully!';
-                    this.loadBooks();
+                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 }
             },
@@ -334,7 +332,7 @@ export class BookComponent implements OnDestroy {
 
                     this.statusMessage = error + ' Check all your data, and try again! ';
                     console.log(error);
-                    this.loadBooks();
+                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 });
 
@@ -358,7 +356,8 @@ export class BookComponent implements OnDestroy {
 
         this.activateRoute.params.subscribe((params) => {
 
-            params['id'] != null ? this.loadBookByAuthor(this.editedBook.authorId) : this.loadBooks()
+            params['id'] != null ? this.loadBookByAuthor(this.editedBook.authorId, this.currentPage, this.currentOrderBy, this.currentAscending)
+                : this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending)
 
         });
 
@@ -374,7 +373,7 @@ export class BookComponent implements OnDestroy {
                 if (resp.status == 200) {
 
                     this.statusMessage = 'Deleted successfully!';
-                    this.loadBooks();
+                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 }
             },
@@ -396,9 +395,10 @@ export class BookComponent implements OnDestroy {
 
         this.authors = [];
         
-        this.authService.get(this.authorApiUrl).subscribe(result => {
+        this.authService.get(this.authorApiUrl + "/GetAuthors").subscribe(result => {
 
             this.authors = result.json();
+            console.log("Authors Result:" + result);
 
             if (this.authors == null) {
 
@@ -458,7 +458,7 @@ export class BookComponent implements OnDestroy {
 
                     if (res.status == 200 && res.text() == "Data added successfully") {
 
-                        this.loadBooks();
+                        this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                     }
                     else if (res.status == 200 && res.text() == "All data is dublicating!") {
@@ -480,17 +480,7 @@ export class BookComponent implements OnDestroy {
 
     setPage(page: number) {
 
-        if (page < 1 || page > this.pager.totalPages) {
-
-            return;
-
-        }
-
-        // get pager object from service
-        this.pager = this.pagerService.getPager(this.booksViewModel.length, page);
-
-        // get current page of items
-        this.pagedBookItems = this.booksViewModel.slice(this.pager.startIndex, this.pager.endIndex + 1);
+        this.loadBooks(page, this.currentOrderBy, this.currentAscending);
 
     }
 

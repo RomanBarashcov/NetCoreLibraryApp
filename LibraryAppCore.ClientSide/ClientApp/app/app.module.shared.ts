@@ -14,9 +14,6 @@ import { UnauthorizedComponent } from './components/unauthorized/unauthorized.co
 
 import { AuthModule, OidcSecurityService } from 'angular-auth-oidc-client';
 import { AuthService } from './services/auth.service';
-import { PagerService } from './services/pagination.service';
-import { CategoryPipe } from './filter/category.pipe';
-import { OrderrByPipe } from './filter/orderby.pipe';
 import { Config } from './config';
 
 
@@ -28,9 +25,7 @@ import { Config } from './config';
         AuthorComponent,
         BookComponent,
         DbConnectionComponent,
-        UnauthorizedComponent,
-        CategoryPipe,
-        OrderrByPipe
+        UnauthorizedComponent
     ],
     imports: [
         AuthModule.forRoot(),
@@ -47,7 +42,7 @@ import { Config } from './config';
             { path: '**', redirectTo: 'home' }
         ])
     ],
-    providers: [PagerService, Config, AuthService, OidcSecurityService],
+    providers: [Config, AuthService, OidcSecurityService],
     
 })
 export class AppModuleShared {

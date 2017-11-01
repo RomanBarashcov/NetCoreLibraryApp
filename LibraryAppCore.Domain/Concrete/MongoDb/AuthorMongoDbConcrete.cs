@@ -7,21 +7,44 @@ using System.Threading.Tasks;
 using LibraryAppCore.Domain.Entities.MondoDb;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Linq;
+using LibraryAppCore.Domain.Pagination;
 
 namespace LibraryAppCore.Domain.Concrete.MongoDb
 {
     public class AuthorMongoDbConcrete : IAuthorRepository
     {
-        private IEnumerable<Author> result = null;
+        private PagedResults<Author> result = null;
         private IConvertDataHelper<AuthorMongoDb, Author> mongoDbDataConvert;
         private IDataRequired<Author> dataReqiered;
-        LibraryMongoDbContext db;
+        private LibraryMongoDbContext db;
+        private IPagination<AuthorMongoDb> pagination;
 
-        public AuthorMongoDbConcrete(LibraryMongoDbContext context, IConvertDataHelper<AuthorMongoDb, Author> mDbDataConvert, IDataRequired<Author> dReqiered)
+        public AuthorMongoDbConcrete(LibraryMongoDbContext context, IConvertDataHelper<AuthorMongoDb, Author> mDbDataConvert, IDataRequired<Author> dReqiered, IPagination<AuthorMongoDb> paging)
         {
             this.db = context;
             this.mongoDbDataConvert = mDbDataConvert;
             this.dataReqiered = dReqiered;
+            this.pagination = paging;
+        }
+
+        public async Task<PagedResults<Author>> GetAllAuthors(int page, string orderBy, bool ascending)
+        {
+            var builder = Builders<AuthorMongoDb>.Filter;
+            var filters = new List<FilterDefinition<AuthorMongoDb>>();
+
+            IEnumerable<AuthorMongoDb> CollectionResult = db.Authors.Find(builder.Empty).ToEnumerable();
+            IQueryable<AuthorMongoDb> authorsQueryResult = CollectionResult.AsQueryable();
+
+            PagedResults<AuthorMongoDb> authorPagedResult = await pagination.CreatePagedResultsAsync(authorsQueryResult, page, 10, orderBy, ascending);
+
+            if (authorPagedResult != null)
+            {
+                mongoDbDataConvert.InitData(authorPagedResult);
+                result = mongoDbDataConvert.GetFormatedPagedResults();
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<Author>> GetAllAuthors()
@@ -30,15 +53,17 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             var filters = new List<FilterDefinition<AuthorMongoDb>>();
 
             List<AuthorMongoDb> CollectionResult = await db.Authors.Find(builder.Empty).ToListAsync();
+            IEnumerable<Author> authorEnumResult = null;
 
             if (CollectionResult != null)
             {
                 mongoDbDataConvert.InitData(CollectionResult);
-                result = mongoDbDataConvert.GetIEnumerubleDbResult();
+                authorEnumResult = mongoDbDataConvert.GetFormatedEnumResult();
             }
 
-            return result;
+            return authorEnumResult;
         }
+
 
         public async Task<string> GetAuthorIdByName(string firstName, string surName)
         {
@@ -142,10 +167,8 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             if (!String.IsNullOrEmpty(authorId))
             {
                 List<AuthorMongoDb> CollectionResult = await db.Authors.Find(new BsonDocument("_id", new ObjectId(authorId))).ToListAsync();
-                mongoDbDataConvert.InitData(CollectionResult);
-                IEnumerable<Author> deletingAuthor = mongoDbDataConvert.GetIEnumerubleDbResult();
 
-                if (deletingAuthor != null)
+                if (CollectionResult != null)
                 {
                     await db.Authors.DeleteOneAsync(new BsonDocument("_id", new ObjectId(authorId)));
                     DbResult = 1;

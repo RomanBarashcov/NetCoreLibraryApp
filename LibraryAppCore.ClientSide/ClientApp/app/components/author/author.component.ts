@@ -1,14 +1,14 @@
-﻿import { TemplateRef, ViewChild, Component, OnInit, OnDestroy, Input } from '@angular/core';
+﻿import { TemplateRef, ViewChild, Component, OnDestroy, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 import { Author } from '../../models/author';
+import { AuthorPagedResult } from '../../models/authorPagedResult';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs/Observable';
 import { Config } from '../../config';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
-import { PagerService } from '../../services/pagination.service';
 import { trigger, state, style, animate, transition, group } from '@angular/animations';
 
 
@@ -47,35 +47,36 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     ]
 
 })
-export class AuthorComponent implements OnInit {
+export class AuthorComponent {
     
     @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
     @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
 
     private authorApiUrl: string;
     authors: Author[] = [];
+    authorPagedResult: AuthorPagedResult;
     editedAuthor: Author;
     editAuthorNull: Author;
     isNewRecord: boolean;
     statusMessage: string;
     private sub: Subscription;
-    private allItems: any[];
-    pagedAuthorItems: any[];
-    pager: any = {};
     error: any;
     state: string = '';
     
     isAuthorized: boolean;
     private isAuthorizedSubscription: Subscription;
 
-    isDesc: boolean = false;
-    column: string = 'id';
-    direction: number;
+    currentPage: number;
+    currentOrderBy: string;
+    currentAscending: boolean;
+    pageSize: number;
+    totalNumberOfPages: number[];
+    totalNumberOfRecords: number;
 
-    constructor(private authService: AuthService, private config: Config, private pagerService: PagerService, private router: Router) {
+    constructor(private authService: AuthService, private config: Config, private router: Router) {
 
         this.authorApiUrl = this.config.AuthorsApiUrl;
-
+        this.loadAuthors(1, "Id", true);
     }
 
     animate() {
@@ -84,16 +85,19 @@ export class AuthorComponent implements OnInit {
 
     }
 
-    sort(property: string) {
+    sort(orderBy: string, ascending: boolean) {
 
-        this.isDesc = !this.isDesc;
-        this.column = property;
-        this.direction = this.isDesc ? 1 : -1;
+        ascending = ascending ? false : true;
+        this.loadAuthors(this.currentPage, orderBy, ascending);
 
     };
 
-    ngOnInit() {
-        
+    loadAuthors(page: number, orderBy: string, ascending: boolean) {
+
+        this.currentPage = page;
+        this.currentOrderBy = orderBy;
+        this.currentAscending = ascending;
+
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe(
 
             (isAuthorized: boolean) => {
@@ -102,16 +106,19 @@ export class AuthorComponent implements OnInit {
 
             });
         
-        this.authService.get(this.authorApiUrl).subscribe(result => {
+        this.authService.get(this.authorApiUrl + "?page=" + page + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
 
-            this.authors = result.json();
-            if (this.authors != null) {
+            this.authorPagedResult = result.json();
 
-                this.setPage(1);
+            if (this.authorPagedResult != null) {
+
+                this.authors = this.authorPagedResult.results;
+                this.pageSize = this.authorPagedResult.pageSize;
+                this.totalNumberOfRecords = this.authorPagedResult.totalNumberOfRecords;
+                this.totalNumberOfPages = this.authorPagedResult.totalNumberOfPages;
 
             } else {
 
-                this.setPage(0);
                 this.authors = [];
 
             }
@@ -132,14 +139,8 @@ export class AuthorComponent implements OnInit {
 
             this.editedAuthor = new Author("", "", "");
             this.authors.push(this.editedAuthor);
-            this.pagedAuthorItems = this.authors;
             this.isNewRecord = true;
 
-            if (this.pager.totalPages > 0) {
-
-                this.setPage(this.pager.totalPages);
-
-            }
         }
         else {
 
@@ -185,7 +186,7 @@ export class AuthorComponent implements OnInit {
 
                     this.statusMessage = 'Saved successfully!';
                     this.editedAuthor = this.editAuthorNull;
-                    this.ngOnInit();
+                    this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 }
             },
@@ -193,7 +194,7 @@ export class AuthorComponent implements OnInit {
 
                     this.statusMessage = error + ' Check all your data, and try again! ';
                     console.log(error);
-                    this.ngOnInit();
+                    this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 });
 
@@ -207,7 +208,7 @@ export class AuthorComponent implements OnInit {
 
                     this.statusMessage = 'Updated successfully!';
                     this.editedAuthor = this.editAuthorNull;
-                    this.ngOnInit();
+                    this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 }
             },
@@ -215,7 +216,7 @@ export class AuthorComponent implements OnInit {
 
                     this.statusMessage = error + ' Check all your data, and try again! ';
                     console.log(error);
-                    this.ngOnInit();
+                    this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 });
         }
@@ -235,7 +236,7 @@ export class AuthorComponent implements OnInit {
 
         }
 
-        this.ngOnInit();
+        this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
         this.editedAuthor = this.editAuthorNull;
 
     }
@@ -249,7 +250,7 @@ export class AuthorComponent implements OnInit {
                 if (resp.status == 200) {
 
                       this.statusMessage = 'Deleted successfully!';
-                      this.ngOnInit();
+                      this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                    }
                 },
@@ -257,7 +258,7 @@ export class AuthorComponent implements OnInit {
 
                     this.statusMessage = error;
                     console.log(error);
-                    this.ngOnInit();
+                    this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
 
                 });
         }
@@ -276,16 +277,7 @@ export class AuthorComponent implements OnInit {
 
     setPage(page: number) {
 
-        if (page < 1 || page > this.pager.totalPages) {
-
-            return;
-
-        }
-        // get pager object from service
-        this.pager = this.pagerService.getPager(this.authors.length, page);
-
-        // get current page of items
-        this.pagedAuthorItems = this.authors.slice(this.pager.startIndex, this.pager.endIndex + 1);
+        this.loadAuthors(page, this.currentOrderBy, this.currentAscending);
 
     }
 }

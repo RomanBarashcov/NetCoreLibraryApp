@@ -7,47 +7,53 @@ using System.Threading.Tasks;
 using LibraryAppCore.Domain.Entities.MsSql;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using LibraryAppCore.Domain.Pagination;
 
 namespace LibraryAppCore.Domain.Concrete.MsSql
 {
     public class AuthorPostgreSqlConcrete : IAuthorRepository
     {
-        private IEnumerable<Author> result = null;
+        private PagedResults<Author> result = null;
         private IConvertDataHelper<AuthorPostgreSql, Author> PostgreSqlDataConvert;
         private IDataRequired<Author> dataReqiered;
         private LibraryPostgreSqlContext db;
+        private IPagination<AuthorPostgreSql> pagination;
 
-        public AuthorPostgreSqlConcrete(LibraryPostgreSqlContext context, IConvertDataHelper<AuthorPostgreSql, Author> pSqlDataConvert, IDataRequired<Author> dReqiered)
+        public AuthorPostgreSqlConcrete(LibraryPostgreSqlContext context, IConvertDataHelper<AuthorPostgreSql, Author> pSqlDataConvert, IDataRequired<Author> dReqiered, IPagination<AuthorPostgreSql> pagin)
         {
             this.db = context;
             this.PostgreSqlDataConvert = pSqlDataConvert;
             this.dataReqiered = dReqiered;
+            this.pagination = pagin;
+        }
+
+        public async Task<PagedResults<Author>> GetAllAuthors(int page, string orderBy, bool ascending)
+        {
+            IQueryable<AuthorPostgreSql> authorsQueryResult = db.Authors.AsQueryable();
+
+            PagedResults<AuthorPostgreSql> authorPagedResult = await pagination.CreatePagedResultsAsync(authorsQueryResult, page, 10, orderBy, ascending);
+
+            if (authorPagedResult != null)
+            {
+                PostgreSqlDataConvert.InitData(authorPagedResult);
+                result = PostgreSqlDataConvert.GetFormatedPagedResults();
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<Author>> GetAllAuthors()
         {
-            List<AuthorPostgreSql> AuthorList = await db.Authors.ToListAsync();
+            List<AuthorPostgreSql> authorListResult = await db.Authors.ToListAsync();
+            IEnumerable<Author> auhorsEnumResult = null;
 
-            if (AuthorList != null)
+            if (authorListResult != null)
             {
-                PostgreSqlDataConvert.InitData(AuthorList);
-                result = PostgreSqlDataConvert.GetIEnumerubleDbResult();
-            }
-            return result;
-        }
-
-        public async Task<string> GetAuthorIdByName(string firstName, string surName)
-        {
-            string authorId = "";
-            List<AuthorPostgreSql> author = await db.Authors.Where(a => a.Name == firstName && (a.Surname == surName)).ToListAsync();
-
-            foreach(AuthorPostgreSql a in author)
-            {
-                authorId = Convert.ToString(a.Id);
-                break;
+                PostgreSqlDataConvert.InitData(authorListResult);
+                auhorsEnumResult = PostgreSqlDataConvert.GetFormatedEnumResult();
             }
 
-            return authorId;
+            return auhorsEnumResult;
         }
 
         public async Task<Author> GetAuthorById(string authorId)
@@ -69,6 +75,21 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
             return Author;
         }
+
+        public async Task<string> GetAuthorIdByName(string firstName, string surName)
+        {
+            string authorId = "";
+            List<AuthorPostgreSql> author = await db.Authors.Where(a => a.Name == firstName && (a.Surname == surName)).ToListAsync();
+
+            foreach (AuthorPostgreSql a in author)
+            {
+                authorId = Convert.ToString(a.Id);
+                break;
+            }
+
+            return authorId;
+        }
+
 
         public async Task<int> CreateAuthor(Author author)
         {

@@ -6,8 +6,7 @@ using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Abstracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using LibraryAppCore.Domain.Pagination;
 
 namespace LibraryAppCore.WebApi.Controllers
 {
@@ -24,9 +23,9 @@ namespace LibraryAppCore.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<Book>> GetBooks()
+        public async Task<PagedResults<Book>> GetBooks(int page, string orderBy, bool ascending)
         {
-            IEnumerable<Book> Books = await repository.GetAllBooks();
+            PagedResults<Book> Books = await repository.GetAllBooks(page, orderBy, ascending);
             return Books;
         }
 
@@ -92,13 +91,13 @@ namespace LibraryAppCore.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet("/BookApi/GetBookByAuthorId/{id}")]
-        public async Task<IEnumerable<Book>> GetBookByAuthorId(string id)
+        public async Task<PagedResults<Book>> GetBookByAuthorId(string id, int page, string orderBy, bool ascending)
         {
-            IEnumerable<Book> Books = null;
+            PagedResults<Book> Books = null;
 
             if (!String.IsNullOrEmpty(id))
             {
-                Books = await repository.GetBookByAuthorId(id);
+                Books = await repository.GetBookByAuthorId(id, page,orderBy, ascending);
             }
 
             return Books;

@@ -1,4 +1,5 @@
 ﻿using LibraryAppCore.Domain.Entities;
+using LibraryAppCore.Domain.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,10 +9,10 @@ namespace LibraryAppCore.Domain.Abstracts
 {
     public interface IBookRepository
     {
-        Task<IEnumerable<Book>> GetAllBooks();
+        Task<PagedResults<Book>> GetAllBooks(int page, string orderBy, bool ascending);
         Task<int> CreateBook(Book book);
         Task<int> UpdateBook(string bookId, Book book);
         Task<int> DeleteBook(string bookId);
-        Task<IEnumerable<Book>> GetBookByAuthorId(string authorId);
+        Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, string orderBy, bool ascending);
     }
 }

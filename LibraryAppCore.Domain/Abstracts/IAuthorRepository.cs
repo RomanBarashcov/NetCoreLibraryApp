@@ -1,4 +1,5 @@
 ﻿using LibraryAppCore.Domain.Entities;
+using LibraryAppCore.Domain.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,7 @@ namespace LibraryAppCore.Domain.Abstracts
 {
     public interface IAuthorRepository
     {
+        Task<PagedResults<Author>> GetAllAuthors(int page, string orderBy, bool ascending);
         Task<IEnumerable<Author>> GetAllAuthors();
         Task<string> GetAuthorIdByName(string firstName, string surName);
         Task<Author> GetAuthorById(string authorId);
