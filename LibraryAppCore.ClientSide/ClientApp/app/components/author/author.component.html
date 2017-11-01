@@ -38,7 +38,7 @@
     <ul *ngIf="currentPage && totalNumberOfPages && authors.length > 0" [@flyInOut]="state" class="pagination">
         <li class="pointer">
             <select class="row-count form-control" (change)="onRowCountSelected($event.target.value)" name="rowCount">
-                <option value="5">Row count</option>
+                <option value="5">Row count({{selectedRowCount}})</option>
                 <option value="{{r}}" *ngFor="let r of rowCount">
                     {{r}}
                 </option>
