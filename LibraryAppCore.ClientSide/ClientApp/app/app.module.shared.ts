@@ -14,6 +14,7 @@ import { DbConnectionComponent } from './components/dbconnection/dbcon.component
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 import { NgProgressModule } from 'ngx-progressbar';
+import { SpinnerComponentModule } from 'ng2-component-spinner';
 import { AuthModule, OidcSecurityService } from 'angular-auth-oidc-client';
 import { AuthService } from './services/auth.service';
 import { Config } from './config';
@@ -36,6 +37,7 @@ import { Config } from './config';
         HttpModule,
         FormsModule,
         NgProgressModule,
+        SpinnerComponentModule,
         RouterModule.forRoot([
             { path: 'home', component: HomeComponent },
             { path: 'author', component: AuthorComponent },
