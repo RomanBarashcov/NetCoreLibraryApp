@@ -87,7 +87,8 @@ export class BookComponent implements OnDestroy {
     pageSize: number;
     rowCount: number[] = [5, 10, 20];
     selectedRowCount: number;
-    totalNumberOfPages: number[];
+    countNumberOfPages: number[];
+    totalNumberOfPages: number;
     totalNumberOfRecords: number;
 
     showDialog: boolean = false;
@@ -150,7 +151,8 @@ export class BookComponent implements OnDestroy {
                 this.bookPagedResult = result.json();
                 this.pageSize = this.bookPagedResult.pageSize;
                 this.totalNumberOfRecords = this.bookPagedResult.totalNumberOfRecords;
-                this.totalNumberOfPages = this.bookPagedResult.totalNumberOfPages;
+                this.totalNumberOfPages = this.bookPagedResult.totalNumberOfPages.length;
+                this.configureCountPages(this.bookPagedResult.totalNumberOfPages);
 
                 if (this.bookPagedResult.results != null && this.authors.length > 0) {
 
@@ -185,7 +187,42 @@ export class BookComponent implements OnDestroy {
 
                 });
 
-        }, 250);
+        }, 350);
+    }
+
+    configureCountPages(numberArr: number[]) {
+
+        this.countNumberOfPages = [];
+
+        if (this.currentPage + 1 <= numberArr.length) {
+
+            let index: number = this.currentPage;
+            let countPages: number;
+
+            for (let p: number = index; p <= index + 4; p++) {
+
+                if (this.currentPage == 1) {
+                    countPages = numberArr[p - 1];
+                }
+                else if (this.currentPage == 2) {
+                    countPages = numberArr[p - 2];
+                }
+                else {
+                    countPages = numberArr[p - 3];
+                }
+
+                this.countNumberOfPages.push(countPages);
+            }
+        }
+        else if (this.currentPage == numberArr.length) {
+
+            this.countNumberOfPages.push(numberArr.length);
+
+        }
+        else {
+
+            this.countNumberOfPages = numberArr;
+        }
     }
 
     loadBookByAuthor(id: string, page: number, orderBy: string, ascending: boolean) {
@@ -239,7 +276,7 @@ export class BookComponent implements OnDestroy {
                     console.log(error);
 
                 });
-        }, 250);
+        }, 350);
     }
 
     addBook() {

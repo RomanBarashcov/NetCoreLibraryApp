@@ -72,7 +72,8 @@ export class AuthorComponent {
     pageSize: number;
     rowCount: number[] = [5, 10, 20];
     selectedRowCount: number;
-    totalNumberOfPages: number[];
+    totalNumberOfPages: number;
+    countNumberOfPages: number[];
     totalNumberOfRecords: number;
 
     constructor(private authService: AuthService, private config: Config, private router: Router, private ngProgress: NgProgress) {
@@ -128,7 +129,8 @@ export class AuthorComponent {
                 this.authors = this.authorPagedResult.results;
                 this.pageSize = this.authorPagedResult.pageSize;
                 this.totalNumberOfRecords = this.authorPagedResult.totalNumberOfRecords;
-                this.totalNumberOfPages = this.authorPagedResult.totalNumberOfPages;
+                this.totalNumberOfPages = this.authorPagedResult.totalNumberOfPages.length;
+                this.configureCountPages(this.authorPagedResult.totalNumberOfPages);
 
             } else {
 
@@ -146,6 +148,41 @@ export class AuthorComponent {
                 console.log(error);
 
             });
+    }
+
+    configureCountPages(numberArr: number[]) {
+
+        this.countNumberOfPages = [];
+
+        if (this.currentPage + 1 <= numberArr.length) {
+
+            let index: number = this.currentPage;
+            let countPages: number;
+
+            for (let p: number = index; p <= index + 4; p++) {
+
+                if (this.currentPage == 1) {
+                    countPages = numberArr[p - 1];
+                }
+                else if (this.currentPage == 2) {
+                    countPages = numberArr[p - 2];
+                }
+                else {
+                    countPages = numberArr[p - 3];
+                }
+
+                this.countNumberOfPages.push(countPages);
+            }
+        }
+        else if (this.currentPage == numberArr.length) {
+
+            this.countNumberOfPages.push(numberArr.length);
+
+        }
+        else {
+
+            this.countNumberOfPages = numberArr;
+        }
     }
 
     addAuthor() {
