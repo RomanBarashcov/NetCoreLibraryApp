@@ -13,6 +13,7 @@ import { ModalWindowComponent } from './components/modal-window/modal-windows.co
 import { DbConnectionComponent } from './components/dbconnection/dbcon.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
+import { NgProgressModule } from 'ngx-progressbar';
 import { AuthModule, OidcSecurityService } from 'angular-auth-oidc-client';
 import { AuthService } from './services/auth.service';
 import { Config } from './config';
@@ -34,6 +35,7 @@ import { Config } from './config';
         CommonModule,
         HttpModule,
         FormsModule,
+        NgProgressModule,
         RouterModule.forRoot([
             { path: 'home', component: HomeComponent },
             { path: 'author', component: AuthorComponent },

@@ -10,7 +10,7 @@ import { Config } from '../../config';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
 import { trigger, state, style, animate, transition, group } from '@angular/animations';
-
+import { NgProgress } from 'ngx-progressbar';
 
 @Component({
     selector: 'authors-app',
@@ -75,8 +75,9 @@ export class AuthorComponent {
     totalNumberOfPages: number[];
     totalNumberOfRecords: number;
 
-    constructor(private authService: AuthService, private config: Config, private router: Router) {
+    constructor(private authService: AuthService, private config: Config, private router: Router, private ngProgress: NgProgress) {
 
+        this.ngProgress.start();
         this.authorApiUrl = this.config.AuthorsApiUrl;
         this.selectedRowCount = 5;
         this.loadAuthors(1, "Id", true);
@@ -90,6 +91,7 @@ export class AuthorComponent {
 
     sort(orderBy: string, ascending: boolean) {
 
+        this.ngProgress.start();
         ascending = ascending ? false : true;
         this.loadAuthors(this.currentPage, orderBy, ascending);
 
@@ -97,6 +99,7 @@ export class AuthorComponent {
 
     onRowCountSelected(rowCoutn: number) {
 
+        this.ngProgress.start();
         this.selectedRowCount = rowCoutn;
         this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
 
@@ -132,6 +135,8 @@ export class AuthorComponent {
                 this.authors = [];
 
             }
+
+                this.ngProgress.done();
                 this.animate();
                 this.state = "in";
         },
@@ -188,6 +193,8 @@ export class AuthorComponent {
 
     saveAuthor() {
 
+        this.ngProgress.start();
+
         if (this.isNewRecord) {
 
             this.authService.post(this.authorApiUrl, this.editedAuthor).subscribe((resp: Response) => {
@@ -234,6 +241,8 @@ export class AuthorComponent {
 
     cancel() {
 
+        this.ngProgress.start();
+
         if (this.isNewRecord) {
 
             this.authors.pop();
@@ -252,6 +261,8 @@ export class AuthorComponent {
     }
 
     deleteAuthor(author: Author) {
+
+        this.ngProgress.start();
 
         if (this.isAuthorized) {
 
@@ -287,6 +298,7 @@ export class AuthorComponent {
 
     setPage(page: number) {
 
+        this.ngProgress.start();
         this.loadAuthors(page, this.currentOrderBy, this.currentAscending);
 
     }

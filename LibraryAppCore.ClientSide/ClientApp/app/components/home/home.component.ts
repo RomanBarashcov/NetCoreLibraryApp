@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { trigger, state, style, animate, transition, group } from '@angular/animations';
+import { NgProgress } from 'ngx-progressbar';
 
 @Component({
     selector: 'home',
@@ -36,6 +37,19 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
 export class HomeComponent {
 
     state: string = '';
+
+    constructor(public ngProgress: NgProgress) {
+
+        this.loadProgressBar();
+
+    }
+
+    loadProgressBar() {
+
+        this.ngProgress.start();
+        this.ngProgress.done();
+
+    }
 
     animate() {
 

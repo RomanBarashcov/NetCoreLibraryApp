@@ -14,6 +14,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
 import { trigger, state, style, animate, transition, group } from '@angular/animations';
+import { NgProgress } from 'ngx-progressbar';
 
 @Component({
     selector: 'books-app',
@@ -91,8 +92,9 @@ export class BookComponent implements OnDestroy {
 
     showDialog: boolean = false;
 
-    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private config: Config, private http: Http) {
+    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private config: Config, private http: Http, private ngProgress: NgProgress) {
 
+        this.ngProgress.start();
         this.authorApiUrl = this.config.AuthorsApiUrl;
         this.loadAuthors();
         this.bookApiUrl = this.config.BookApiUrl;
@@ -115,6 +117,7 @@ export class BookComponent implements OnDestroy {
 
     sort(orderBy: string, ascending: boolean) {
 
+        this.ngProgress.start();
         ascending = ascending ? false : true;
         this.loadBooks(this.currentPage, orderBy, ascending);
 
@@ -122,6 +125,7 @@ export class BookComponent implements OnDestroy {
 
     onRowCountSelected(rowCoutn: number) {
 
+        this.ngProgress.start();
         this.selectedRowCount = rowCoutn;
         this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
     }
@@ -169,6 +173,7 @@ export class BookComponent implements OnDestroy {
 
                 }
 
+                this.ngProgress.done();
                 this.animate();
                 this.state = "in";
 
@@ -222,6 +227,7 @@ export class BookComponent implements OnDestroy {
                     this.booksViewModel = [];
                 }
 
+                this.ngProgress.done();
                 this.hiddenAuthorId = id;
                 this.animate();
                 this.state = "in";
@@ -301,6 +307,8 @@ export class BookComponent implements OnDestroy {
 
     saveBook() {
 
+        this.ngProgress.start();
+
         if (this.isNewRecord) {
 
             let createdBookData: Book = new Book(this.editedBook.id, this.editedBook.year, this.editedBook.name, this.editedBook.description, this.editedBook.authorId);
@@ -352,6 +360,8 @@ export class BookComponent implements OnDestroy {
 
     cancel() {
 
+        this.ngProgress.start();
+
         if (this.isNewRecord) {
 
             this.booksViewModel.pop();
@@ -375,6 +385,8 @@ export class BookComponent implements OnDestroy {
     }
 
     deleteBook(book: Book) {
+
+        this.ngProgress.start();
 
         if (this.isAuthorized) {
 
@@ -454,6 +466,7 @@ export class BookComponent implements OnDestroy {
 
     addFile(): void {
 
+        this.ngProgress.start();
         this.showDialog = true;
         let fi = this.fileInput.nativeElement;
 
@@ -483,6 +496,7 @@ export class BookComponent implements OnDestroy {
 
                     }
 
+                    this.ngProgress.done();
                     this.showDialog = false;
                     console.log(res);
 
@@ -492,6 +506,7 @@ export class BookComponent implements OnDestroy {
 
     setPage(page: number) {
 
+        this.ngProgress.start();
         this.loadBooks(page, this.currentOrderBy, this.currentAscending);
 
     }
