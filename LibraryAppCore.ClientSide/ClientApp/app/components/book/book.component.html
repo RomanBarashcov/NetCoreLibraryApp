@@ -75,6 +75,11 @@
      </label>
     <button class="btn btn-success" (click)="addFile()" >Send File</button>
 </div>
+
+<app-modal-window [(visible)]="showDialog">
+    <h1>Please wait data is load!</h1>
+</app-modal-window>
+
 <div class="status-message danger">{{statusMessage}}</div>
 
 

@@ -9,6 +9,7 @@ import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthorComponent } from './components/author/author.component';
 import { BookComponent } from './components/book/book.component';
+import { ModalWindowComponent } from './components/modal-window/modal-windows.component';
 import { DbConnectionComponent } from './components/dbconnection/dbcon.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
@@ -24,6 +25,7 @@ import { Config } from './config';
         HomeComponent,
         AuthorComponent,
         BookComponent,
+        ModalWindowComponent,
         DbConnectionComponent,
         UnauthorizedComponent
     ],

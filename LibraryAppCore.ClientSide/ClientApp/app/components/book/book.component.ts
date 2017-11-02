@@ -89,6 +89,8 @@ export class BookComponent implements OnDestroy {
     totalNumberOfPages: number[];
     totalNumberOfRecords: number;
 
+    showDialog: boolean = false;
+
     constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private config: Config, private http: Http) {
 
         this.authorApiUrl = this.config.AuthorsApiUrl;
@@ -452,6 +454,7 @@ export class BookComponent implements OnDestroy {
 
     addFile(): void {
 
+        this.showDialog = true;
         let fi = this.fileInput.nativeElement;
 
         if (fi.files && fi.files[0]) {
@@ -480,6 +483,7 @@ export class BookComponent implements OnDestroy {
 
                     }
 
+                    this.showDialog = false;
                     console.log(res);
 
                 });
