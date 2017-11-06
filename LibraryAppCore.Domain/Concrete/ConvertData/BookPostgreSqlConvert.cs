@@ -2,6 +2,7 @@
 using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Entities.MsSql;
 using LibraryAppCore.Domain.Pagination;
+using LibraryAppCore.Domain.QueryResultObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +10,20 @@ using System.Text;
 
 namespace LibraryAppCore.Domain.Concrete.ConvertData
 {
-    public class BookPostgreSqlConvert : IConvertDataHelper<BookPostgreSql, Book>
+    public class BookPostgreSqlConvert : IConvertDataHelper<BookPostgreSqlQueryResult, Book>
     {
-        private List<BookPostgreSql> Books = new List<BookPostgreSql>();
+        private List<BookPostgreSqlQueryResult> Books = new List<BookPostgreSqlQueryResult>();
         private Book formatedBooks = new Book();
         private List<Book> ListBooks = new List<Book>();
         private PagedResults<Book> pagedResultFormated = new PagedResults<Book>();
 
-        public void InitData(PagedResults<BookPostgreSql> books)
+        public void InitData(PagedResults<BookPostgreSqlQueryResult> books)
         {
             Books = books.Results.ToList();
             initPaginationInfo(books);
         }
 
-        private void initPaginationInfo(PagedResults<BookPostgreSql> booksPagInfo)
+        private void initPaginationInfo(PagedResults<BookPostgreSqlQueryResult> booksPagInfo)
         {
             pagedResultFormated.PageNumber = booksPagInfo.PageNumber;
             pagedResultFormated.PageSize = booksPagInfo.PageSize;
@@ -32,7 +33,7 @@ namespace LibraryAppCore.Domain.Concrete.ConvertData
 
         public PagedResults<Book> GetFormatedPagedResults()
         {
-            foreach (BookPostgreSql bPostgreSql in Books)
+            foreach (BookPostgreSqlQueryResult bPostgreSql in Books)
             {
                 formatedBooks = new Book(bPostgreSql);
                 ListBooks.Add(formatedBooks);
@@ -42,12 +43,12 @@ namespace LibraryAppCore.Domain.Concrete.ConvertData
             return pagedResultFormated;
         }
 
-        public void InitData(List<BookPostgreSql> data)
+        public IEnumerable<Book> GetFormatedEnumResult()
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Book> GetFormatedEnumResult()
+        public void InitData(List<BookPostgreSqlQueryResult> data)
         {
             throw new NotImplementedException();
         }

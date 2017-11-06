@@ -100,6 +100,8 @@ namespace LibraryAppCore.Domain.Concrete
                         if (dbResult > 0)
                             bookPostgreSql.AuthorId = Convert.ToInt32(await authorRepo.GetAuthorIdByName(author.Name, author.Surname));
 
+                        author = null;
+
                     }
            
                 }
@@ -107,6 +109,8 @@ namespace LibraryAppCore.Domain.Concrete
                 Book book = new Book(bookPostgreSql);
 
                 bookList.Add(book);
+                book = null;
+
             }
         }
 
@@ -132,6 +136,8 @@ namespace LibraryAppCore.Domain.Concrete
                     {
                         operationSuccessCount = + 1;
                     }
+
+                    book = null;
                 }
             }
 

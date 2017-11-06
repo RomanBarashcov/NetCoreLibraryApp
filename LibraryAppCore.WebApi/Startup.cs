@@ -16,6 +16,8 @@ using LibraryAppCore.Domain.Entities.MondoDb;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using LibraryAppCore.AuthServer;
 using LibraryAppCore.Domain.Pagination.Concrete;
+using LibraryAppCore.Domain.QueryResultObjects;
+using LibraryAppCore.Domain.QueryResultObjects.MongoDb;
 
 namespace LibraryAppCore.WebApi
 {
@@ -93,21 +95,21 @@ namespace LibraryAppCore.WebApi
             {
                 if (ConnectionDB.ConnectionString == "DefaultConnection")
                 {
-                    services.AddTransient<IConvertDataHelper<BookPostgreSql, Book>, BookPostgreSqlConvert>();
+                    services.AddTransient<IConvertDataHelper<BookPostgreSqlQueryResult, Book>, BookPostgreSqlConvert>();
                     return new BookPostgreSqlConcrete(
                         new LibraryPostgreSqlContext(optionsBuilder.Options),
                         new BookPostgreSqlConvert(), 
                         new BookDataRequired(), 
-                        new Pagination<BookPostgreSql>());
+                        new Pagination<BookPostgreSqlQueryResult>());
                 }
                 else
                 {
-                    services.AddTransient<IConvertDataHelper<BookMongoDb, Book>, BookMongoDbConvert>();
+                    services.AddTransient<IConvertDataHelper<BookMongoDbQueryResult, Book>, BookMongoDbConvert>();
                     return new BookMongoDbConcrete(
                         new LibraryMongoDbContext(), 
                         new BookMongoDbConvert(), 
                         new BookDataRequired(), 
-                        new Pagination<BookMongoDb>());
+                        new Pagination<BookMongoDbQueryResult>());
                 }
             });
 
@@ -125,7 +127,7 @@ namespace LibraryAppCore.WebApi
                             new LibraryPostgreSqlContext(optionsBuilder.Options),
                             new BookPostgreSqlConvert(),
                             new BookDataRequired(),
-                            new Pagination<BookPostgreSql>()));
+                            new Pagination<BookPostgreSqlQueryResult>()));
                 }
                 else
                 {
@@ -139,7 +141,7 @@ namespace LibraryAppCore.WebApi
                             new LibraryMongoDbContext(),
                             new BookMongoDbConvert(),
                             new BookDataRequired(),
-                            new Pagination<BookMongoDb>()));
+                            new Pagination<BookMongoDbQueryResult>()));
                 }
             });
 

@@ -1,5 +1,6 @@
 ﻿using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Pagination;
+using LibraryAppCore.Domain.QueryResultObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;

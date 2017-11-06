@@ -1,7 +1,6 @@
 ﻿using LibraryAppCore.Domain.Abstracts;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using LibraryAppCore.Domain.Entities;
 using System.Threading.Tasks;
 using LibraryAppCore.Domain.Entities.MsSql;

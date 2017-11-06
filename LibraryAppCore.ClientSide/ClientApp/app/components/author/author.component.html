@@ -48,13 +48,13 @@
             <a (click)="setPage(1)">First</a>
         </li>
         <li class="pointer" [ngClass]="{disabled:currentPage === 1}">
-            <a (click)="setPage(currentPage - 1)">Previous</a>
+            <a *ngIf="currentPage !== 1" (click)="setPage(currentPage - 1)">Previous</a>
         </li>
         <li class="pointer" *ngFor="let page of countNumberOfPages" [ngClass]="{active:currentPage === page}">
             <a (click)="setPage(page)">{{page}}</a>
         </li>
         <li class="pointer" [ngClass]="{disabled:currentPage === totalNumberOfPages}">
-            <a (click)="setPage(currentPage + 1)">Next</a>
+            <a *ngIf="currentPage !== totalNumberOfPages" (click)="setPage(currentPage + 1)">Next</a>
         </li>
         <li class="pointer" [ngClass]="{disabled:currentPage === totalNumberOfPages}">
             <a (click)="setPage(totalNumberOfPages)">Last</a>

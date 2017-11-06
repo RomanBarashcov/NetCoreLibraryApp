@@ -1,25 +1,24 @@
 ﻿using LibraryAppCore.Domain.Abstracts;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using LibraryAppCore.Domain.Entities;
 using System.Threading.Tasks;
 using LibraryAppCore.Domain.Entities.MsSql;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using LibraryAppCore.Domain.Pagination;
+using LibraryAppCore.Domain.QueryResultObjects;
 
 namespace LibraryAppCore.Domain.Concrete.MsSql
 {
     public class BookPostgreSqlConcrete : IBookRepository
     {
         private PagedResults<Book> result = null;
-        private IConvertDataHelper<BookPostgreSql, Book> PostgreSqlDataConvert;
+        private IConvertDataHelper<BookPostgreSqlQueryResult, Book> PostgreSqlDataConvert;
         private IDataRequired<Book> dataReqiered;
         private LibraryPostgreSqlContext db;
-        private IPagination<BookPostgreSql> pagination;
+        private IPagination<BookPostgreSqlQueryResult> pagination;
 
-        public BookPostgreSqlConcrete(LibraryPostgreSqlContext context, IConvertDataHelper<BookPostgreSql, Book> pSqlDataConvert, IDataRequired<Book> dReqiered, IPagination<BookPostgreSql> pagin)
+        public BookPostgreSqlConcrete(LibraryPostgreSqlContext context, IConvertDataHelper<BookPostgreSqlQueryResult, Book> pSqlDataConvert, IDataRequired<Book> dReqiered, IPagination<BookPostgreSqlQueryResult> pagin)
         {
             this.db = context;
             this.PostgreSqlDataConvert = pSqlDataConvert;
@@ -29,14 +28,23 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
         public async Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending)
         {
-            IQueryable<BookPostgreSql> BookQuery =  db.Books.AsQueryable();
+            IQueryable<BookPostgreSqlQueryResult> BookQuery = db.Books.Join(db.Authors, b => b.Id, a => a.Id, (b,a) => new BookPostgreSqlQueryResult
+            {
+                Id = b.Id,
+                Year = b.Year,
+                Name = b.Name,
+                Description = b.Description,
+                AuthorId = b.Id.ToString(),
+                AuthorName = a.Name + " " + a.Surname
 
-            PagedResults<BookPostgreSql> BookPagedResult = await pagination.CreatePagedResultsAsync(BookQuery, page, pageSize, orderBy, ascending);
+            }).AsQueryable();
 
-            if (BookPagedResult != null)
+            PagedResults<BookPostgreSqlQueryResult> BookPagedResult = await pagination.CreatePagedResultsAsync(BookQuery, page, pageSize, orderBy, ascending);
+
+            if(BookPagedResult != null)
             {
                 PostgreSqlDataConvert.InitData(BookPagedResult);
-                result = PostgreSqlDataConvert.GetFormatedPagedResults();
+                result = PostgreSqlDataConvert.GetFormatedPagedResults();  
             }
 
             return result;
@@ -162,13 +170,25 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
         public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, int pageSize, string orderBy, bool ascending)
         {
+            PagedResults<BookPostgreSqlQueryResult> bookPagedResult = null;
+
             if (!String.IsNullOrEmpty(authorId))
             {
                 int author_Id = Convert.ToInt32(authorId);
 
-                IQueryable<BookPostgreSql> bookQueryResult = db.Books.Where(x => x.AuthorId == author_Id).AsQueryable();
+                IQueryable<BookPostgreSqlQueryResult> BookQuery = db.Books.Where(b => b.AuthorId == author_Id)
+                    .Join(db.Authors, b => b.Id, a => a.Id, (b, a) => new BookPostgreSqlQueryResult
+                    {
+                         Id = b.Id,
+                         Year = b.Year,
+                         Name = b.Name,
+                         Description = b.Description,
+                         AuthorId = a.Id.ToString(),
+                         AuthorName = a.Name + " " + a.Surname
 
-                PagedResults<BookPostgreSql> bookPagedResult = await pagination.CreatePagedResultsAsync(bookQueryResult, page, pageSize, orderBy, ascending);
+                    }).AsQueryable();
+
+                bookPagedResult = await pagination.CreatePagedResultsAsync(BookQuery, page, pageSize, orderBy, ascending);
 
                 if (bookPagedResult != null)
                 {

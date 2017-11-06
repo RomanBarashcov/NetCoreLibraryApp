@@ -144,9 +144,7 @@ export class BookComponent implements OnDestroy {
 
         });
 
-        setTimeout(() => {
-
-            this.authService.get(this.bookApiUrl + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
+        this.authService.get(this.bookApiUrl + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
 
                 this.bookPagedResult = result.json();
                 this.pageSize = this.bookPagedResult.pageSize;
@@ -154,19 +152,12 @@ export class BookComponent implements OnDestroy {
                 this.totalNumberOfPages = this.bookPagedResult.totalNumberOfPages.length;
                 this.configureCountPages(this.bookPagedResult.totalNumberOfPages);
 
-                if (this.bookPagedResult.results != null && this.authors.length > 0) {
+                if (this.bookPagedResult.results != null) {
 
                     for (let b of this.bookPagedResult.results) {
 
-                        for (let a of this.authors) {
+                         this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, b.authorName));
 
-                            if (a.id === b.authorId) {
-
-                                this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
-
-                            }
-
-                        }
                     }
 
                 } else {
@@ -180,14 +171,12 @@ export class BookComponent implements OnDestroy {
                 this.state = "in";
 
             },
-                error => {
+            error => {
 
                     this.statusMessage = error;
                     console.log(error);
 
-                });
-
-        }, 350);
+            });
     }
 
     configureCountPages(numberArr: number[]) {
@@ -238,25 +227,15 @@ export class BookComponent implements OnDestroy {
 
         });
 
-        setTimeout(() => {
-
-            this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
+        this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
 
                 this.bookPagedResult = result.json();
 
-                if (this.bookPagedResult.results != null && this.authors.length > 0) {
+                if (this.bookPagedResult.results != null) {
 
                     for (let b of this.bookPagedResult.results) {
 
-                        for (let a of this.authors) {
-
-                            if (a.id === b.authorId) {
-
-                                this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, a.name, a.surname));
-
-                            }
-
-                        }
+                        this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, b.authorName));
                     }
                 }
                 else {
@@ -276,7 +255,6 @@ export class BookComponent implements OnDestroy {
                     console.log(error);
 
                 });
-        }, 350);
     }
 
     addBook() {
@@ -287,17 +265,12 @@ export class BookComponent implements OnDestroy {
 
             if (this.hiddenAuthorId != undefined) {
 
-                let author: Author = this.loadAuthorById(this.hiddenAuthorId);
+                this.editedBook = new BookViewModel("", 0, "", "", this.hiddenAuthorId, "");
 
-                if (author.id != null && author.name != null && author.surname != null) {
-
-                    this.editedBook = new BookViewModel("", 0, "", "", this.hiddenAuthorId, author.name, author.surname);
-
-                }
             }
             else {
 
-                this.editedBook = new BookViewModel("", 0, "", "", "0", "", "");
+                this.editedBook = new BookViewModel("", 0, "", "", "0", "");
 
             }
 
@@ -313,15 +286,9 @@ export class BookComponent implements OnDestroy {
 
     editBook(book: BookViewModel) {
 
-        let author: Author = this.loadAuthorById(book.authorId);
-
         if (this.isAuthorized) {
 
-            if (author.id != null && author.name != null && author.surname != null) {
-
-                this.editedBook = new BookViewModel(book.id, book.year, book.name, book.description, book.authorId, book.authorName, book.authorSurname);
-
-            }
+             this.editedBook = new BookViewModel(book.id, book.year, book.name, book.description, book.authorId, book.authorName);
 
         } else {
 
@@ -348,7 +315,7 @@ export class BookComponent implements OnDestroy {
 
         if (this.isNewRecord) {
 
-            let createdBookData: Book = new Book(this.editedBook.id, this.editedBook.year, this.editedBook.name, this.editedBook.description, this.editedBook.authorId);
+            let createdBookData: Book = new Book(this.editedBook.id, this.editedBook.year, this.editedBook.name, this.editedBook.description, this.editedBook.authorId, this.editedBook.authorName);
 
             this.authService.post(this.bookApiUrl, createdBookData).subscribe((resp: Response) => {
 
@@ -372,7 +339,7 @@ export class BookComponent implements OnDestroy {
 
         } else {
 
-            let updatedBookData: Book = new Book(this.editedBook.id, this.editedBook.year, this.editedBook.name, this.editedBook.description, this.editedBook.authorId);
+            let updatedBookData: Book = new Book(this.editedBook.id, this.editedBook.year, this.editedBook.name, this.editedBook.description, this.editedBook.authorId, this.editedBook.authorName);
 
             this.authService.put(this.bookApiUrl + "/" + this.editedBook.id, updatedBookData).subscribe((resp: Response) => {
 

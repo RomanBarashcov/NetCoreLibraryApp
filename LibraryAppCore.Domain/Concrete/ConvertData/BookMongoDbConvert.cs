@@ -2,24 +2,25 @@
 using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Entities.MondoDb;
 using LibraryAppCore.Domain.Pagination;
+using LibraryAppCore.Domain.QueryResultObjects.MongoDb;
 using System.Collections.Generic;
 
 namespace LibraryAppCore.Domain.Concrete.ConvertData
 {
-    public class BookMongoDbConvert : IConvertDataHelper<BookMongoDb, Book>
+    public class BookMongoDbConvert : IConvertDataHelper<BookMongoDbQueryResult, Book>
     {
-        private List<BookMongoDb> Books = new List<BookMongoDb>();
+        private List<BookMongoDbQueryResult> Books = new List<BookMongoDbQueryResult>();
         private Book formatedBooks = new Book();
         private List<Book> ListBook = new List<Book>();
         private PagedResults<Book> pagedResultFormated = new PagedResults<Book>();
 
-        public void InitData(PagedResults<BookMongoDb> books)
+        public void InitData(PagedResults<BookMongoDbQueryResult> books)
         {
             Books = books.Results;
             initPaginationInfo(books);
         }
 
-        private void initPaginationInfo(PagedResults<BookMongoDb> booksPagInfo)
+        private void initPaginationInfo(PagedResults<BookMongoDbQueryResult> booksPagInfo)
         {
             pagedResultFormated.PageNumber = booksPagInfo.PageNumber;
             pagedResultFormated.PageSize = booksPagInfo.PageSize;
@@ -29,7 +30,7 @@ namespace LibraryAppCore.Domain.Concrete.ConvertData
 
         public PagedResults<Book> GetFormatedPagedResults()
         {
-            foreach (BookMongoDb bMongoDb in Books)
+            foreach (BookMongoDbQueryResult bMongoDb in Books)
             {
                 formatedBooks = new Book(bMongoDb);
                 ListBook.Add(formatedBooks);
@@ -39,12 +40,12 @@ namespace LibraryAppCore.Domain.Concrete.ConvertData
             return pagedResultFormated;
         }
 
-        public void InitData(List<BookMongoDb> data)
+        public IEnumerable<Book> GetFormatedEnumResult()
         {
             throw new System.NotImplementedException();
         }
 
-        public IEnumerable<Book> GetFormatedEnumResult()
+        public void InitData(List<BookMongoDbQueryResult> data)
         {
             throw new System.NotImplementedException();
         }

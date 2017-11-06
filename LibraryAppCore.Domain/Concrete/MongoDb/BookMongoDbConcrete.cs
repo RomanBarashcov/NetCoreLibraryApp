@@ -9,18 +9,20 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using LibraryAppCore.Domain.Pagination;
 using System.Linq;
+using LibraryAppCore.Domain.QueryResultObjects;
+using LibraryAppCore.Domain.QueryResultObjects.MongoDb;
 
 namespace LibraryAppCore.Domain.Concrete.MongoDb
 {
     public class BookMongoDbConcrete : IBookRepository
     {
         private PagedResults<Book> result = null;
-        private IConvertDataHelper<BookMongoDb, Book> mongoDbDataConvert;
+        private IConvertDataHelper<BookMongoDbQueryResult, Book> mongoDbDataConvert;
         private IDataRequired<Book> dataReqiered;
         private LibraryMongoDbContext db;
-        private IPagination<BookMongoDb> pagination;
+        private IPagination<BookMongoDbQueryResult> pagination;
 
-        public BookMongoDbConcrete(LibraryMongoDbContext context, IConvertDataHelper<BookMongoDb, Book> mDbDataConvert, IDataRequired<Book> dReqiered, IPagination<BookMongoDb> paging)
+        public BookMongoDbConcrete(LibraryMongoDbContext context, IConvertDataHelper<BookMongoDbQueryResult, Book> mDbDataConvert, IDataRequired<Book> dReqiered, IPagination<BookMongoDbQueryResult> paging)
         {
             this.db = context;
             this.mongoDbDataConvert = mDbDataConvert;
@@ -31,17 +33,31 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
         public async Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending)
         {
             var builder = Builders<BookMongoDb>.Filter;
+            var builderForAuthor = Builders<AuthorMongoDb>.Filter;
             var filters = new List<FilterDefinition<BookMongoDb>>();
 
-            IEnumerable<BookMongoDb> CollectionResult =  db.Books.Find(builder.Empty).ToEnumerable();
-            IQueryable<BookMongoDb> booksQueryResult = CollectionResult.AsQueryable();
+            IEnumerable<BookMongoDb> CollectionResult = db.Books.Find(builder.Empty).ToEnumerable();
 
-            PagedResults<BookMongoDb> booksPagedResult = await pagination.CreatePagedResultsAsync(booksQueryResult, page, pageSize, orderBy, ascending);
+            IEnumerable<BookMongoDbQueryResult> booksCollectionResult =
+                from b in db.Books.Find(builder.Empty).ToEnumerable()
+                join a in db.Authors.Find(builderForAuthor.Empty).ToEnumerable() on b.Id equals a.Id into joinedReadings
+                select new BookMongoDbQueryResult
+                {
+                    Id = b.Id,
+                    Year = b.Year,
+                    Name = b.Name,
+                    Description = b.Description,
+                    AuthorId = b.AuthorId,
+                    AuthorName = b.Author.Name + " " + b.Author.Surname
+                };
 
-            if (booksPagedResult != null)
+            IQueryable<BookMongoDbQueryResult> booksQueryResult = booksCollectionResult.AsQueryable();
+            PagedResults<BookMongoDbQueryResult> booksPagedResult = await pagination.CreatePagedResultsAsync(booksQueryResult, page, pageSize, orderBy, ascending);
+            
+            if(booksPagedResult != null)
             {
-                mongoDbDataConvert.InitData(booksPagedResult);
-                result = mongoDbDataConvert.GetFormatedPagedResults();
+                 mongoDbDataConvert.InitData(booksPagedResult);
+                 result = mongoDbDataConvert.GetFormatedPagedResults();
             }
 
             return result;
@@ -155,21 +171,22 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
 
         public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, int pageSize, string orderBy, bool ascending)
         {
+            PagedResults<Book> booksPagedResult = null;
             if (!String.IsNullOrEmpty(authorId))
             {
-                IEnumerable<BookMongoDb> BooksByAuthor = db.Books.Find(new BsonDocument("AuthorId", authorId)).ToEnumerable();
-                IQueryable<BookMongoDb> booksQueryResult = BooksByAuthor.AsQueryable();
+                //IEnumerable<BookMongoDb> BooksByAuthor = db.Books.Find(new BsonDocument("AuthorId", authorId)).ToEnumerable();
+                //IQueryable<BookMongoDb> booksQueryResult = BooksByAuthor.AsQueryable();
 
-                PagedResults<BookMongoDb> booksPagedResult = await pagination.CreatePagedResultsAsync(booksQueryResult, page, pageSize, orderBy, ascending);
+                //booksPagedResult = await pagination.CreatePagedResultsAsync(booksQueryResult, page, pageSize, orderBy, ascending);
 
-                if (booksPagedResult != null)
-                {
-                    mongoDbDataConvert.InitData(booksPagedResult);
-                    result = mongoDbDataConvert.GetFormatedPagedResults();
-                }
+                //if (booksPagedResult != null)
+                //{
+                //    mongoDbDataConvert.InitData(booksPagedResult);
+                //    result = mongoDbDataConvert.GetFormatedPagedResults();
+                //}
             }
 
-            return result;
+            return booksPagedResult;
         }
     }
 }

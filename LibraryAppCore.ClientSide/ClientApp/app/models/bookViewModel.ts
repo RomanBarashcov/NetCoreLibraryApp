@@ -5,8 +5,7 @@
         public name: string,
         public description: string,
         public authorId: string,
-        public authorName: string,
-        public authorSurname: string
+        public authorName: string
     ) { }
 
 }

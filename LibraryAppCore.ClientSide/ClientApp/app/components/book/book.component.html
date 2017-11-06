@@ -26,9 +26,9 @@
 					Description
 					<i class="fa" [ngClass]="{'fa-sort': currentOrderBy != 'Description', 'fa-sort-asc': (currentOrderBy == 'Description' && currentAscending), 'fa-sort-desc': (currentOrderBy == 'Description' && !currentAscending) }" aria-hidden="true"> </i>
 				</th>
-                <th class="pointer" (click)="sort('AuthorId', currentAscending)">
+                <th class="pointer" (click)="sort('AuthorName', currentAscending)">
 					Author Name
-					<i class="fa" [ngClass]="{'fa-sort': currentOrderBy != 'AuthorId', 'fa-sort-asc': (currentOrderBy == 'AuthorId' && currentAscending), 'fa-sort-desc': (currentOrderBy == 'AuthorId' && !currentAscending) }" aria-hidden="true"> </i>
+					<i class="fa" [ngClass]="{'fa-sort': currentOrderBy != 'AuthorName', 'fa-sort-asc': (currentOrderBy == 'AuthorName' && currentAscending), 'fa-sort-desc': (currentOrderBy == 'AuthorName' && !currentAscending) }" aria-hidden="true"> </i>
 				</th>
                 <th></th>
                 <th></th>
@@ -57,13 +57,13 @@
                 <a (click)="setPage(1)">First</a>
             </li>
             <li class="pointer" [ngClass]="{disabled:currentPage === 1}">
-                <a (click)="setPage(currentPage - 1)">Previous</a>
+                <a *ngIf="currentPage !== 1" (click)="setPage(currentPage - 1)">Previous</a>
             </li>
             <li class="pointer" *ngFor="let page of countNumberOfPages" [ngClass]="{active:currentPage === page}">
                 <a (click)="setPage(page)">{{page}}</a>
             </li>
             <li class="pointer" [ngClass]="{disabled:currentPage === totalNumberOfPages}">
-                <a (click)="setPage(currentPage + 1)">Next</a>
+                <a *ngIf="currentPage !== totalNumberOfPages" (click)="setPage(currentPage + 1)">Next</a>
             </li>
             <li class="pointer" [ngClass]="{disabled:currentPage === totalNumberOfPages}">
                 <a (click)="setPage(totalNumberOfPages)">Last</a>
@@ -95,7 +95,7 @@
     <td>{{book.year}}</td>
     <td>{{book.name}}</td>
     <td>{{book.description}}</td>
-    <td>{{book.authorName + " " + book.authorSurname}}</td>
+    <td>{{book.authorName}}</td>
     <td>
         <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book)" *ngIf="isAuthorized" />
     </td>
@@ -123,8 +123,8 @@
     </td>
     <td>
         <select class="form-control" (change)="onAuthorSelect($event.target.value)" name="authorId">
-            <option value="editedBook.authorId"> {{ editedBook.authorId + " - " + editedBook.authorName + " " + editedBook.authorSurname + " (Selected) " }} </option>
-            <option> ____All____Authors____ </option>
+            <option value="editedBook.authorId"> {{ editedBook.authorId + " - " + editedBook.authorName + " (Selected) " }} </option>
+            <option> (  All  Authors  )</option>
             <option value="{{a.id}}" *ngFor="let a of authors">
                 {{a.id}} - {{a.name + " " + a.surname}}
             </option>

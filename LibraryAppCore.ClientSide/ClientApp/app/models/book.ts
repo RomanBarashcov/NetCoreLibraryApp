@@ -4,7 +4,8 @@
         public year: number,
         public name: string,
         public description: string,
-        public authorId: string
+        public authorId: string, 
+        public authorName: string
     ) { }
 
 }

@@ -1,8 +1,6 @@
 ﻿using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Pagination;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using LibraryAppCore.Domain.QueryResultObjects;
 using System.Threading.Tasks;
 
 namespace LibraryAppCore.Domain.Abstracts
