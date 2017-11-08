@@ -13,9 +13,9 @@ namespace LibraryAppCore.Domain.Pagination.Concrete
         public async Task<PagedResults<T>> CreatePagedResultsAsync(IQueryable<T> queryable, int page, int pageSize, string orderBy, bool ascending)
         {
             var skipAmount = pageSize * (page - 1);
-            var projection = await queryable.OrderByPropertyOrField(orderBy, ascending).Skip(skipAmount).Take(pageSize).ToListAsync();
+            var projection =  queryable.OrderByPropertyOrField(orderBy, ascending).Skip(skipAmount).Take(pageSize).ToList();
        
-            var totalNumberOfRecords = await queryable.CountAsync();
+            var totalNumberOfRecords = queryable.Count();
 
             var mod = totalNumberOfRecords % pageSize;
             int totalPageCount = (totalNumberOfRecords / pageSize) + (mod == 0 ? 0 : 1);

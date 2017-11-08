@@ -105,8 +105,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
                     }
                 }
 
-                Book book = new Book();
-
+                Book book = new Book(bookMongoDb);
                 bookList.Add(book);
                 book = null;
             }

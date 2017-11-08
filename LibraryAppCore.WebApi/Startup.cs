@@ -80,9 +80,9 @@ namespace LibraryAppCore.WebApi
                 {
                     services.AddTransient<IConvertDataHelper<AuthorMongoDb, Author>, AuthorMongoDbConvert>();
                     return new AuthorMongoDbConcrete(
-                        new LibraryMongoDbContext(), 
+                        new LibraryMongoDbContext(),
                         new AuthorMongoDbConvert(),
-                        new AuthorDataRequired(), 
+                        new AuthorDataRequired(),
                         new Pagination<AuthorMongoDb>());
                 }
 
@@ -135,7 +135,7 @@ namespace LibraryAppCore.WebApi
                         new AuthorMongoDbConcrete(
                             new LibraryMongoDbContext(),
                             new AuthorMongoDbConvert(),
-                            new AuthorDataRequired(), 
+                            new AuthorDataRequired(),
                             new Pagination<AuthorMongoDb>()),
                         new BookMongoDbConcrete(
                             new LibraryMongoDbContext(),

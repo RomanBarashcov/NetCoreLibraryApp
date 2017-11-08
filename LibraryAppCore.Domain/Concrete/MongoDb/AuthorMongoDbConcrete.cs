@@ -30,10 +30,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
 
         public async Task<PagedResults<Author>> GetAllAuthors(int page, int pageSize, string orderBy, bool ascending)
         {
-            orderBy = orderBy == "Id" ? "_id" : orderBy;
-
             var builder = Builders<AuthorMongoDb>.Filter;
-            var filters = new List<FilterDefinition<AuthorMongoDb>>();
 
             IEnumerable<AuthorMongoDb> CollectionResult = db.Authors.Find(builder.Empty).ToEnumerable();
             IQueryable<AuthorMongoDb> authorsQueryResult = CollectionResult.AsQueryable();
