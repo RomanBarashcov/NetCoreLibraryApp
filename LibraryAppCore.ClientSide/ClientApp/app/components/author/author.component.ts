@@ -154,7 +154,7 @@ export class AuthorComponent {
 
         this.countNumberOfPages = [];
 
-        if (this.currentPage + 1 < numberArr.length) {
+        if (this.currentPage + 1 <= numberArr.length && numberArr.length > 4) {
 
             let index: number = this.currentPage;
             let countPages: number;
