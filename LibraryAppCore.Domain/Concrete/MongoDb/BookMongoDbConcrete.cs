@@ -158,7 +158,6 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
 
         public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, int pageSize, string orderBy, bool ascending)
         {
-            PagedResults<BookMongoDbQueryResult> booksPagedResult = null;
             if (!String.IsNullOrEmpty(authorId))
             {
                 var BookQueryResult = from b in db.Books.AsQueryable().Where(b => b.AuthorId == authorId)
@@ -174,7 +173,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
                                           AuthorName = r.Name + " " + r.Surname
                                       };
 
-                booksPagedResult = await pagination.CreatePagedResultsAsync(BookQueryResult, page, pageSize, orderBy, ascending);
+                PagedResults<BookMongoDbQueryResult> booksPagedResult = await pagination.CreatePagedResultsAsync(BookQueryResult, page, pageSize, orderBy, ascending);
 
                 if (booksPagedResult != null)
                 {
