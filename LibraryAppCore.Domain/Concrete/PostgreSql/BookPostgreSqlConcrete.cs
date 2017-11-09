@@ -28,7 +28,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
         public async Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending)
         {
-            IQueryable<BookPostgreSqlQueryResult> BookQuery = db.Books.Join(db.Authors, b => b.Id, a => a.Id, (b,a) => new BookPostgreSqlQueryResult
+            IQueryable<BookPostgreSqlQueryResult> BookQuery = db.Books.Join(db.Authors, b => b.AuthorId, a => a.Id, (b,a) => new BookPostgreSqlQueryResult
             {
                 Id = b.Id,
                 Year = b.Year,
@@ -177,7 +177,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                 int author_Id = Convert.ToInt32(authorId);
 
                 IQueryable<BookPostgreSqlQueryResult> BookQuery = db.Books.Where(b => b.AuthorId == author_Id)
-                    .Join(db.Authors, b => b.Id, a => a.Id, (b, a) => new BookPostgreSqlQueryResult
+                    .Join(db.Authors, b => b.AuthorId, a => a.Id, (b, a) => new BookPostgreSqlQueryResult
                     {
                          Id = b.Id,
                          Year = b.Year,

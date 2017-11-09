@@ -1,7 +1,6 @@
 ﻿using LibraryAppCore.Domain.Abstracts;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using LibraryAppCore.Domain.Entities;
 using System.Threading.Tasks;
 using LibraryAppCore.Domain.Entities.MondoDb;
@@ -9,7 +8,6 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using LibraryAppCore.Domain.Pagination;
 using System.Linq;
-using LibraryAppCore.Domain.QueryResultObjects;
 using LibraryAppCore.Domain.QueryResultObjects.MongoDb;
 
 namespace LibraryAppCore.Domain.Concrete.MongoDb
@@ -32,10 +30,18 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
 
         public async Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending)
         {
-            var authorCollections = await db.Authors.Find(new BsonDocument()).ToListAsync();
-            var bookCollections = await db.Books.Find(new BsonDocument()).ToListAsync();
-
-            IQueryable<BookMongoDbQueryResult> BookQueryResult = await GetBookQueryResult(authorCollections, bookCollections);
+            var BookQueryResult = from b in db.Books.AsQueryable()
+                                  join a in db.Authors.AsQueryable() on b.AuthorId equals a.Id into joinedResult
+                                  from r in joinedResult.DefaultIfEmpty()
+                                  select new BookMongoDbQueryResult
+                                  {
+                                      Id = b.Id,
+                                      Year = b.Year,
+                                      Name = b.Name,
+                                      Description = b.Description,
+                                      AuthorId = b.AuthorId,
+                                      AuthorName = r.Name + " " + r.Surname
+                                  };
 
             PagedResults<BookMongoDbQueryResult> bookPagedResult = await pagination.CreatePagedResultsAsync(BookQueryResult, page, pageSize, orderBy, ascending);
 
@@ -155,10 +161,18 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             PagedResults<BookMongoDbQueryResult> booksPagedResult = null;
             if (!String.IsNullOrEmpty(authorId))
             {
-                var authorCollections = await db.Authors.Find(new BsonDocument()).ToListAsync();
-                var bookCollections = await db.Books.Find(new BsonDocument("AuthorId", authorId)).ToListAsync();
-
-                IQueryable<BookMongoDbQueryResult> BookQueryResult = await GetBookQueryResult(authorCollections, bookCollections);
+                var BookQueryResult = from b in db.Books.AsQueryable().Where(b => b.AuthorId == authorId)
+                                      join a in db.Authors.AsQueryable() on b.AuthorId equals a.Id into joinedResult
+                                      from r in joinedResult.DefaultIfEmpty()
+                                      select new BookMongoDbQueryResult
+                                      {
+                                          Id = b.Id,
+                                          Year = b.Year,
+                                          Name = b.Name,
+                                          Description = b.Description,
+                                          AuthorId = b.AuthorId,
+                                          AuthorName = r.Name + " " + r.Surname
+                                      };
 
                 booksPagedResult = await pagination.CreatePagedResultsAsync(BookQueryResult, page, pageSize, orderBy, ascending);
 
@@ -170,35 +184,6 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             }
 
             return result;
-        }
-
-        private async Task<IQueryable<BookMongoDbQueryResult>> GetBookQueryResult(List<AuthorMongoDb> authorCollection, List<BookMongoDb> bookCollection)
-        {
-            List<BookMongoDbQueryResult> BookQueryResult = new List<BookMongoDbQueryResult>();
-
-            foreach (var b in bookCollection)
-            {
-                BookMongoDbQueryResult books = new BookMongoDbQueryResult();
-
-                books.Id = b.Id;
-                books.Year = b.Year;
-                books.Name = b.Name;
-                books.Description = b.Description;
-                books.AuthorId = b.AuthorId;
-
-                foreach (var a in authorCollection)
-                {
-                    if (books.AuthorId == a.Id)
-                    {
-                        books.AuthorName = a.Name + " " + a.Surname;
-                        break;
-                    }
-                }
-
-                BookQueryResult.Add(books);
-            }
-
-            return BookQueryResult.AsQueryable();
         }
     }
 }
