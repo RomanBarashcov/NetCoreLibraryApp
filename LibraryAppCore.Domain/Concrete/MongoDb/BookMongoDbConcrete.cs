@@ -14,7 +14,6 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
 {
     public class BookMongoDbConcrete : IBookRepository
     {
-        private PagedResults<Book> result = null;
         private IConvertDataHelper<BookMongoDbQueryResult, Book> mongoDbDataConvert;
         private IDataRequired<Book> dataReqiered;
         private LibraryMongoDbContext db;
@@ -30,6 +29,8 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
 
         public async Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending)
         {
+            PagedResults<Book> result = null;
+
             var BookQueryResult = from b in db.Books.AsQueryable()
                                   join a in db.Authors.AsQueryable() on b.AuthorId equals a.Id into joinedResult
                                   from r in joinedResult.DefaultIfEmpty()
@@ -158,6 +159,8 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
 
         public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, int pageSize, string orderBy, bool ascending)
         {
+            PagedResults<Book> result = null;
+
             if (!String.IsNullOrEmpty(authorId))
             {
                 var BookQueryResult = from b in db.Books.AsQueryable().Where(b => b.AuthorId == authorId)

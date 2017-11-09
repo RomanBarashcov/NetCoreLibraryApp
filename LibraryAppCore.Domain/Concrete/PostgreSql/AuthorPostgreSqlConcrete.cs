@@ -12,7 +12,6 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 {
     public class AuthorPostgreSqlConcrete : IAuthorRepository
     {
-        private PagedResults<Author> result = null;
         private IConvertDataHelper<AuthorPostgreSql, Author> PostgreSqlDataConvert;
         private IDataRequired<Author> dataReqiered;
         private LibraryPostgreSqlContext db;
@@ -28,6 +27,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
         public async Task<PagedResults<Author>> GetAllAuthors(int page, int pageSize, string orderBy, bool ascending)
         {
+            PagedResults<Author> result = null;
             IQueryable<AuthorPostgreSql> authorsQueryResult = db.Authors.AsQueryable();
 
             PagedResults<AuthorPostgreSql> authorPagedResult = await pagination.CreatePagedResultsAsync(authorsQueryResult, page, pageSize, orderBy, ascending);

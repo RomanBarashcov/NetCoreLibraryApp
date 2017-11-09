@@ -14,7 +14,6 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
 {
     public class AuthorMongoDbConcrete : IAuthorRepository
     {
-        private PagedResults<Author> result = null;
         private IConvertDataHelper<AuthorMongoDb, Author> mongoDbDataConvert;
         private IDataRequired<Author> dataReqiered;
         private LibraryMongoDbContext db;
@@ -30,6 +29,7 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
 
         public async Task<PagedResults<Author>> GetAllAuthors(int page, int pageSize, string orderBy, bool ascending)
         {
+            PagedResults<Author> result = null;
             var builder = Builders<AuthorMongoDb>.Filter;
 
             IEnumerable<AuthorMongoDb> CollectionResult = db.Authors.Find(builder.Empty).ToEnumerable();

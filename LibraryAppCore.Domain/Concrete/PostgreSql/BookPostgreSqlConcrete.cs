@@ -12,7 +12,6 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 {
     public class BookPostgreSqlConcrete : IBookRepository
     {
-        private PagedResults<Book> result = null;
         private IConvertDataHelper<BookPostgreSqlQueryResult, Book> PostgreSqlDataConvert;
         private IDataRequired<Book> dataReqiered;
         private LibraryPostgreSqlContext db;
@@ -28,6 +27,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
         public async Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending)
         {
+            PagedResults<Book> result = null;
             IQueryable<BookPostgreSqlQueryResult> BookQuery = db.Books.Join(db.Authors, b => b.AuthorId, a => a.Id, (b,a) => new BookPostgreSqlQueryResult
             {
                 Id = b.Id,
@@ -170,6 +170,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
         public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, int pageSize, string orderBy, bool ascending)
         {
+            PagedResults<Book> result = null;
             PagedResults<BookPostgreSqlQueryResult> bookPagedResult = null;
 
             if (!String.IsNullOrEmpty(authorId))
