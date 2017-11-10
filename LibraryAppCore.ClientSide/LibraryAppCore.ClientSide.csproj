@@ -25,7 +25,9 @@
 
   <ItemGroup>
     <None Remove="ClientApp\app\category.pipe.ts" />
+    <None Remove="ClientApp\app\components\author-edit\author-edit.component.ts" />
     <None Remove="ClientApp\app\components\author\author.component.ts" />
+    <None Remove="ClientApp\app\components\book-edit\book-edit.component.ts" />
     <None Remove="ClientApp\app\components\book\book.component.ts" />
     <None Remove="ClientApp\app\components\dbconnection\dbcon.component.ts" />
     <None Remove="ClientApp\app\components\modal-window\modal-windows.component.ts" />
@@ -46,7 +48,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\components\author-edit\author-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\author\author.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\book-edit\book-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\book\book.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dbconnection\dbcon.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\modal-window\modal-windows.component.ts" />

@@ -1,4 +1,4 @@
-﻿import { TemplateRef, ViewChild, Component, OnDestroy, Input } from '@angular/core';
+﻿import { Component, OnDestroy, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
@@ -49,15 +49,10 @@ import { NgProgress } from 'ngx-progressbar';
 })
 export class AuthorComponent {
     
-    @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
-    @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
-
     private authorApiUrl: string;
     authors: Author[] = [];
     authorPagedResult: AuthorPagedResult;
-    editedAuthor: Author;
-    editAuthorNull: Author;
-    isNewRecord: boolean;
+
     statusMessage: string;
     private sub: Subscription;
     error: any;
@@ -189,9 +184,7 @@ export class AuthorComponent {
 
         if (this.isAuthorized) {
 
-            this.editedAuthor = new Author("", "", "");
-            this.authors.push(this.editedAuthor);
-            this.isNewRecord = true;
+            this.router.navigate(['/addAuthor']);
 
         }
         else {
@@ -201,11 +194,11 @@ export class AuthorComponent {
         }
     }
 
-    editAuthor(author: Author) {
+    editAuthor(authorId:number) {
 
         if (this.isAuthorized) {
 
-            this.editedAuthor = new Author(author.id, author.name, author.surname);   
+            this.router.navigate(['/editAuthor', authorId]);   
 
         }
         else {
@@ -215,95 +208,13 @@ export class AuthorComponent {
         }
     }
 
-    loadTemplate(author: Author) {
-
-        if (this.editedAuthor && this.editedAuthor.id == author.id) {
-
-            return this.editTemplate;
-
-        } else {
-
-            return this.readOnlyTemplate;
-
-        }
-    }
-
-    saveAuthor() {
-
-        this.ngProgress.start();
-
-        if (this.isNewRecord) {
-
-            this.authService.post(this.authorApiUrl, this.editedAuthor).subscribe((resp: Response) => {
-
-                if (resp.status == 200) {
-
-                    this.statusMessage = 'Saved successfully!';
-                    this.editedAuthor = this.editAuthorNull;
-                    this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
-
-                }
-            },
-                error => {
-
-                    this.statusMessage = error + ' Check all your data, and try again! ';
-                    console.log(error);
-                    this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
-
-                });
-
-            this.isNewRecord = false;
-
-        } else {
-
-            this.authService.put(this.authorApiUrl + "/" + this.editedAuthor.id, this.editedAuthor).subscribe((resp: Response) => {
-
-                if (resp.status == 200) {
-
-                    this.statusMessage = 'Updated successfully!';
-                    this.editedAuthor = this.editAuthorNull;
-                    this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
-
-                }
-            },
-                error => {
-
-                    this.statusMessage = error + ' Check all your data, and try again! ';
-                    console.log(error);
-                    this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
-
-                });
-        }
-    }
-
-    cancel() {
-
-        this.ngProgress.start();
-
-        if (this.isNewRecord) {
-
-            this.authors.pop();
-            this.isNewRecord = false;
-
-        }
-        else {
-
-            this.authors.pop();
-
-        }
-
-        this.loadAuthors(this.currentPage, this.currentOrderBy, this.currentAscending);
-        this.editedAuthor = this.editAuthorNull;
-
-    }
-
-    deleteAuthor(author: Author) {
+    deleteAuthor(authorId: number) {
 
         this.ngProgress.start();
 
         if (this.isAuthorized) {
 
-            this.authService.delete(this.authorApiUrl + "/" + author.id).subscribe((resp: Response) => {
+            this.authService.delete(this.authorApiUrl + "/" + authorId).subscribe((resp: Response) => {
 
                 if (resp.status == 200) {
 
@@ -327,9 +238,9 @@ export class AuthorComponent {
         }
     }
 
-    routeToBooks(author: Author) {
+    routeToBooks(authorId: number) {
 
-        this.router.navigate(['/bookByAuthor', author.id]);
+        this.router.navigate(['/bookByAuthor', authorId]);
 
     }
 

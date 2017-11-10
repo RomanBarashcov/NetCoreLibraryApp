@@ -39,6 +39,14 @@ namespace LibraryAppCore.WebApi.Controllers
         }
 
         [Authorize]
+        [HttpGet("/AuthorApi/GetAuthorById/{id}")]
+        public async Task<Author> GetAuthorById(string id)
+        {
+            Author Author = await repository.GetAuthorById(id);
+            return Author;
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAuthor([FromBody]Author author)
         {

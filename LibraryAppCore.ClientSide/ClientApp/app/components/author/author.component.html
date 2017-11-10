@@ -26,9 +26,18 @@
         </thead>
         <tbody *ngIf="authors.length > 0">
             <tr [@flyInOut]="state" *ngFor="let author of authors">
-                <ng-template [ngTemplateOutlet]="loadTemplate(author)"
-                             [ngOutletContext]="{ $implicit: author}">
-                </ng-template>
+                <td>{{author.id}}</td>
+                <td>{{author.name}}</td>
+                <td>{{author.surname}}</td>
+                <td>
+                    <input type="button" value="Books by Author" class="btn btn-default" (click)="routeToBooks(author.id)" />
+                </td>
+                <td>
+                    <input type="button" value="Edit" class="btn btn-warning" (click)="editAuthor(author.id)" *ngIf="isAuthorized" />
+                </td>
+                <td>
+                    <input type="button" value="Delete" class="btn btn-danger" (click)="deleteAuthor(author.id)" *ngIf="isAuthorized" />
+                </td>
             </tr>
         </tbody>
     </table>
@@ -64,40 +73,3 @@
 <div>{{statusMessage}}</div>
 
 
-
-<ng-template  #readOnlyTemplate let-author>
-    <td>{{author.id}}</td>
-    <td>{{author.name}}</td>
-    <td>{{author.surname}}</td>
-    <td>
-        <input type="button" value="Books by Author" class="btn btn-default" (click)="routeToBooks(author)" />
-    </td>
-    <td>
-        <input type="button" value="Edit" class="btn btn-warning" (click)="editAuthor(author)" *ngIf="isAuthorized" />
-    </td>
-    <td>
-        <input type="button" value="Delete" class="btn btn-danger" (click)="deleteAuthor(author)" *ngIf="isAuthorized" />
-    </td>
-    <td></td>
-</ng-template>
-
-<ng-template #editTemplate>
-    <td>
-        <input type="text" [(ngModel)]="editedAuthor.id" readonly disabled class="form-control" />
-    </td>
-    <td>
-        <input type="text" name="authorName" [(ngModel)]="editedAuthor.name" class="form-control" #authorName="ngModel" required />
-        <p [hidden]="authorName.valid || authorName.untouched" class="danger">Enter the name!</p>
-    </td>
-    <td>
-        <input type="text" name="authorSurname" [(ngModel)]="editedAuthor.surname" class="form-control" #authorSurname="ngModel" required />
-        <p [hidden]="authorSurname.valid || authorSurname.untouched" class="danger">Enter the surname!</p>
-    </td>
-    <td>
-        <button [disabled]="authorName.invalid || authorSurname.invalid" (click)="saveAuthor()" class="btn btn-success">Save</button>
-    </td>
-    <td>
-        <button (click)="cancel()" class="btn btn-warning">Cencel</button>
-    </td>
-    <td></td>
-</ng-template>

@@ -3,6 +3,7 @@ using LibraryAppCore.Domain.Entities.MsSql;
 using LibraryAppCore.Domain.QueryResultObjects;
 using LibraryAppCore.Domain.QueryResultObjects.MongoDb;
 using System;
+using System.Linq;
 
 namespace LibraryAppCore.Domain.Entities
 {
@@ -60,6 +61,19 @@ namespace LibraryAppCore.Domain.Entities
             Description = book.Description;
             AuthorId = book.AuthorId;
             BookMongoDb = book;
+        }
+
+        public Book(IQueryable<Book> book)
+        {
+            foreach (var b in book)
+            {
+                Id = b.Id;
+                Year = b.Year;
+                Name = b.Name;
+                Description = b.Description;
+                AuthorId = b.AuthorId;
+                AuthorName = b.AuthorName;
+            }
         }
 
         public Book() { }

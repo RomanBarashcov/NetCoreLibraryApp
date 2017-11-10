@@ -1,0 +1,53 @@
+﻿<h1>Edit Book</h1>
+
+<form class="form-horizontal edit-form">
+    <div class="form-group">
+        <label class="col-lg-3 control-label">BookId:</label>
+        <div class="col-lg-5">
+            <input type="text" [(ngModel)]="editedBook.id"  class="form-control" name="bookId" readonly disabled />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">Book Year:</label>
+        <div class="col-lg-5">
+            <input type="text" name="bookYear" [(ngModel)]="editedBook.year" class="form-control" #bookYear="ngModel" required pattern="[0-9]{4}" />
+            <p [hidden]="bookYear.valid || bookYear === 0" class="danger">Year must be have four numbers !</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">Book Name:</label>
+        <div class="col-lg-5">
+            <input type="text" name="bookName" [(ngModel)]="editedBook.name" class="form-control" #bookName="ngModel" required />
+            <p [hidden]="bookName.valid" class="danger">Enter the Name!</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">Book Description:</label>
+        <div class="col-lg-5">
+            <textarea name="bookDescription" [(ngModel)]="editedBook.description" class="form-control" #bookDescription="ngModel" required  rows="5"></textarea>
+            <!--<input type="text" name="bookDescription" [(ngModel)]="editedBook.description" class="form-control" #bookDescription="ngModel" required />-->
+            <p [hidden]="bookDescription.valid" class="danger">Enter the Description!</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label"></label>
+        <div class="col-lg-5">
+            <select class="form-control" (change)="onAuthorSelect($event.target.value)" name="authorId">
+                <option value="editedBook.authorId"> {{ editedBook.authorId + " - " + editedBook.authorName + " (Selected) " }} </option>
+                <option> (  All  Authors  )</option>
+                <option value="{{a.id}}" *ngFor="let a of authors">
+                    {{a.id}} - {{a.name + " " + a.surname}}
+                </option>
+            </select>
+            <p [hidden]="editedBook.authorId > 0" class="danger">Chose author please!</p>
+            </div>
+        </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label"></label>
+        <div class="col-lg-5">
+            <button [disabled]="authorId == 0 || bookYear.invalid || bookName.invalid || bookDescription.invalid" (click)="saveBook()" class="btn btn-success">Save</button>
+            <span></span>
+            <button (click)="cancel()" class="btn btn-warning">Cencel</button>
+        </div>
+    </div>
+</form>

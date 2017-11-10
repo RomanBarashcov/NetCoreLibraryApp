@@ -36,9 +36,17 @@
         </thead>
         <tbody *ngIf="booksViewModel.length > 0">
             <tr [@flyInOut]="state" *ngFor="let book of booksViewModel">
-                <ng-template [ngTemplateOutlet]="loadTemplate(book)"
-                             [ngOutletContext]="{ $implicit: book}">
-                </ng-template>
+                <td>{{book.id}}</td>
+                <td>{{book.year}}</td>
+                <td>{{book.name}}</td>
+                <td>{{book.description}}</td>
+                <td>{{book.authorName}}</td>
+                <td>
+                    <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book.id)" *ngIf="isAuthorized" />
+                </td>
+                <td>
+                    <input type="button" value="Delete" class="btn btn-danger" (click)="deleteBook(book.id)" *ngIf="isAuthorized" />
+                </td>
             </tr>
         </tbody>
     </table>
@@ -89,52 +97,3 @@
 
 <div class="status-message danger">{{statusMessage}}</div>
 
-
-<ng-template #readOnlyTemplate let-book>
-    <td>{{book.id}}</td>
-    <td>{{book.year}}</td>
-    <td>{{book.name}}</td>
-    <td>{{book.description}}</td>
-    <td>{{book.authorName}}</td>
-    <td>
-        <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book)" *ngIf="isAuthorized" />
-    </td>
-    <td>
-        <input type="button" value="Delete" class="btn btn-danger" (click)="deleteBook(book)" *ngIf="isAuthorized" />
-    </td>
-</ng-template>
-
-
-<ng-template #editTemplate>
-    <td>
-        <input type="text" [(ngModel)]="editedBook.id" readonly disabled class="form-control" />
-    </td>
-    <td>
-        <input type="text" name="bookYear" [(ngModel)]="editedBook.year" class="form-control" #bookYear="ngModel" required pattern="[0-9]{4}" />
-        <p [hidden]="bookYear.valid || bookYear === 0" class="danger">Year must be have four numbers !</p>
-    </td>
-    <td>
-        <input type="text" name="bookName" [(ngModel)]="editedBook.name" class="form-control"  #bookName="ngModel" required  />
-        <p [hidden]="bookName.valid" class="danger">Enter the Name!</p>
-    </td>
-    <td>
-        <input type="text" name="bookDescription" [(ngModel)]="editedBook.description" class="form-control" #bookDescription="ngModel" required />
-        <p [hidden]="bookDescription.valid" class="danger">Enter the Description!</p> 
-    </td>
-    <td>
-        <select class="form-control" (change)="onAuthorSelect($event.target.value)" name="authorId">
-            <option value="editedBook.authorId"> {{ editedBook.authorId + " - " + editedBook.authorName + " (Selected) " }} </option>
-            <option> (  All  Authors  )</option>
-            <option value="{{a.id}}" *ngFor="let a of authors">
-                {{a.id}} - {{a.name + " " + a.surname}}
-            </option>
-        </select>
-        <p [hidden]="editedBook.authorId > 0" class="danger">Chose author please!</p> 
-    </td>
-    <td>
-        <button [disabled]="authorId == 0 || bookYear.invalid || bookName.invalid || bookDescription.invalid" (click)="saveBook()" class="btn btn-success">Save</button>
-    </td>
-    <td>
-        <button (click)="cancel()" class="btn btn-warning">Cencel</button>
-    </td>
-</ng-template>

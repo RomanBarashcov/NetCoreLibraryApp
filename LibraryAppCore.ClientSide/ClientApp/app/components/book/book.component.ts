@@ -52,18 +52,12 @@ import { NgProgress } from 'ngx-progressbar';
 })
 export class BookComponent implements OnDestroy {
 
-    @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
-    @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
     @ViewChild("fileInput") fileInput: any;
 
     books: Book[] = [];
     authors: Author[] = [];
-    booksNull: Book;
     bookPagedResult: BookPagedResult;
-    authorPagedResult: AuthorPagedResult;
-    editedBook: BookViewModel;
     authorData: Author;
-    editedBookNull: BookViewModel;
     booksViewModel: BookViewModel[] = [];
 
     isNewRecord: boolean;
@@ -93,11 +87,10 @@ export class BookComponent implements OnDestroy {
 
     showDialog: boolean = false;
 
-    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private config: Config, private http: Http, private ngProgress: NgProgress) {
+    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private config: Config, private router: Router, private http: Http, private ngProgress: NgProgress) {
 
         this.ngProgress.start();
         this.authorApiUrl = this.config.AuthorsApiUrl;
-        this.loadAuthors();
         this.bookApiUrl = this.config.BookApiUrl;
         this.documentApiUrl = this.config.DocumentApiUrl;
         this.selectedRowCount = 5;
@@ -224,7 +217,6 @@ export class BookComponent implements OnDestroy {
         this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe((isAuthorized: boolean) => {
 
             this.isAuthorized = isAuthorized;
-
         });
 
         this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
@@ -265,127 +257,29 @@ export class BookComponent implements OnDestroy {
 
             if (this.hiddenAuthorId != undefined) {
 
-                this.editedBook = new BookViewModel("", 0, "", "", this.hiddenAuthorId, "");
-
+                this.router.navigate(['/addBook', this.hiddenAuthorId]);   
             }
             else {
 
-                this.editedBook = new BookViewModel("", 0, "", "", "0", "");
-
+                this.router.navigate(['/addBook']);   
             }
-
-            this.booksViewModel.push(this.editedBook);
-
         }
         else {
 
             this.statusMessage = "Please log in!";
-
         }
     }
 
-    editBook(book: BookViewModel) {
+    editBook(bookId: number) {
 
-        if (this.isAuthorized) {
+        if (this.hiddenAuthorId != undefined) {
 
-             this.editedBook = new BookViewModel(book.id, book.year, book.name, book.description, book.authorId, book.authorName);
+            this.router.navigate(['/editBook', this.hiddenAuthorId, bookId]);
 
         } else {
 
-            this.statusMessage = "Please log in!";
-
+            this.router.navigate(['/editBook', bookId]);
         }
-    }
-
-    loadTemplate(book: BookViewModel) {
-
-        if (this.editedBook && this.editedBook.id == book.id) {
-
-            return this.editTemplate;
-
-        } else {
-
-            return this.readOnlyTemplate;
-        }
-    }
-
-    saveBook() {
-
-        this.ngProgress.start();
-
-        if (this.isNewRecord) {
-
-            let createdBookData: Book = new Book(this.editedBook.id, this.editedBook.year, this.editedBook.name, this.editedBook.description, this.editedBook.authorId, this.editedBook.authorName);
-
-            this.authService.post(this.bookApiUrl, createdBookData).subscribe((resp: Response) => {
-
-                if (resp.status == 200) {
-
-                    this.statusMessage = 'Saved successfully!';
-                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
-
-                }
-            },
-                error => {
-
-                    this.statusMessage = error + ' Check all your data, and try again! ';
-                    console.log(error);
-                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
-
-                });
-
-            this.isNewRecord = false;
-            this.editedBook = this.editedBookNull;
-
-        } else {
-
-            let updatedBookData: Book = new Book(this.editedBook.id, this.editedBook.year, this.editedBook.name, this.editedBook.description, this.editedBook.authorId, this.editedBook.authorName);
-
-            this.authService.put(this.bookApiUrl + "/" + this.editedBook.id, updatedBookData).subscribe((resp: Response) => {
-
-                if (resp.status == 200) {
-
-                    this.statusMessage = 'Updated successfully!';
-                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
-
-                }
-            },
-                error => {
-
-                    this.statusMessage = error + ' Check all your data, and try again! ';
-                    console.log(error);
-                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
-
-                });
-
-            this.editedBook = this.editedBookNull;
-        }
-    }
-
-    cancel() {
-
-        this.ngProgress.start();
-
-        if (this.isNewRecord) {
-
-            this.booksViewModel.pop();
-            this.isNewRecord = false;
-
-        }
-        else {
-
-            this.booksViewModel.pop();
-
-        }
-
-        this.activateRoute.params.subscribe((params) => {
-
-            params['id'] != null ? this.loadBookByAuthor(this.editedBook.authorId, this.currentPage, this.currentOrderBy, this.currentAscending)
-                : this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending)
-
-        });
-
-        this.editedBook = this.editedBookNull;
     }
 
     deleteBook(book: Book) {
@@ -400,7 +294,6 @@ export class BookComponent implements OnDestroy {
 
                     this.statusMessage = 'Deleted successfully!';
                     this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
-
                 }
             },
                 error => {
@@ -413,60 +306,8 @@ export class BookComponent implements OnDestroy {
         else {
 
             this.statusMessage = "Please log in!";
-
         }
     }
-
-    loadAuthors() {
-
-        this.authors = [];
-        
-        this.authService.get(this.authorApiUrl + "/GetAuthors").subscribe(result => {
-
-            this.authors = result.json();
-            console.log("Authors Result:" + result);
-
-            if (this.authors == null) {
-
-                this.authors = [];
-
-            }
-
-        },
-            error => {
-
-                this.statusMessage = error;
-                console.log(error);
-
-            });
-
-    }
-
-    loadAuthorById(authorId: string): Author {
-
-        let result: Author = new Author("", "", "");
-
-        if (this.authors.length > 0) {
-
-            for (let a of this.authors) {
-
-                if (a.id == authorId) {
-
-                    result = new Author(a.id, a.name, a.surname);
-
-                }
-            }
-        }
-
-        return result;
-    }
-
-    onAuthorSelect(authorId: string) {
-
-        this.editedBook.authorId = authorId;
-
-    }
-
 
     addFile(): void {
 
@@ -480,30 +321,25 @@ export class BookComponent implements OnDestroy {
             let data = new FormData();
             data.append("file", fileToUpload);
 
-
             this.authService.postFormData(this.documentApiUrl + "/Upload/", data)
                 .subscribe(res => {
 
                     if (res.status == 200 && res.text() == "Data added successfully") {
 
                         this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
-
                     }
                     else if (res.status == 200 && res.text() == "All data is dublicating!") {
 
                         this.statusMessage = res.text();
-
                     }
                     else {
 
                         this.statusMessage = res.text();
-
                     }
 
                     this.ngProgress.done();
                     this.showDialog = false;
                     console.log(res);
-
                 });
         }
     } 
@@ -512,7 +348,6 @@ export class BookComponent implements OnDestroy {
 
         this.ngProgress.start();
         this.loadBooks(page, this.currentOrderBy, this.currentAscending);
-
     }
 
 }

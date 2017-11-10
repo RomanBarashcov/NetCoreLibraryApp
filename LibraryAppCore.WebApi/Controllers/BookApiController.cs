@@ -30,6 +30,14 @@ namespace LibraryAppCore.WebApi.Controllers
         }
 
         [Authorize]
+        [HttpGet("/BookApi/GetBookById/{id}")]
+        public async Task<Book> GetBookById(string id)
+        {
+            Book Book = await repository.GetBookById(id);
+            return Book;
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] Book book)
         {

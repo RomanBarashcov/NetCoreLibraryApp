@@ -55,6 +55,31 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
             return result;
         }
 
+        public async Task<Book> GetBookById(string bookId)
+        {
+            Book result = null;
+
+            if (!String.IsNullOrEmpty(bookId))
+            {
+                var BookQueryResult = from b in db.Books.AsQueryable().Where(b => b.Id == bookId)
+                                      join a in db.Authors.AsQueryable() on b.AuthorId equals a.Id into joinedResult
+                                      from r in joinedResult.DefaultIfEmpty()
+                                      select new Book
+                                      {
+                                          Id = b.Id,
+                                          Year = b.Year,
+                                          Name = b.Name,
+                                          Description = b.Description,
+                                          AuthorId = b.AuthorId,
+                                          AuthorName = r.Name + " " + r.Surname
+                                      };
+
+                result = new Book(BookQueryResult);
+            }
+
+            return result;
+        }
+
         public async Task<int> CreateBook(Book book)
         {
             int DbResult = 0;

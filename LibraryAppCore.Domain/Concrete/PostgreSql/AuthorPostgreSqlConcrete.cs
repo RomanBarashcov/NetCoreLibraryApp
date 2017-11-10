@@ -61,7 +61,8 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
 
             if (!String.IsNullOrEmpty(authorId))
             {
-                AuthorPostgreSql authorDbResult = await db.Authors.FindAsync(authorId);
+                int aId = Convert.ToUInt16(authorId);
+                AuthorPostgreSql authorDbResult = await db.Authors.FindAsync(aId);
 
                 if(authorDbResult != null)
                 {
@@ -69,7 +70,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                     Author.Name = authorDbResult.Name;
                     Author.Surname = authorDbResult.Surname;
                 }
-                
+
             }
 
             return Author;

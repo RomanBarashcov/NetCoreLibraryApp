@@ -50,6 +50,32 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
             return result;
         }
 
+        public async Task<Book> GetBookById(string bookId)
+        {
+            Book result = null;
+
+            if (!String.IsNullOrEmpty(bookId))
+            {
+                int bId = Convert.ToInt16(bookId);
+
+                IQueryable<Book> BookQuery = db.Books.Where(b => b.Id == bId)
+                    .Join(db.Authors, b => b.AuthorId, a => a.Id, (b, a) => new Book
+                    {
+                        Id = b.Id.ToString(),
+                        Year = b.Year,
+                        Name = b.Name,
+                        Description = b.Description,
+                        AuthorId = a.Id.ToString(),
+                        AuthorName = a.Name + " " + a.Surname
+
+                    });
+
+                result = new Book(BookQuery);
+            }
+
+            return result;
+        }
+
         public async Task<int> CreateBook(Book book)
         {
             int DbResult = 0;
