@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LibraryAppCore.XF.Client.Views.BooksListPage">
+    <ContentPage.Content>
+        <StackLayout Margin="20">
+            <StackLayout Orientation="Horizontal">
+                <Button Text="Home" Clicked="Move_To_Home" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
+                <Button Text="Authors" Clicked="Move_To_Authors" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10"  />
+                <Button Text="Books" Clicked="Move_To_Books" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
+                <Button Text="Choose Db" Clicked="Move_To_ChooseDb" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
+            </StackLayout>
+            <StackLayout x:Name="labelStack" Orientation="Horizontal">
+                <Label Text="Books List" FontSize="Large"  Margin="10" />
+            </StackLayout>
+            <Button Text="Add Book" Command="{Binding CreateBookCommand}" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
+            <ListView ItemsSource="{Binding Books}"
+                      SelectedItem="{Binding SelectedBook, Mode=TwoWay}" HasUnevenRows="True" />
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.View>
+                            <StackLayout>
+                                <Label Text="{Binding BookId}" FontSize="Medium" />
+                                <Label Text="{Binding Year}" FontSize="Medium" />
+                                <Label Text="{Binding Name}" FontSize="Medium" />
+                                <Label Text="{Binding Description}" FontSize="Medium" />
+                                <Label Text="{Binding AuthorId}" FontSize="Medium" />
+                            </StackLayout>
+                        </ViewCell.View>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

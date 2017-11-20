@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LibraryAppCore.XF.Client.Views.AuthorPage">
+    <ContentPage.Content>
+        <StackLayout Margin="20">
+            <StackLayout x:Name="authorStack">
+                <Label Text="AuthorId" />
+                <Entry Text="{Binding AuthorId}" FontSize="Medium" />
+                <Label Text="Name" />
+                <Entry Text="{Binding Name}" FontSize="Medium" />
+                <Label Text="Surname" />
+                <Entry Text="{Binding Surname}" FontSize="Medium" />
+            </StackLayout>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                <Button Text="Add" Command="{Binding ListViewModel.SaveAuthorCommand}" CommandParameter="{Binding}" />
+                <Button Text="Delete" Command="{Binding ListViewModel.DeleteAuthorCommand}" CommandParameter="{Binding}" />
+                <Button Text="Back" Command="{Binding ListViewModel.BackCommand}" CommandParameter="{Binding}" />
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

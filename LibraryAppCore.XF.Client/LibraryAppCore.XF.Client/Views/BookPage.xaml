@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LibraryAppCore.XF.Client.Views.BookPage">
+    <ContentPage.Content>
+        <StackLayout Margin="20">
+            <StackLayout x:Name="bookStack">
+                <Label Text="BookId" />
+                <Entry Text="{Binding BookId}" FontSize="Medium" />
+                <Label Text="Year" />
+                <Entry Text="{Binding Year}" FontSize="Medium" />
+                <Label Text="Name" />
+                <Entry Text="{Binding Name}" FontSize="Medium" />
+                <Label Text="Description" />
+                <Entry Text="{Binding Description}" FontSize="Medium" />
+                <Label Text="AuthorId" />
+                <Entry Text="{Binding AuthorId}" FontSize="Medium" />
+            </StackLayout>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                <Button Text="Add" Command="{Binding ListViewModel.SaveBookCommand}" CommandParameter="{Binding}" />
+                <Button Text="Delete" Command="{Binding ListViewModel.DeleteBookCommand}" CommandParameter="{Binding}" />
+                <Button Text="Back" Command="{Binding ListViewModel.BackCommand}" CommandParameter="{Binding}" />
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

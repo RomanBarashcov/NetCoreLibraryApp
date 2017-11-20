@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LibraryAppCore.XF.Client.Views.ChooseDbPage">
+    <ContentPage.Content>
+        <StackLayout Orientation="Horizontal" Margin="20">
+            <Button Text="Home" Clicked="Move_To_Home" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
+            <Button Text="Authors" Clicked="Move_To_Authors" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10"  />
+            <Button Text="Books" Clicked="Move_To_Books" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
+            <Button Text="Choose Db" Clicked="Move_To_ChooseDb" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
+        </StackLayout>
+        <!--<StackLayout x:Name="labelStack" Orientation="Horizontal">
+            <Label Text="Home Page" FontSize="Large"  />
+        </StackLayout>-->
+    </ContentPage.Content>
+</ContentPage>
