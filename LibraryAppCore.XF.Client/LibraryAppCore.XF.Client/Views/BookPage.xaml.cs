@@ -1,4 +1,5 @@
-﻿using LibraryAppCore.XF.Client.ViewModels;
+﻿using LibraryAppCore.XF.Client.Models;
+using LibraryAppCore.XF.Client.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +14,15 @@ namespace LibraryAppCore.XF.Client.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class BookPage : ContentPage
 	{
-        public BookViewModel ViewModel { get; set; }
+        public Book Model { get; set; }
+        public BooksListViewModel ViewModel { get; private set; }
 
-        public BookPage(BookViewModel bvm)
+        public BookPage(Book model, BooksListViewModel blvm)
         {
             InitializeComponent();
-            ViewModel = bvm;
-            BindingContext = ViewModel;
+            Model = model;
+            ViewModel = blvm;
+            BindingContext = this;
         }
     }
 }

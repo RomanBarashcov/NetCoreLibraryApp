@@ -33,14 +33,14 @@ namespace LibraryAppCore.XF.Client.ViewModels
             }
         }
 
-        public string BookId
+        public string Id
         {
-            get { return Book.BookId; }
+            get { return Book.Id; }
             set
             {
-                if (Book.BookId != value)
+                if (Book.Id != value)
                 {
-                    Book.BookId = value;
+                    Book.Id = value;
                     OnPropertyChanged("BookId");
                 }
 
@@ -103,11 +103,11 @@ namespace LibraryAppCore.XF.Client.ViewModels
         {
             get
             {
-                return ((!string.IsNullOrEmpty(Book.BookId)) ||
+                return ((!string.IsNullOrEmpty(Book.Id)) ||
                     (Book.Year > 0) ||
                     (!string.IsNullOrEmpty(Name.Trim())) ||
                     (!string.IsNullOrEmpty(Book.Description)) ||
-                    (!string.IsNullOrEmpty(Book.BookId)));
+                    (!string.IsNullOrEmpty(Book.Id)));
             }
         }
 

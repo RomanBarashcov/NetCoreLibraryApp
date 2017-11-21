@@ -8,7 +8,7 @@ namespace LibraryAppCore.XF.Client.Models
 {
     public class Author
     {
-        public string AuthorId { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
     }

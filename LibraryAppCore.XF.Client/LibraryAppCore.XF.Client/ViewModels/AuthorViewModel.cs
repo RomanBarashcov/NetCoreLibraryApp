@@ -1,12 +1,7 @@
 ﻿using LibraryAppCore.XF.Client.Models;
-using System;
-using System.Collections.Generic;
+using LibraryAppCore.XF.Client.Pagination;
+using LibraryAppCore.XF.Client.Services;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Xamarin.Forms;
 
 namespace LibraryAppCore.XF.Client.ViewModels
 {
@@ -19,7 +14,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
         public AuthorViewModel()
         {
             Author = new Author();
-
         }
         
         public AuthorsListViewModel ListViewModel
@@ -35,14 +29,14 @@ namespace LibraryAppCore.XF.Client.ViewModels
             }
         }
 
-        public string AuthorId
+        public string Id
         {
-            get { return Author.AuthorId; }
+            get { return Author.Id; }
             set
             {
-                if (Author.AuthorId != value)
+                if (Author.Id != value)
                 {
-                    Author.AuthorId = value;
+                    Author.Id = value;
                     OnPropertyChanged("AuthorId");
                 }
 
@@ -79,7 +73,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
         {
             get
             {
-                return ((!string.IsNullOrEmpty(Author.AuthorId)) ||
+                return ((!string.IsNullOrEmpty(Author.Id)) ||
                     (!string.IsNullOrEmpty(Name.Trim())) ||
                     (!string.IsNullOrEmpty(Author.Surname)));
             }

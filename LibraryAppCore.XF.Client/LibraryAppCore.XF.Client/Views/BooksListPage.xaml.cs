@@ -13,10 +13,19 @@ namespace LibraryAppCore.XF.Client.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class BooksListPage : ContentPage
 	{
-		public BooksListPage ()
-		{
-			InitializeComponent ();
-            BindingContext = new BooksListViewModel() { Navigation = this.Navigation };
+        BooksListViewModel viewModel;
+
+        public BooksListPage()
+        {
+            InitializeComponent();
+            viewModel = new BooksListViewModel() { Navigation = this.Navigation };
+            BindingContext = viewModel;
+        }
+
+        protected override async void OnAppearing()
+        {
+            await viewModel.GetBooks();
+            base.OnAppearing();
         }
 
         private void Move_To_Home(object sender, EventArgs e)

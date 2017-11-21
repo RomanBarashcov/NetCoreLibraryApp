@@ -8,7 +8,7 @@ namespace LibraryAppCore.XF.Client.Models
 {
     public class Book
     {
-        public string BookId { get; set; }
+        public string Id { get; set; }
         public int Year { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

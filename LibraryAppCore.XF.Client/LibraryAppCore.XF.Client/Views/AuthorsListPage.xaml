@@ -12,23 +12,35 @@
             </StackLayout>
             <StackLayout x:Name="labelStack" Orientation="Horizontal">
                 <Label Text="Authors List" FontSize="Large" Margin="10"/>
-            </StackLayout>    
-            <Button Text="Add Author" Command="{Binding CreateAuthorCommand}" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
-            <ListView ItemsSource="{Binding Authors}"
-                      SelectedItem="{Binding SelectedAuthor, Mode=TwoWay}" HasUnevenRows="True" />
+            </StackLayout>
+            <Button Text="Add Author" Command="{Binding CreateAuthorCommand}" IsEnabled="{Binding IsLoaded}" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="#4cae4c"/>
+            <StackLayout x:Name="Header" Orientation="Horizontal">
+                <Label Text="Id" FontSize="Medium" Margin="10" />
+                <Label Text="Name" FontSize="Medium" Margin="10" />
+                <Label Text="Surname" FontSize="Medium" Margin="10" />
+            </StackLayout>
+            <ListView x:Name="authorsList" ItemsSource="{Binding Authors}"
+                      SelectedItem="{Binding SelectedAuthor, Mode=TwoWay}" HasUnevenRows="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <ViewCell.View>
-                            <StackLayout>
-                                <Label Text="{Binding AuthorId}" FontSize="Medium" />
-                                <Label Text="{Binding Name}" FontSize="Medium" />
-                                <Label Text="{Binding Surname}" FontSize="Medium" />
+                            <ViewCell.View>
+                            <StackLayout x:Name="DataBody" Orientation="Horizontal">
+                                <Label Text="{Binding Id}" FontSize="Medium" Margin="10" />
+                                <Label Text="{Binding Name}" FontSize="Medium" Margin="10" />
+                                <Label Text="{Binding Surname}" FontSize="Medium" Margin="10" />
                             </StackLayout>
                         </ViewCell.View>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
+           </ListView>
+            <StackLayout IsVisible="{Binding IsBusy}"
+                    HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Padding="20">
+                <Label Text="Data is Load..." TextColor="Green" HorizontalOptions="Center" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="Accent" >
+                </ActivityIndicator>
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

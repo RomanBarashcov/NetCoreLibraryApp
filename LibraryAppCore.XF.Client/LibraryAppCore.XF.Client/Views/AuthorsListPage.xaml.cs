@@ -13,11 +13,20 @@ namespace LibraryAppCore.XF.Client.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class AuthorsListPage : ContentPage
 	{
+        AuthorsListViewModel viewModel;
+
 		public AuthorsListPage ()
 		{
 			InitializeComponent ();
-            BindingContext = new AuthorsListViewModel() { Navigation = this.Navigation };
+            viewModel = new AuthorsListViewModel() { Navigation = this.Navigation };
+            BindingContext = viewModel;
 		}
+
+        protected override async void OnAppearing()
+        {
+            await viewModel.GetAuthors();
+            base.OnAppearing();
+        }
 
         private void Move_To_Home(object sender, EventArgs e)
         {

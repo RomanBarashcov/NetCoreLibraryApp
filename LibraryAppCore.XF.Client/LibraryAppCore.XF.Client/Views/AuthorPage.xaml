@@ -6,16 +6,16 @@
         <StackLayout Margin="20">
             <StackLayout x:Name="authorStack">
                 <Label Text="AuthorId" />
-                <Entry Text="{Binding AuthorId}" FontSize="Medium" />
+                <Entry Text="{Binding Path=Model.Id}" FontSize="Medium" />
                 <Label Text="Name" />
-                <Entry Text="{Binding Name}" FontSize="Medium" />
+                <Entry Text="{Binding Path=Model.Name}" FontSize="Medium" />
                 <Label Text="Surname" />
-                <Entry Text="{Binding Surname}" FontSize="Medium" />
+                <Entry Text="{Binding Path=Model.Surname}" FontSize="Medium" />
             </StackLayout>
             <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-                <Button Text="Add" Command="{Binding ListViewModel.SaveAuthorCommand}" CommandParameter="{Binding}" />
-                <Button Text="Delete" Command="{Binding ListViewModel.DeleteAuthorCommand}" CommandParameter="{Binding}" />
-                <Button Text="Back" Command="{Binding ListViewModel.BackCommand}" CommandParameter="{Binding}" />
+                <Button Text="Add" Command="{Binding ViewModel.SaveAuthorCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#4cae4c" />
+                <Button Text="Delete" Command="{Binding ViewModel.DeleteAuthorCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#d9534f" />
+                <Button Text="Back" Command="{Binding ViewModel.BackCommand}" TextColor="White" />
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

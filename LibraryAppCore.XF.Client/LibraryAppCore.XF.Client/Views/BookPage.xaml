@@ -6,20 +6,20 @@
         <StackLayout Margin="20">
             <StackLayout x:Name="bookStack">
                 <Label Text="BookId" />
-                <Entry Text="{Binding BookId}" FontSize="Medium" />
+                <Entry Text="{Binding Path=Model.Id}" FontSize="Medium" />
                 <Label Text="Year" />
-                <Entry Text="{Binding Year}" FontSize="Medium" />
+                <Entry Text="{Binding Path=Model.Year}" FontSize="Medium" />
                 <Label Text="Name" />
-                <Entry Text="{Binding Name}" FontSize="Medium" />
+                <Entry Text="{Binding Path=Model.Name}" FontSize="Medium" />
                 <Label Text="Description" />
-                <Entry Text="{Binding Description}" FontSize="Medium" />
+                <Entry Text="{Binding Path=Model.Description}" FontSize="Medium" />
                 <Label Text="AuthorId" />
-                <Entry Text="{Binding AuthorId}" FontSize="Medium" />
+                <Entry Text="{Binding Path=Model.AuthorId}" FontSize="Medium" />
             </StackLayout>
             <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-                <Button Text="Add" Command="{Binding ListViewModel.SaveBookCommand}" CommandParameter="{Binding}" />
-                <Button Text="Delete" Command="{Binding ListViewModel.DeleteBookCommand}" CommandParameter="{Binding}" />
-                <Button Text="Back" Command="{Binding ListViewModel.BackCommand}" CommandParameter="{Binding}" />
+                <Button Text="Add" Command="{Binding ViewModel.SaveBookCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#4cae4c" />
+                <Button Text="Delete" Command="{Binding ViewModel.DeleteBookCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#d9534f" />
+                <Button Text="Back" Command="{Binding ViewModel.BackCommand}" TextColor="White" />
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>
