@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LibraryAppCore.XF.Client.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,29 +13,19 @@ namespace LibraryAppCore.XF.Client.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class ChooseDbPage : ContentPage
 	{
-		public ChooseDbPage ()
+        ChooseDbViewModel viewModel;
+
+        public ChooseDbPage ()
 		{
 			InitializeComponent ();
-		}
-
-        private void Move_To_Home(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new MainPage());
+            viewModel = new ChooseDbViewModel() { Navigation = this.Navigation };
+            BindingContext = viewModel;
         }
 
-        private void Move_To_Authors(object sender, EventArgs e)
+        protected override void OnAppearing()
         {
-            Navigation.PushAsync(new AuthorsListPage());
+            base.OnAppearing();
         }
 
-        private void Move_To_Books(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new BooksListPage());
-        }
-
-        private void Move_To_ChooseDb(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new ChooseDbPage());
-        }
     }
 }

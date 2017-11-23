@@ -12,6 +12,7 @@ namespace LibraryAppCore.XF.Client.Models
         public int Year { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string AuthorName { get; set; }
         public string AuthorId { get; set; }
     }
 }

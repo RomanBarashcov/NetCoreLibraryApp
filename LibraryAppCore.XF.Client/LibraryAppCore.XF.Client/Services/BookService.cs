@@ -24,11 +24,11 @@ namespace LibraryAppCore.XF.Client.Services
             return client;
         }
 
-        public async Task<PagedResults<Book>> GetBooks()
+        public async Task<PagedResults<Book>> GetBooks(int page, string orderBy, bool ascending)
         {
             PagedResults<Book> bookReuslt = null;
             HttpClient client = GetClient();
-            client.BaseAddress = new Uri(bookApiUrl + "?page=" + 1 + "&pageSize=" + 5 + "&orderBy=" + "Id" + "&ascending=" + true);
+            client.BaseAddress = new Uri(bookApiUrl + "?page=" + page + "&pageSize=" + 5 + "&orderBy=" + orderBy + "&ascending=" + ascending);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             var response = await client.GetStringAsync(client.BaseAddress);
             bookReuslt = JsonConvert.DeserializeObject<PagedResults<Book>>(response);

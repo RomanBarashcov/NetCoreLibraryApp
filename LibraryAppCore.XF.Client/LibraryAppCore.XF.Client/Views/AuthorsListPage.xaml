@@ -1,46 +1,88 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LibraryAppCore.XF.Client.Views.AuthorsListPage">
+             x:Class="LibraryAppCore.XF.Client.Views.AuthorsListPage"
+             Title="Authors List">
     <ContentPage.Content>
         <StackLayout Margin="20">
-            <StackLayout Orientation="Horizontal">
-                <Button Text="Home" Clicked="Move_To_Home" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
-                <Button Text="Authors" Clicked="Move_To_Authors" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10"  />
-                <Button Text="Books" Clicked="Move_To_Books" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
-                <Button Text="Choose Db" Clicked="Move_To_ChooseDb" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" />
-            </StackLayout>
+            
             <StackLayout x:Name="labelStack" Orientation="Horizontal">
-                <Label Text="Authors List" FontSize="Large" Margin="10"/>
+                <Label Text="Authors List" FontSize="Large" />
             </StackLayout>
-            <Button Text="Add Author" Command="{Binding CreateAuthorCommand}" IsEnabled="{Binding IsLoaded}" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="#4cae4c"/>
-            <StackLayout x:Name="Header" Orientation="Horizontal">
-                <Label Text="Id" FontSize="Medium" Margin="10" />
-                <Label Text="Name" FontSize="Medium" Margin="10" />
-                <Label Text="Surname" FontSize="Medium" Margin="10" />
-            </StackLayout>
+            
+            <Button Text="Add Author" Command="{Binding CreateAuthorCommand}" IsEnabled="{Binding IsLoaded}" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start"  TextColor="White" BackgroundColor="#4cae4c"/>
+           
+            <Grid x:Name="Header">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Button Text="Id" Grid.Column="0" Grid.Row="0" FontSize="Medium" BackgroundColor="White" BorderColor="White" Command="{Binding SortTableByIdCommand}" />
+                <Button Text="Name" Grid.Column="1" Grid.Row="0" FontSize="Medium" BackgroundColor="White" BorderColor="White" Command="{Binding SortTableByNameCommand}" />
+                <Button Text="Surname" Grid.Column="2" Grid.Row="0" FontSize="Medium" BackgroundColor="White" BorderColor="White" Command="{Binding SortTableBySurnameCommand}" />
+                
+            </Grid>
+            
             <ListView x:Name="authorsList" ItemsSource="{Binding Authors}"
                       SelectedItem="{Binding SelectedAuthor, Mode=TwoWay}" HasUnevenRows="True">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                            <ViewCell.View>
-                            <StackLayout x:Name="DataBody" Orientation="Horizontal">
-                                <Label Text="{Binding Id}" FontSize="Medium" Margin="10" />
-                                <Label Text="{Binding Name}" FontSize="Medium" Margin="10" />
-                                <Label Text="{Binding Surname}" FontSize="Medium" Margin="10" />
-                            </StackLayout>
-                        </ViewCell.View>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-           </ListView>
-            <StackLayout IsVisible="{Binding IsBusy}"
-                    HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Padding="20">
-                <Label Text="Data is Load..." TextColor="Green" HorizontalOptions="Center" />
-                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="Accent" >
-                </ActivityIndicator>
-            </StackLayout>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <ViewCell.View>
+                                    
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <Label Text="{Binding Id}" Grid.Column="0" Grid.Row="0" FontSize="Small" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    <Label Text="{Binding Name}"  Grid.Column="1" Grid.Row="0" FontSize="Small"  HorizontalOptions="Center"  VerticalOptions="Center"/>
+                                    <Label Text="{Binding Surname}"  Grid.Column="2" Grid.Row="0" FontSize="Small" HorizontalOptions="Center"  VerticalOptions="Center"/>
+
+                                    </Grid>
+
+                                </ViewCell.View>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <StackLayout x:Name="Pagination" Orientation="Horizontal">
+                    <Button Text="Back" x:Name="BackPage"  Command="{Binding BackPageCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
+                    <Button Text="Next" x:Name="NextPage" Command="{Binding NextPageCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
+                 </StackLayout>
+
+            <!--<StackLayout x:Name="Pagination" Orientation="Horizontal">
+
+                <ListView x:Name="authorsList" ItemsSource="{Binding Pages}"
+                      SelectedItem="{Binding SelectedPage, Mode=TwoWay}" HasUnevenRows="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <ViewCell.View>
+                                    <Label Text="{Binding page}" BackgroundColor="Silver" TextColor="Black" HeightRequest="10" WidthRequest="10"/>
+                                </ViewCell.View>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>-->
+            
+            
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

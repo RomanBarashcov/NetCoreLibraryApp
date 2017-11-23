@@ -15,37 +15,18 @@ namespace LibraryAppCore.XF.Client.Views
 	{
         AuthorsListViewModel viewModel;
 
-		public AuthorsListPage ()
+		public AuthorsListPage()
 		{
 			InitializeComponent ();
-            viewModel = new AuthorsListViewModel() { Navigation = this.Navigation };
+            viewModel = new AuthorsListViewModel() {  Navigation = this.Navigation };
             BindingContext = viewModel;
 		}
 
         protected override async void OnAppearing()
         {
-            await viewModel.GetAuthors();
+            await viewModel.LoadAuthors();
             base.OnAppearing();
         }
 
-        private void Move_To_Home(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new MainPage());
-        }
-
-        private void Move_To_Authors(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new AuthorsListPage());
-        }
-
-        private void Move_To_Books(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new BooksListPage());
-        }
-
-        private void Move_To_ChooseDb(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new ChooseDbPage());
-        }
     }
 }

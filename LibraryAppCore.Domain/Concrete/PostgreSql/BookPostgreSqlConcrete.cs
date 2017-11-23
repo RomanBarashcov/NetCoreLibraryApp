@@ -34,7 +34,7 @@ namespace LibraryAppCore.Domain.Concrete.MsSql
                 Year = b.Year,
                 Name = b.Name,
                 Description = b.Description,
-                AuthorId = b.Id.ToString(),
+                AuthorId = a.Id.ToString(),
                 AuthorName = a.Name + " " + a.Surname
 
             }).AsQueryable();

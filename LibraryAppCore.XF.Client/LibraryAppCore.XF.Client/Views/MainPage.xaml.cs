@@ -10,31 +10,12 @@ using Xamarin.Forms;
 
 namespace LibraryAppCore.XF.Client
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage : TabbedPage
     {
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void Move_To_Home(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new MainPage());
-        }
-
-        private void Move_To_Authors(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new AuthorsListPage());
-        }
-
-        private void Move_To_Books(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new BooksListPage());
-        }
-
-        private void Move_To_ChooseDb(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new ChooseDbPage());
-        }
     }
 }

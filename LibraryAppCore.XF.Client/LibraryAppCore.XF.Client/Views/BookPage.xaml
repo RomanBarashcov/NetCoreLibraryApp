@@ -4,22 +4,31 @@
              x:Class="LibraryAppCore.XF.Client.Views.BookPage">
     <ContentPage.Content>
         <StackLayout Margin="20">
+            <StackLayout x:Name="labelStack" Orientation="Horizontal">
+                <Label Text="Book Edit" FontSize="Large" Margin="10"/>
+            </StackLayout>
             <StackLayout x:Name="bookStack">
-                <Label Text="BookId" />
-                <Entry Text="{Binding Path=Model.Id}" FontSize="Medium" />
-                <Label Text="Year" />
-                <Entry Text="{Binding Path=Model.Year}" FontSize="Medium" />
-                <Label Text="Name" />
-                <Entry Text="{Binding Path=Model.Name}" FontSize="Medium" />
-                <Label Text="Description" />
-                <Entry Text="{Binding Path=Model.Description}" FontSize="Medium" />
-                <Label Text="AuthorId" />
-                <Entry Text="{Binding Path=Model.AuthorId}" FontSize="Medium" />
+                <Label Text="BookId:" FontSize="Medium" />
+                <Entry Text="{Binding Path=Model.Id}" FontSize="Small" />
+                <Label Text="Year:" FontSize="Medium"/>
+                <Entry Text="{Binding Path=Model.Year}" FontSize="Small" />
+                <Label Text="Name:" FontSize="Medium"/>
+                <Entry Text="{Binding Path=Model.Name}" FontSize="Small" />
+                <Label Text="Description:" FontSize="Medium"/>
+                <Entry Text="{Binding Path=Model.Description}" FontSize="Small" />
+            </StackLayout>
+            <StackLayout x:Name="AuthorPocker">
+
+                <Picker x:Name="picker"
+                        ItemsSource="{Binding Path=aViewModel.Authors}"
+                        ItemDisplayBinding="{Binding FullName}"
+                        SelectedIndexChanged="OnPickerSelectedIndexChanged" />
+
             </StackLayout>
             <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-                <Button Text="Add" Command="{Binding ViewModel.SaveBookCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#4cae4c" />
-                <Button Text="Delete" Command="{Binding ViewModel.DeleteBookCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#d9534f" />
-                <Button Text="Back" Command="{Binding ViewModel.BackCommand}" TextColor="White" />
+                <Button Text="Add" Command="{Binding ViewModel.SaveBookCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#4cae4c" FontSize="Medium" />
+                <Button Text="Delete" Command="{Binding ViewModel.DeleteBookCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#d9534f" FontSize="Medium" />
+                <Button Text="Back" Command="{Binding ViewModel.BackCommand}" TextColor="White" FontSize="Medium" />
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

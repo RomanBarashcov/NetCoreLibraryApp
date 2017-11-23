@@ -40,13 +40,17 @@
     </Compile>
     <Compile Include="Models\Author.cs" />
     <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\DbConnection.cs" />
     <Compile Include="Pagination\PagedResult.cs" />
+    <Compile Include="Pagination\Pages.cs" />
     <Compile Include="Services\AuthorService.cs" />
     <Compile Include="Services\BookService.cs" />
+    <Compile Include="Services\ConnectionDbService.cs" />
     <Compile Include="ViewModels\AuthorsListViewModel.cs" />
     <Compile Include="ViewModels\AuthorViewModel.cs" />
     <Compile Include="ViewModels\BooksListViewModel.cs" />
     <Compile Include="ViewModels\BookViewModel.cs" />
+    <Compile Include="ViewModels\ChooseDbViewModel.cs" />
     <Compile Include="Views\AuthorPage.xaml.cs">
       <DependentUpon>AuthorPage.xaml</DependentUpon>
     </Compile>
@@ -61,6 +65,9 @@
     </Compile>
     <Compile Include="Views\ChooseDbPage.xaml.cs">
       <DependentUpon>ChooseDbPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomePage.xaml.cs">
+      <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -120,6 +127,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\ChooseDbPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\HomePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -24,28 +24,9 @@ namespace LibraryAppCore.XF.Client.Views
 
         protected override async void OnAppearing()
         {
-            await viewModel.GetBooks();
+            await viewModel.LoadBooks();
             base.OnAppearing();
         }
 
-        private void Move_To_Home(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new MainPage());
-        }
-
-        private void Move_To_Authors(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new AuthorsListPage());
-        }
-
-        private void Move_To_Books(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new BooksListPage());
-        }
-
-        private void Move_To_ChooseDb(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new ChooseDbPage());
-        }
     }
 }

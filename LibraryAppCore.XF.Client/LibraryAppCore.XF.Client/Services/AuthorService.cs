@@ -25,14 +25,27 @@ namespace LibraryAppCore.XF.Client.Services
             return client;
         }
 
-        public async Task<PagedResults<Author>> GetAuthors()
+        public async Task<PagedResults<Author>> GetAuthors(int page, string orderBy, bool ascending)
         {
             PagedResults<Author> authorReuslt = null;
             HttpClient client = GetClient();
-            client.BaseAddress = new Uri(authorApiUrl + "?page=" + 1 + "&pageSize=" + 5 + "&orderBy=" + "Id" + "&ascending=" + true);
+            client.BaseAddress = new Uri(authorApiUrl + "?page=" + page + "&pageSize=" + 5 + "&orderBy=" + orderBy + "&ascending=" + ascending);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             var response = await client.GetStringAsync(client.BaseAddress);
             authorReuslt = JsonConvert.DeserializeObject<PagedResults<Author>>(response);
+
+            return authorReuslt;
+        }
+
+
+        public async Task<List<Author>> GetAllAuthors()
+        {
+            List<Author> authorReuslt = null;
+            HttpClient client = GetClient();
+            client.BaseAddress = new Uri(authorApiUrl + "/GetAuthors");
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            var response = await client.GetStringAsync(client.BaseAddress);
+            authorReuslt = JsonConvert.DeserializeObject<List<Author>>(response);
 
             return authorReuslt;
         }

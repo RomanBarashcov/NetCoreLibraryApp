@@ -4,18 +4,21 @@
              x:Class="LibraryAppCore.XF.Client.Views.AuthorPage">
     <ContentPage.Content>
         <StackLayout Margin="20">
+            <StackLayout x:Name="labelStack" Orientation="Horizontal">
+                <Label Text="Author Edit" FontSize="Large" Margin="10"/>
+            </StackLayout>
             <StackLayout x:Name="authorStack">
-                <Label Text="AuthorId" />
-                <Entry Text="{Binding Path=Model.Id}" FontSize="Medium" />
-                <Label Text="Name" />
-                <Entry Text="{Binding Path=Model.Name}" FontSize="Medium" />
-                <Label Text="Surname" />
-                <Entry Text="{Binding Path=Model.Surname}" FontSize="Medium" />
+                <Label Text="AuthorId:" FontSize="Medium"/>
+                <Entry Text="{Binding Path=Model.Id}" FontSize="Small" />
+                <Label Text="Name:" FontSize="Medium"/>
+                <Entry Text="{Binding Path=Model.Name}" FontSize="Small" />
+                <Label Text="Surname:" FontSize="Medium"/>
+                <Entry Text="{Binding Path=Model.Surname}" FontSize="Small" />
             </StackLayout>
             <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-                <Button Text="Add" Command="{Binding ViewModel.SaveAuthorCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#4cae4c" />
-                <Button Text="Delete" Command="{Binding ViewModel.DeleteAuthorCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#d9534f" />
-                <Button Text="Back" Command="{Binding ViewModel.BackCommand}" TextColor="White" />
+                <Button Text="Add" Command="{Binding ViewModel.SaveAuthorCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#4cae4c" FontSize="Medium" />
+                <Button Text="Delete" Command="{Binding ViewModel.DeleteAuthorCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#d9534f" FontSize="Medium" />
+                <Button Text="Back" Command="{Binding ViewModel.BackCommand}" TextColor="White" FontSize="Medium" />
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

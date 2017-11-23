@@ -17,7 +17,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
         public BookViewModel()
         {
             Book = new Book();
-
         }
 
         public BooksListViewModel ListViewModel

@@ -2,12 +2,9 @@
 using LibraryAppCore.XF.Client.Pagination;
 using LibraryAppCore.XF.Client.Services;
 using LibraryAppCore.XF.Client.Views;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -16,7 +13,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
 {
     public class BooksListViewModel : INotifyPropertyChanged
     {
-        bool initialized = false;
+        public bool initialized { get; set; }
         private bool isBusy;
 
         public ObservableCollection<Book> Books { get; set; }
@@ -27,19 +24,42 @@ namespace LibraryAppCore.XF.Client.ViewModels
         public ICommand DeleteBookCommand { protected set; get; }
         public ICommand SaveBookCommand { protected set; get; }
         public ICommand BackCommand { protected set; get; }
+        public ICommand BackPageCommand { protected set; get; }
+        public ICommand NextPageCommand { protected set; get; }
+
+        public ICommand SortTableByIdCommand { protected set; get; }
+        public ICommand SortTableByYearCommand { protected set; get; }
+        public ICommand SortTableByNameCommand { protected set; get; }
+        public ICommand SortTableByDescriptionCommand { protected set; get; }
+        public ICommand SortTableByAuthorNameCommand { protected set; get; }
 
         Book selectedBook;
         public INavigation Navigation { get; set; }
+
+        public static int currentPage { get; set; }
+        public static string currentOrderBy { get; set; }
+        public static bool currentAscending { get; set; }
 
         public BooksListViewModel()
         {
             Books = new ObservableCollection<Book>();
             bookService = new BookService();
             isBusy = false;
+            initialized = false;
+            currentPage = 1;
+            currentAscending = true;
+            currentOrderBy = "Id";
+            SortTableByIdCommand = new Command(SortById);
+            SortTableByYearCommand = new Command(SortByYear);
+            SortTableByNameCommand = new Command(SortByName);
+            SortTableByDescriptionCommand = new Command(SortByDescription);
+            SortTableByAuthorNameCommand = new Command(SortByAuthorName);
             CreateBookCommand = new Command(CreateBook);
             SaveBookCommand = new Command(SaveBook);
             DeleteBookCommand = new Command(DeleteBook);
             BackCommand = new Command(Back);
+            BackPageCommand = new Command(BackPage);
+            NextPageCommand = new Command(NextPage);
         }
 
 
@@ -72,6 +92,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
                         Year = value.Year,
                         Name = value.Name,
                         Description = value.Description,
+                        AuthorName = value.AuthorName,
                         AuthorId = value.AuthorId
                     };
 
@@ -82,12 +103,52 @@ namespace LibraryAppCore.XF.Client.ViewModels
             }
         }
 
-        public async Task GetBooks()
+        public async void SortById()
+        {
+            initialized = false;
+            currentOrderBy = "Id";
+            currentAscending = currentAscending == true ? false : true;
+            await LoadBooks();
+        }
+
+        public async void SortByYear()
+        {
+            initialized = false;
+            currentOrderBy = "Year";
+            currentAscending = currentAscending == true ? false : true;
+            await LoadBooks();
+        }
+
+        public async void SortByName()
+        {
+            initialized = false;
+            currentOrderBy = "Name";
+            currentAscending = currentAscending == true ? false : true;
+            await LoadBooks();
+        }
+
+        public async void SortByDescription()
+        {
+            initialized = false;
+            currentOrderBy = "Description";
+            currentAscending = currentAscending == true ? false : true;
+            await LoadBooks();
+        }
+
+        public async void SortByAuthorName()
+        {
+            initialized = false;
+            currentOrderBy = "AuthorName";
+            currentAscending = currentAscending == true ? false : true;
+            await LoadBooks();
+        }
+
+        public async Task LoadBooks()
         {
             if (initialized == true) return;
             isBusy = true;
 
-            PagedResults<Book> bookReuslt = await bookService.GetBooks();
+            PagedResults<Book> bookReuslt = await bookService.GetBooks(currentPage, currentOrderBy, currentAscending);
             Book bModel = new Book();
 
             while (Books.Any())
@@ -131,7 +192,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
                     if (isBookUpdated)
                     {
                         initialized = false;
-                        await GetBooks();
+                        await LoadBooks();
                     }
                 }
                 else
@@ -140,7 +201,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
                     if (isBookCreated)
                     {
                         initialized = false;
-                        await GetBooks();
+                        await LoadBooks();
                     }
                 }
                 initialized = true;
@@ -159,12 +220,30 @@ namespace LibraryAppCore.XF.Client.ViewModels
                 if (isBookDeleted)
                 {
                     initialized = false;
-                    await GetBooks();
+                    await LoadBooks();
                 }
                 initialized = true;
                 IsBusy = false;
             }
             Back();
+        }
+
+        private async void NextPage()
+        {
+            initialized = false;
+            currentPage = currentPage + 1;
+            await LoadBooks();
+        }
+
+        private async void BackPage()
+        {
+            initialized = false;
+            currentPage = currentPage - 1;
+            if (currentPage >= 1)
+                await LoadBooks();
+            else
+                currentPage = 1;
+
         }
     }
 }
