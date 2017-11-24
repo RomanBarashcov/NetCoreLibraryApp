@@ -23,9 +23,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
         private AuthorService authorService;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ICommand CreateAuthorCommand { protected set; get; }
-        public ICommand DeleteAuthorCommand { protected set; get; }
-        public ICommand SaveAuthorCommand { protected set; get; }
         public ICommand BackCommand { protected set; get; }
         public ICommand BackPageCommand { protected set; get; }
         public ICommand NextPageCommand { protected set; get; }
@@ -52,14 +49,10 @@ namespace LibraryAppCore.XF.Client.ViewModels
             SortTableByIdCommand = new Command(SortById);
             SortTableByNameCommand = new Command(SortByName);
             SortTableBySurnameCommand = new Command(SortBySurname);
-            CreateAuthorCommand = new Command(CreateAuthor);
-            SaveAuthorCommand = new Command(SaveAuthor);
-            DeleteAuthorCommand = new Command(DeleteAuthor);
             BackCommand = new Command(Back);
             BackPageCommand = new Command(BackPage);
             NextPageCommand = new Command(NextPage);
         }
-
 
         public bool IsBusy
         {
@@ -89,7 +82,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
                         Id = value.Id,
                         Name = value.Name,
                         Surname = value.Surname,
-                        
                     };
 
                     selectedAuthor = null;
@@ -129,20 +121,48 @@ namespace LibraryAppCore.XF.Client.ViewModels
             if (initialized == true) return;
             isBusy = true;
 
-            PagedResults<Author> authorsReuslt = await authorService.GetAuthors(currentPage, currentOrderBy, currentAscending);
+            if (IsInConnection())
+            {
+                PagedResults<Author> authors = await authorService.GetAuthors(currentPage, currentOrderBy, currentAscending);
 
-            while (Authors.Any())
-                Authors.RemoveAt(Authors.Count - 1);
+                while (Authors.Any())
+                    Authors.RemoveAt(Authors.Count - 1);
 
-            foreach (var a in authorsReuslt.Results)
-                Authors.Add(a);
+                for (int a = 0; a < authors.Results.Count; a++)
+                {
+                    Author author = new Author
+                    {
+                        Id = authors.Results[a].Id.ToString(),
+                        Name = authors.Results[a].Name,
+                        Surname = authors.Results[a].Surname
+                    };
 
-            //for(int p = 0; p <= authorsReuslt.PageSize; p++)
-            //{
-            //    Pages pagees = new Pages { page = p };
-            //    Pages.Add(pagees);
-            //    pagees = null;
-            //}
+                    Authors.Add(author);
+                    author = null;
+                }
+            }
+            else
+            {
+                List<Entities.Author> authors = App.authorDb.GetAuthors().ToList();
+
+                while (Authors.Any())
+                    Authors.RemoveAt(Authors.Count - 1);
+
+
+                for(int a = 0; a < authors.Count(); a++)
+                {
+                    Author author = new Author
+                    {
+                        Id = authors[a].Id.ToString(),
+                        Name = authors[a].Name,
+                        Surname = authors[a].Surname
+                    };
+
+                    Authors.Add(author);
+                    author = null;
+                }
+
+            }
 
             IsBusy = false;
             initialized = true;
@@ -153,20 +173,23 @@ namespace LibraryAppCore.XF.Client.ViewModels
             if (initialized == true) return;
             isBusy = true;
 
-            List<Author> authorsReuslt = await authorService.GetAllAuthors();
+            List<Author> authors = await authorService.GetAllAuthors();
            
             while (Authors.Any())
                 Authors.RemoveAt(Authors.Count - 1);
 
-            foreach (var a in authorsReuslt)
+            for (int a = 0; a < authors.Count; a++)
             {
-                Author aModel = new Author();
-                aModel.Id = a.Id;
-                aModel.Name = a.Name;
-                aModel.Surname = a.Surname;
-                aModel.FullName = a.Name + " " + a.Surname;
-                Authors.Add(aModel);
-                aModel = null;
+                Author author = new Author
+                {
+                    Id = authors[a].Id.ToString(),
+                    Name = authors[a].Name,
+                    Surname = authors[a].Surname,
+                    FullName = authors[a].Name + " " + authors[a].Surname
+                };
+
+                Authors.Add(author);
+                author = null;
             }
 
             IsBusy = false;
@@ -189,10 +212,8 @@ namespace LibraryAppCore.XF.Client.ViewModels
             Navigation.PushAsync(new AuthorPage(new Author(), this));
         }
 
-        private async void SaveAuthor(object authorObject)
-        {
-            Author author = authorObject as Author;
-
+        public async void SaveAuthor(Author author)
+        { 
             if (author != null)
             {
                 IsBusy = true;
@@ -216,15 +237,11 @@ namespace LibraryAppCore.XF.Client.ViewModels
                         await LoadAuthors();
                     }
                 }
-                initialized = true;
-                IsBusy = false;
             }
-            Back();
         }
 
-        private async void DeleteAuthor(object authorObject)
+        public async void DeleteAuthor(Author author)
         {
-            Author author = authorObject as Author;
             if (author != null)
             {
                 IsBusy = true;
@@ -234,10 +251,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
                     initialized = false;
                     await LoadAuthors();
                 }
-                initialized = true;
-                IsBusy = false;
             }
-            Back();
         }
 
         private async void NextPage()
@@ -245,7 +259,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
             initialized = false;
             currentPage = currentPage + 1;
             await LoadAuthors();
-
         }
 
         private async void BackPage()
@@ -256,7 +269,20 @@ namespace LibraryAppCore.XF.Client.ViewModels
                 await LoadAuthors();
             else
                 currentPage = 1;
+        }
 
+        public bool IsInConnection()
+        {
+            string curConnection = App.ConnectionType;
+
+            if(curConnection == "No Connection")
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
     }

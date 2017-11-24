@@ -4,9 +4,11 @@
              x:Class="LibraryAppCore.XF.Client.Views.BookPage">
     <ContentPage.Content>
         <StackLayout Margin="20">
+            
             <StackLayout x:Name="labelStack" Orientation="Horizontal">
                 <Label Text="Book Edit" FontSize="Large" Margin="10"/>
             </StackLayout>
+            
             <StackLayout x:Name="bookStack">
                 <Label Text="BookId:" FontSize="Medium" />
                 <Entry Text="{Binding Path=Model.Id}" FontSize="Small" />
@@ -17,6 +19,7 @@
                 <Label Text="Description:" FontSize="Medium"/>
                 <Entry Text="{Binding Path=Model.Description}" FontSize="Small" />
             </StackLayout>
+            
             <StackLayout x:Name="AuthorPocker">
 
                 <Picker x:Name="picker"
@@ -25,11 +28,15 @@
                         SelectedIndexChanged="OnPickerSelectedIndexChanged" />
 
             </StackLayout>
+
             <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-                <Button Text="Add" Command="{Binding ViewModel.SaveBookCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#4cae4c" FontSize="Medium" />
-                <Button Text="Delete" Command="{Binding ViewModel.DeleteBookCommand}" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#d9534f" FontSize="Medium" />
-                <Button Text="Back" Command="{Binding ViewModel.BackCommand}" TextColor="White" FontSize="Medium" />
+                <Button Text="Add" Clicked="SaveBook" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#4cae4c" FontSize="Medium" />
+                <Button Text="Delete" Clicked="DeleteBook" CommandParameter="{Binding Model}" TextColor="White" BackgroundColor="#d9534f" FontSize="Medium" />
+                <Button Text="Back" Clicked="Cancel" TextColor="White" FontSize="Medium" />
             </StackLayout>
+
+            <Label x:Name="ConnType" FontSize="Medium" />
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

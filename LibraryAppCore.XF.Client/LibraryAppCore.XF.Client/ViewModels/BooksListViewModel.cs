@@ -2,6 +2,7 @@
 using LibraryAppCore.XF.Client.Pagination;
 using LibraryAppCore.XF.Client.Services;
 using LibraryAppCore.XF.Client.Views;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -20,9 +21,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
         private BookService bookService;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ICommand CreateBookCommand { protected set; get; }
-        public ICommand DeleteBookCommand { protected set; get; }
-        public ICommand SaveBookCommand { protected set; get; }
         public ICommand BackCommand { protected set; get; }
         public ICommand BackPageCommand { protected set; get; }
         public ICommand NextPageCommand { protected set; get; }
@@ -54,9 +52,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
             SortTableByNameCommand = new Command(SortByName);
             SortTableByDescriptionCommand = new Command(SortByDescription);
             SortTableByAuthorNameCommand = new Command(SortByAuthorName);
-            CreateBookCommand = new Command(CreateBook);
-            SaveBookCommand = new Command(SaveBook);
-            DeleteBookCommand = new Command(DeleteBook);
             BackCommand = new Command(Back);
             BackPageCommand = new Command(BackPage);
             NextPageCommand = new Command(NextPage);
@@ -148,14 +143,53 @@ namespace LibraryAppCore.XF.Client.ViewModels
             if (initialized == true) return;
             isBusy = true;
 
-            PagedResults<Book> bookReuslt = await bookService.GetBooks(currentPage, currentOrderBy, currentAscending);
-            Book bModel = new Book();
+            if (IsInConnection())
+            {
+                PagedResults<Book> books = await bookService.GetBooks(currentPage, currentOrderBy, currentAscending);
 
-            while (Books.Any())
-                Books.RemoveAt(Books.Count - 1);
+                while (Books.Any())
+                    Books.RemoveAt(Books.Count - 1);
 
-            foreach (var a in bookReuslt.Results)
-                Books.Add(a);
+                for (int b = 0; b < books.Results.Count; b++)
+                {
+                    Book book = new Book
+                    {
+                        Id = books.Results[b].Id,
+                        Year = books.Results[b].Year,
+                        Name = books.Results[b].Name,
+                        Description = books.Results[b].Description,
+                        AuthorName = books.Results[b].AuthorName,
+                        AuthorId = books.Results[b].AuthorId
+                    };
+
+                    Books.Add(book);
+                    book = null;
+                }
+
+            }
+            else
+            {
+                List<Entities.Book> books = App.BookDb.GetBooks().ToList();
+
+                while (Books.Any())
+                    Books.RemoveAt(Books.Count - 1);
+
+                for (int b = 0; b < books.Count; b++)
+                {
+                    Book book = new Book
+                    {
+                        Id = books[b].Id.ToString(),
+                        Year = books[b].Year,
+                        Name = books[b].Name,
+                        Description = books[b].Description,
+                        //AuthorName = books[b].AuthorName,
+                        AuthorId = books[b].AuthorId.ToString()
+                    };
+
+                    Books.Add(book);
+                    book = null;
+                }
+            }
 
             IsBusy = false;
             initialized = true;
@@ -177,10 +211,8 @@ namespace LibraryAppCore.XF.Client.ViewModels
             Navigation.PushAsync(new BookPage(new Book(), this));
         }
 
-        private async void SaveBook(object bookObject)
+        public async void SaveBook(Book book)
         {
-            Book book = bookObject as Book;
-
             if (book != null)
             {
                 IsBusy = true;
@@ -204,15 +236,11 @@ namespace LibraryAppCore.XF.Client.ViewModels
                         await LoadBooks();
                     }
                 }
-                initialized = true;
-                IsBusy = false;
             }
-            Back();
         }
 
-        private async void DeleteBook(object bookObject)
+        public async void DeleteBook(Book book)
         {
-            Book book = bookObject as Book;
             if (book != null)
             {
                 IsBusy = true;
@@ -222,10 +250,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
                     initialized = false;
                     await LoadBooks();
                 }
-                initialized = true;
-                IsBusy = false;
             }
-            Back();
         }
 
         private async void NextPage()
@@ -243,7 +268,20 @@ namespace LibraryAppCore.XF.Client.ViewModels
                 await LoadBooks();
             else
                 currentPage = 1;
+        }
 
+        public bool IsInConnection()
+        {
+            string curConnection = App.ConnectionType;
+
+            if (curConnection == "No Connection")
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

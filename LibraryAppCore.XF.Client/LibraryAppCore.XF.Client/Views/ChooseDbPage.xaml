@@ -5,17 +5,21 @@
              Title="Choose Db">
     <ContentPage.Content>
         <StackLayout>
+            
             <StackLayout x:Name="labelStack" Orientation="Horizontal">
                 <Label Text="Choose Db Connection" FontSize="Large" Margin="10" />
             </StackLayout>
+            
             <StackLayout x:Name="DbChoose" Orientation="Horizontal">
                 <Button Text="PostgreSql" x:Name="PostgreSql"  Command="{Binding DefaultConnectionCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
                 <Button Text="MongoDb" x:Name="MongoDb" Command="{Binding MongoDbConnectionCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
             </StackLayout>
+            
             <StackLayout IsVisible="{Binding viewModel.IsVisibleData}"
                     HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Padding="20">
                 <Label Text="Success!" TextColor="Green" HorizontalOptions="Center" />
             </StackLayout>
+            
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

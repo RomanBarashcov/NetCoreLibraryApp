@@ -61,28 +61,11 @@
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <StackLayout x:Name="Pagination" Orientation="Horizontal">
-                    <Button Text="Back" x:Name="BackPage"  Command="{Binding BackPageCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
-                    <Button Text="Next" x:Name="NextPage" Command="{Binding NextPageCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
-                 </StackLayout>
+            <StackLayout x:Name="Pagination" Orientation="Horizontal">
+                <Button Text="Back" x:Name="BackPage"  Command="{Binding BackPageCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
+                <Button Text="Next" x:Name="NextPage" Command="{Binding NextPageCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
+            </StackLayout>
 
-            <!--<StackLayout x:Name="Pagination" Orientation="Horizontal">
-
-                <ListView x:Name="authorsList" ItemsSource="{Binding Pages}"
-                      SelectedItem="{Binding SelectedPage, Mode=TwoWay}" HasUnevenRows="True">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <ViewCell.View>
-                                    <Label Text="{Binding page}" BackgroundColor="Silver" TextColor="Black" HeightRequest="10" WidthRequest="10"/>
-                                </ViewCell.View>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </StackLayout>-->
-            
-            
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

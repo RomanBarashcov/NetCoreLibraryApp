@@ -5,9 +5,11 @@
              Title="Books List">
     <ContentPage.Content>
         <StackLayout Margin="20">
+            
             <StackLayout x:Name="labelStack" Orientation="Horizontal">
                 <Label Text="Books List" FontSize="Large" />
             </StackLayout>
+            
             <Button Text="Add Book" Command="{Binding CreateBookCommand}" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" TextColor="White" BackgroundColor="#4cae4c"/>
 
             <Grid x:Name="Header">
@@ -32,7 +34,6 @@
                 <Button Text="Name" Grid.Column="2" Grid.Row="0" FontSize="Medium" BackgroundColor="White" BorderColor="White" Command="{Binding SortTableByNameCommand}" />
                 <Button Text="Description" Grid.Column="3" Grid.Row="0" FontSize="Medium" BackgroundColor="White" BorderColor="White" Command="{Binding SortTableByDescriptionCommand}" />
                 <Button Text="Author Name" Grid.Column="4" Grid.Row="0" FontSize="Medium" BackgroundColor="White" BorderColor="White" Command="{Binding SortTableByAuthorNameCommand}" />
-
 
             </Grid>
             

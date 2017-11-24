@@ -26,6 +26,7 @@ namespace LibraryAppCore.XF.Client.Views
             ViewModel = blvm;
             aViewModel = new AuthorsListViewModel();
             LoadAuthors();
+            CheckConnType();
             BindingContext = this;
         }
 
@@ -58,6 +59,71 @@ namespace LibraryAppCore.XF.Client.Views
                 Model.AuthorId = selectedAuthor.Id;
                 picker.Title = "Selected Author: " + selectedAuthor.FullName;
             }
+        }
+
+        public void CheckConnType()
+        {
+            string conType = App.ConnectionType;
+            ConnType.Text = "Connection type:" + conType;
+        }
+
+        private async Task SaveBook(object sender, EventArgs e)
+        {
+            Book book = Model;
+
+            if (!String.IsNullOrEmpty(book.Name) && !String.IsNullOrEmpty(book.Description) && book.Year > 0)
+            {
+                if (App.ConnectionType != "No Connection")
+                {
+                    ViewModel.SaveBook(book);
+                    await this.Navigation.PopAsync();
+                }
+                else
+                {
+                    var answer = await DisplayAlert("Save Data", "You don't have internet connection, you can save data in local storage!", "Save local", "Try agin");
+
+                    Entities.Book newBook = new Entities.Book
+                    {
+                        Id = Convert.ToInt32(Model.Id),
+                        Year = Model.Year,
+                        Name = Model.Name,
+                        Description = Model.Description,
+                        AuthorId = Convert.ToInt32(Model.AuthorId)
+                        
+                    };
+
+                    if (answer)
+                    {
+                        App.BookDb.SaveBook(newBook);
+                        await this.Navigation.PopAsync();
+                    }
+                }
+            }
+        }
+
+        private async Task DeleteBook(object sender, EventArgs e)
+        {
+            var book = Model;
+            if (App.ConnectionType != "No Connection")
+            {
+                ViewModel.DeleteBook(book);
+                await this.Navigation.PopAsync();
+            }
+            else
+            {
+                var answer = await DisplayAlert("Save Data", "You don't have internet connection, you can delete data local!", "Delete local", "Try agin");
+
+                if (answer)
+                {
+                    App.BookDb.DeleteBook(Convert.ToInt32(book.Id));
+                    await this.Navigation.PopAsync();
+                }
+            }
+        }
+
+        private async void Cancel(object sender, EventArgs e)
+        {
+            await this.Navigation.PopAsync();
         }
     }
 }
