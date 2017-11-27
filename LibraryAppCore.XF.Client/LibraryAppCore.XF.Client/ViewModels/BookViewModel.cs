@@ -98,6 +98,19 @@ namespace LibraryAppCore.XF.Client.ViewModels
             }
         }
 
+        public string AuthorName
+        {
+            get { return Book.AuthorName; }
+            set
+            {
+                if(Book.AuthorName != value)
+                {
+                    Book.AuthorName = value;
+                    OnPropertyChanged("AuthorName");
+                }
+            }
+        }
+
         public bool IsValid
         {
             get

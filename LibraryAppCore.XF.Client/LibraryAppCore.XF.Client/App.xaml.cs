@@ -24,7 +24,15 @@ namespace LibraryAppCore.XF.Client
             {
                 if (authorDb == null)
                 {
-                    authorDb = new AuthorRepository(DATABASE_NAME);
+                    try
+                    {
+                        authorDb = new AuthorRepository(DATABASE_NAME);
+                    }
+                    catch (Exception ex)
+                    {
+                        var expt = ex;
+                    }
+
                 }
                 return authorDb;
             }

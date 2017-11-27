@@ -15,6 +15,7 @@ namespace LibraryAppCore.XF.Client.Entities
 
         public string Name { get; set; }
         public string Surname { get; set; }
+        public bool Synced { get; set; }
 
     }
 }

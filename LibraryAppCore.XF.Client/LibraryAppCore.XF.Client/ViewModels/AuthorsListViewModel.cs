@@ -2,6 +2,7 @@
 using LibraryAppCore.XF.Client.Pagination;
 using LibraryAppCore.XF.Client.Services;
 using LibraryAppCore.XF.Client.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -19,6 +20,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
 
         public ObservableCollection<Author> Authors { get; set; }
         public ObservableCollection<Pages> Pages { get; set; }
+        public List<Entities.Author> AuhtorsLocalData { get; set; }
 
         private AuthorService authorService;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -26,6 +28,8 @@ namespace LibraryAppCore.XF.Client.ViewModels
         public ICommand BackCommand { protected set; get; }
         public ICommand BackPageCommand { protected set; get; }
         public ICommand NextPageCommand { protected set; get; }
+
+        public ICommand CreateAuthorCommand { protected set; get; }
 
         public ICommand SortTableByIdCommand { protected set; get; }
         public ICommand SortTableByNameCommand { protected set; get; }
@@ -46,6 +50,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
             currentOrderBy = "Id";
             isBusy = false;
             initialized = false;
+            CreateAuthorCommand = new Command(CreateAuthor);
             SortTableByIdCommand = new Command(SortById);
             SortTableByNameCommand = new Command(SortByName);
             SortTableBySurnameCommand = new Command(SortBySurname);
@@ -143,29 +148,53 @@ namespace LibraryAppCore.XF.Client.ViewModels
             }
             else
             {
-                List<Entities.Author> authors = App.authorDb.GetAuthors().ToList();
+                List<Entities.Author> authors = App.AuthorDb.GetAuthors().ToList();
 
                 while (Authors.Any())
                     Authors.RemoveAt(Authors.Count - 1);
 
-
-                for(int a = 0; a < authors.Count(); a++)
+                for (int a = 0; a < authors.Count(); a++)
                 {
                     Author author = new Author
                     {
                         Id = authors[a].Id.ToString(),
                         Name = authors[a].Name,
-                        Surname = authors[a].Surname
+                        Surname = authors[a].Surname,
+                        FullName = authors[a].Name + " " + authors[a].Surname
                     };
-
+                        
                     Authors.Add(author);
                     author = null;
+                    
                 }
-
             }
-
+                
             IsBusy = false;
             initialized = true;
+        }
+
+
+        public void CheckLocalData()
+        {
+            AuhtorsLocalData = new List<Entities.Author>();
+            List<Entities.Author> authors = App.AuthorDb.GetAuthors().ToList();
+
+            for (int a = 0; a < authors.Count(); a++)
+            {
+                if (!authors[a].Synced)
+                {
+                    Entities.Author authorForSynced = new Entities.Author
+                    {
+                        Id = authors[a].Id,
+                        Name = authors[a].Name,
+                        Surname = authors[a].Surname,
+                        Synced = authors[a].Synced
+                    };
+
+                    AuhtorsLocalData.Add(authorForSynced);
+                    authorForSynced = null;
+                }
+            }
         }
 
         public async Task LoadAllAuthors()
@@ -251,6 +280,37 @@ namespace LibraryAppCore.XF.Client.ViewModels
                     initialized = false;
                     await LoadAuthors();
                 }
+            }
+        }
+
+        public async void SyncedLocalData()
+        {
+            for(int a = 0; a <= AuhtorsLocalData.Count; a++)
+            {
+                Author author = new Author
+                {
+                    Name = AuhtorsLocalData[a].Name,
+                    Surname = AuhtorsLocalData[a].Surname
+                };
+
+                bool result = await authorService.CreateAuthor(author);
+
+                if (result)
+                {
+                    Entities.Author uplocalData = new Entities.Author
+                    {
+                        Id = AuhtorsLocalData[a].Id,
+                        Name = AuhtorsLocalData[a].Name,
+                        Surname = AuhtorsLocalData[a].Surname,
+                        Synced = result
+                    };
+
+                    App.authorDb.SaveAuthor(uplocalData);
+
+                    uplocalData = null;
+                }
+
+                author = null;
             }
         }
 

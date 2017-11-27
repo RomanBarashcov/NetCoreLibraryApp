@@ -2,6 +2,7 @@
 using LibraryAppCore.XF.Client.Pagination;
 using LibraryAppCore.XF.Client.Services;
 using LibraryAppCore.XF.Client.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -25,6 +26,8 @@ namespace LibraryAppCore.XF.Client.ViewModels
         public ICommand BackPageCommand { protected set; get; }
         public ICommand NextPageCommand { protected set; get; }
 
+        public ICommand CreateBookCommand { protected set; get; }
+
         public ICommand SortTableByIdCommand { protected set; get; }
         public ICommand SortTableByYearCommand { protected set; get; }
         public ICommand SortTableByNameCommand { protected set; get; }
@@ -47,6 +50,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
             currentPage = 1;
             currentAscending = true;
             currentOrderBy = "Id";
+            CreateBookCommand = new Command(CreateBook);
             SortTableByIdCommand = new Command(SortById);
             SortTableByYearCommand = new Command(SortByYear);
             SortTableByNameCommand = new Command(SortByName);
@@ -56,7 +60,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
             BackPageCommand = new Command(BackPage);
             NextPageCommand = new Command(NextPage);
         }
-
 
         public bool IsBusy
         {
@@ -174,21 +177,25 @@ namespace LibraryAppCore.XF.Client.ViewModels
                 while (Books.Any())
                     Books.RemoveAt(Books.Count - 1);
 
-                for (int b = 0; b < books.Count; b++)
+                if(books != null && books.Count > 0)
                 {
-                    Book book = new Book
+                    for (int b = 0; b < books.Count; b++)
                     {
-                        Id = books[b].Id.ToString(),
-                        Year = books[b].Year,
-                        Name = books[b].Name,
-                        Description = books[b].Description,
-                        //AuthorName = books[b].AuthorName,
-                        AuthorId = books[b].AuthorId.ToString()
-                    };
+                        Book book = new Book
+                        {
+                            Id = books[b].Id.ToString(),
+                            Year = books[b].Year,
+                            Name = books[b].Name,
+                            Description = books[b].Description,
+                            AuthorName = books[b].AuthorName,
+                            AuthorId = books[b].AuthorId.ToString()
+                        };
 
-                    Books.Add(book);
-                    book = null;
+                        Books.Add(book);
+                        book = null;
+                    }
                 }
+               
             }
 
             IsBusy = false;

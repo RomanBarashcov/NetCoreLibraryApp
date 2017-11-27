@@ -32,8 +32,15 @@ namespace LibraryAppCore.XF.Client.Views
 
         private async void LoadAuthors()
         {
-            await aViewModel.LoadAllAuthors();
-            LoadFullAuthorName();
+            if (App.ConnectionType != "No Connection")
+            {
+                await aViewModel.LoadAllAuthors();
+                LoadFullAuthorName();
+            }
+            else
+            {
+                await aViewModel.LoadAuthors();
+            }
         }
 
         private void LoadFullAuthorName()
@@ -76,6 +83,7 @@ namespace LibraryAppCore.XF.Client.Views
                 if (App.ConnectionType != "No Connection")
                 {
                     ViewModel.SaveBook(book);
+                    ViewModel.initialized = false;
                     await this.Navigation.PopAsync();
                 }
                 else
@@ -95,6 +103,7 @@ namespace LibraryAppCore.XF.Client.Views
                     if (answer)
                     {
                         App.BookDb.SaveBook(newBook);
+                        ViewModel.initialized = false;
                         await this.Navigation.PopAsync();
                     }
                 }

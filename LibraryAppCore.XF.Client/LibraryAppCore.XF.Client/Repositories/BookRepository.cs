@@ -23,7 +23,19 @@ namespace LibraryAppCore.XF.Client.Repositories
 
         public IEnumerable<Book> GetBooks()
         {
-            return (from i in db.Table<Book>() select i).ToList();
+            return (from b in db.Table<Book>() 
+                    join a in db.Table<Author>() on b.AuthorId equals a.Id into joinedResult
+                    from r in joinedResult.DefaultIfEmpty()
+                    select new Book {
+
+                        Id = b.Id,
+                        Year = b.Year,
+                        Name = b.Name,
+                        Description = b.Description,
+                        AuthorId = b.AuthorId,
+                        AuthorName = r.Name + " " + r.Surname
+
+                    }).ToList();
         }
 
         public Book GetBook(int id)

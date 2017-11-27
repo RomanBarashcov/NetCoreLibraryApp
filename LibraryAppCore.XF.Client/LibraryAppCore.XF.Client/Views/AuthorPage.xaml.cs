@@ -41,11 +41,12 @@ namespace LibraryAppCore.XF.Client.Views
                 if(App.ConnectionType != "No Connection")
                 {
                     ViewModel.SaveAuthor(author);
+                    ViewModel.initialized = false;
                     await this.Navigation.PopAsync();
                 }
                 else
                 {
-                    var answer = await DisplayAlert("Save Data", "You don't have internet connection, you can save data in local storage!", "Save local", "Try agin");
+                    bool answer = await DisplayAlert("Save Data", "You don't have internet connection, you can save data in local storage!", "Save local", "Try agin");
 
                     Entities.Author newAuthor = new Entities.Author
                     {
@@ -57,6 +58,7 @@ namespace LibraryAppCore.XF.Client.Views
                     if (answer)
                     {
                         App.AuthorDb.SaveAuthor(newAuthor);
+                        ViewModel.initialized = false;
                         await this.Navigation.PopAsync();
                     }
                 }
@@ -73,7 +75,7 @@ namespace LibraryAppCore.XF.Client.Views
             }
             else
             {
-                var answer = await DisplayAlert("Save Data", "You don't have internet connection, you can delete data local!", "Delete local", "Try agin");
+                bool answer = await DisplayAlert("Save Data", "You don't have internet connection, you can delete data local!", "Delete local", "Try agin");
 
                 if (answer)
                 {

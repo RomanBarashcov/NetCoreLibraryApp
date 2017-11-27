@@ -10,8 +10,11 @@
                 <Label Text="Authors List" FontSize="Large" />
             </StackLayout>
             
-            <Button Text="Add Author" Command="{Binding CreateAuthorCommand}" IsEnabled="{Binding IsLoaded}" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start"  TextColor="White" BackgroundColor="#4cae4c"/>
-           
+            <StackLayout x:Name="buttonStack" Orientation="Horizontal">
+                <Button Text="Add Author" Command="{Binding CreateAuthorCommand}" IsEnabled="{Binding IsLoaded}" FontSize="Medium" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" BorderColor="#4cae4c" TextColor="#4cae4c" BackgroundColor="White"/>
+                <Button Text="Sync Data" Clicked="CheckLocalDataSynced" FontSize="Medium" BorderWidth="1" HorizontalOptions="End" VerticalOptions="End"  TextColor="Blue" BackgroundColor="White" BorderColor="Blue" />
+            </StackLayout>
+            
             <Grid x:Name="Header">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

@@ -16,6 +16,8 @@ namespace LibraryAppCore.XF.Client.Entities
         public int Year { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string AuthorName { get; set; }
         public int AuthorId { get; set; }
+        public bool Synced { get; set; }
     }
 }
