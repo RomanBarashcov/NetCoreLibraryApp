@@ -15,7 +15,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
 {
     public class AuthorsListViewModel : INotifyPropertyChanged
     {
-        public bool initialized { get; set; }
+        public static bool initialized { get; set; }
         private bool isBusy;
 
         public ObservableCollection<Author> Authors { get; set; }
@@ -126,7 +126,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
             if (initialized == true) return;
             isBusy = true;
 
-            if (IsInConnection())
+            if (IsInConnection() && !ChooseDbViewModel.LocalDb)
             {
                 PagedResults<Author> authors = await authorService.GetAuthors(currentPage, currentOrderBy, currentAscending);
 
@@ -173,8 +173,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
             initialized = true;
         }
 
-
-        public void CheckLocalData()
+        public void LoadLocalData()
         {
             AuhtorsLocalData = new List<Entities.Author>();
             List<Entities.Author> authors = App.AuthorDb.GetAuthors().ToList();
@@ -285,7 +284,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
 
         public async void SyncedLocalData()
         {
-            for(int a = 0; a <= AuhtorsLocalData.Count; a++)
+            for(int a = 0; a < AuhtorsLocalData.Count; a++)
             {
                 Author author = new Author
                 {
@@ -306,7 +305,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
                     };
 
                     App.authorDb.SaveAuthor(uplocalData);
-
                     uplocalData = null;
                 }
 

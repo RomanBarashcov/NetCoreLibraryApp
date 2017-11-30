@@ -28,5 +28,24 @@ namespace LibraryAppCore.XF.Client.Views
             base.OnAppearing();
         }
 
+        private async Task CheckLocalDataSynced(object sender, EventArgs e)
+        {
+            viewModel.LoadLocalData();
+
+            if (viewModel.BooksLocalData.Count > 0 && App.ConnectionType != "No Connection")
+            {
+                bool answer = await DisplayAlert("Sync local data", "You are have " + viewModel.BooksLocalData.Count + " not synced items", "Sync Now", "Sync Later");
+
+                if (answer)
+                {
+                    viewModel.SyncedLocalData();
+                }
+            }
+            else
+            {
+                await DisplayAlert("Save Data", "You don't have internet connection, or local data is empty! Please try again leater", "OK");
+            }
+        }
+
     }
 }

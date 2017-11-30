@@ -14,6 +14,7 @@ namespace LibraryAppCore.XF.Client.ViewModels
 
         public string dbConnection;
         private ConnectionDbService cDbService;
+        public static bool LocalDb { get; set; }
 
         public bool IsVisible { get; set; }
         public INavigation Navigation { get; set; }
@@ -46,6 +47,9 @@ namespace LibraryAppCore.XF.Client.ViewModels
 
         private async void SelectPostgreSqlConnection()
         {
+            LocalDb = false;
+            AuthorsListViewModel.initialized = false;
+            BooksListViewModel.initialized = false;
             dbConnection = "DefaultConnection";
             bool result = await cDbService.SetConnectionString(dbConnection);
             IsVisible = result;
@@ -53,6 +57,9 @@ namespace LibraryAppCore.XF.Client.ViewModels
 
         private async void SelectMongoDbConnection()
         {
+            LocalDb = false;
+            AuthorsListViewModel.initialized = false;
+            BooksListViewModel.initialized = false;
             dbConnection = "MondoDbConnection";
             bool result = await cDbService.SetConnectionString(dbConnection);
             IsVisible = result;

@@ -83,7 +83,7 @@ namespace LibraryAppCore.XF.Client.Views
                 if (App.ConnectionType != "No Connection")
                 {
                     ViewModel.SaveBook(book);
-                    ViewModel.initialized = false;
+                    BooksListViewModel.initialized = false;
                     await this.Navigation.PopAsync();
                 }
                 else
@@ -103,7 +103,7 @@ namespace LibraryAppCore.XF.Client.Views
                     if (answer)
                     {
                         App.BookDb.SaveBook(newBook);
-                        ViewModel.initialized = false;
+                        BooksListViewModel.initialized = false;
                         await this.Navigation.PopAsync();
                     }
                 }

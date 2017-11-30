@@ -15,12 +15,13 @@ namespace LibraryAppCore.XF.Client.ViewModels
 {
     public class BooksListViewModel : INotifyPropertyChanged
     {
-        public bool initialized { get; set; }
+        public static bool initialized { get; set; }
         private bool isBusy;
 
         public ObservableCollection<Book> Books { get; set; }
         private BookService bookService;
         public event PropertyChangedEventHandler PropertyChanged;
+        public List<Entities.Book> BooksLocalData { get; set; }
 
         public ICommand BackCommand { protected set; get; }
         public ICommand BackPageCommand { protected set; get; }
@@ -141,12 +142,38 @@ namespace LibraryAppCore.XF.Client.ViewModels
             await LoadBooks();
         }
 
+        public void LoadLocalData()
+        {
+            BooksLocalData = new List<Entities.Book>();
+            List<Entities.Book> books = App.BookDb.GetBooks().ToList();
+
+            for (int b = 0; b < books.Count(); b++)
+            {
+                if (!books[b].Synced)
+                {
+                    Entities.Book bookForSynced = new Entities.Book
+                    {
+                        Id = books[b].Id,
+                        Year = books[b].Year,
+                        Name = books[b].Name,
+                        Description = books[b].Description,
+                        AuthorName = books[b].AuthorName,
+                        AuthorId = books[b].AuthorId,
+                        Synced = books[b].Synced
+                    };
+
+                    BooksLocalData.Add(bookForSynced);
+                    bookForSynced = null;
+                }
+            }
+        }
+
         public async Task LoadBooks()
         {
             if (initialized == true) return;
             isBusy = true;
 
-            if (IsInConnection())
+            if (IsInConnection() && !ChooseDbViewModel.LocalDb)
             {
                 PagedResults<Book> books = await bookService.GetBooks(currentPage, currentOrderBy, currentAscending);
 
@@ -257,6 +284,42 @@ namespace LibraryAppCore.XF.Client.ViewModels
                     initialized = false;
                     await LoadBooks();
                 }
+            }
+        }
+
+        public async void SyncedLocalData()
+        {
+            for (int b = 0; b < BooksLocalData.Count; b++)
+            {
+                Book book = new Book
+                {
+                    Year = BooksLocalData[b].Year,
+                    Name = BooksLocalData[b].Name,
+                    Description = BooksLocalData[b].Description,
+                    AuthorName = BooksLocalData[b].AuthorName,
+                    AuthorId = BooksLocalData[b].AuthorId.ToString(),
+                };
+
+                bool result = await bookService.CreateBook(book);
+
+                if (result)
+                {
+                    Entities.Book uplocalData = new Entities.Book
+                    {
+                        Id = BooksLocalData[b].Id,
+                        Year = BooksLocalData[b].Year,
+                        Name = BooksLocalData[b].Name,
+                        Description = BooksLocalData[b].Description,
+                        AuthorName = BooksLocalData[b].AuthorName,
+                        AuthorId = BooksLocalData[b].AuthorId,
+                        Synced = result
+                    };
+
+                    App.BookDb.SaveBook(uplocalData);
+                    uplocalData = null;
+                }
+
+                book = null;
             }
         }
 

@@ -27,5 +27,13 @@ namespace LibraryAppCore.XF.Client.Views
             base.OnAppearing();
         }
 
+        private async Task ChooseLocalDb(object sender, EventArgs e)
+        {
+            AuthorsListViewModel.initialized = false;
+            BooksListViewModel.initialized = false;
+            ChooseDbViewModel.LocalDb = ChooseDbViewModel.LocalDb == true ? false : true;
+        }
+        
+
     }
 }

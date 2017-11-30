@@ -41,7 +41,7 @@ namespace LibraryAppCore.XF.Client.Views
                 if(App.ConnectionType != "No Connection")
                 {
                     ViewModel.SaveAuthor(author);
-                    ViewModel.initialized = false;
+                    AuthorsListViewModel.initialized = false;
                     await this.Navigation.PopAsync();
                 }
                 else
@@ -58,7 +58,7 @@ namespace LibraryAppCore.XF.Client.Views
                     if (answer)
                     {
                         App.AuthorDb.SaveAuthor(newAuthor);
-                        ViewModel.initialized = false;
+                        AuthorsListViewModel.initialized = false;
                         await this.Navigation.PopAsync();
                     }
                 }

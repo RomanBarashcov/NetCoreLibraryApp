@@ -13,6 +13,7 @@
             <StackLayout x:Name="DbChoose" Orientation="Horizontal">
                 <Button Text="PostgreSql" x:Name="PostgreSql"  Command="{Binding DefaultConnectionCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
                 <Button Text="MongoDb" x:Name="MongoDb" Command="{Binding MongoDbConnectionCommand}" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
+                <Button Text="LocalDb" x:Name="LocalDb" Clicked="ChooseLocalDb" FontSize="Small" BorderWidth="1" HorizontalOptions="Start" VerticalOptions="Start" Margin="10" TextColor="White" BackgroundColor="Silver"/>
             </StackLayout>
             
             <StackLayout IsVisible="{Binding viewModel.IsVisibleData}"

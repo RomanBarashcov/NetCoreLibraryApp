@@ -11,8 +11,9 @@ namespace LibraryAppCore.XF.Client.ViewModels
     public class BookViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public Book Book { get; private set; }
         BooksListViewModel Blvm;
+
+        public Book Book { get; private set; }
 
         public BookViewModel()
         {

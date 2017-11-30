@@ -30,7 +30,7 @@ namespace LibraryAppCore.XF.Client.Views
 
         private async Task CheckLocalDataSynced(object sender, EventArgs e)
         {
-            viewModel.CheckLocalData();
+            viewModel.LoadLocalData();
 
             if (viewModel.AuhtorsLocalData.Count > 0 && App.ConnectionType != "No Connection")
             {
@@ -43,7 +43,7 @@ namespace LibraryAppCore.XF.Client.Views
             }
             else
             {
-                await DisplayAlert("Save Data", "You don't have internet connection! Please try again leater", "OK");
+                await DisplayAlert("Save Data", "You don't have internet connection, or local data is empty! Please try again leater", "OK");
             }
         }
 
