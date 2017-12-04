@@ -1,5 +1,6 @@
 ﻿using LibraryAppCore.XF.Client.Services;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -8,8 +9,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
     public class ChooseDbViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public ICommand DefaultConnectionCommand { protected set; get; }
-        public ICommand MongoDbConnectionCommand { protected set; get; }
         public ICommand BackCommand { protected set; get; }
 
         public string dbConnection;
@@ -22,8 +21,6 @@ namespace LibraryAppCore.XF.Client.ViewModels
         public ChooseDbViewModel()
         {
             cDbService = new ConnectionDbService();
-            DefaultConnectionCommand = new Command(SelectPostgreSqlConnection);
-            MongoDbConnectionCommand = new Command(SelectMongoDbConnection);
             BackCommand = new Command(Back);
         }
 
@@ -45,25 +42,31 @@ namespace LibraryAppCore.XF.Client.ViewModels
             }
         }
 
-        private async void SelectPostgreSqlConnection()
+        public async void SelectLocalStorage()
+        {
+            LocalDb = true; 
+            AuthorsListViewModel.initialized = false;
+            BooksListViewModel.initialized = false;
+        }
+
+        public async Task<bool> SelectPostgreSqlConnection()
         {
             LocalDb = false;
             AuthorsListViewModel.initialized = false;
             BooksListViewModel.initialized = false;
             dbConnection = "DefaultConnection";
             bool result = await cDbService.SetConnectionString(dbConnection);
-            IsVisible = result;
+            return result;
         }
 
-        private async void SelectMongoDbConnection()
+        public async Task<bool> SelectMongoDbConnection()
         {
             LocalDb = false;
             AuthorsListViewModel.initialized = false;
             BooksListViewModel.initialized = false;
             dbConnection = "MondoDbConnection";
             bool result = await cDbService.SetConnectionString(dbConnection);
-            IsVisible = result;
-
+            return result;
         }
 
         protected void OnPropertyChanged(string propName)

@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
 
 using Xamarin.Forms;
 
@@ -67,7 +69,10 @@ namespace LibraryAppCore.XF.Client
 
         protected override void OnStart()
         {
-            // Handle when your app starts
+            AppCenter.Start("uwp=991ec888-22db-4abd-864d-141dfdbe07cd;" +
+                   "android={Your Android App secret here}" +
+                   "ios={Your iOS App secret here}",
+                   typeof(Analytics));
         }
 
         protected override void OnSleep()
