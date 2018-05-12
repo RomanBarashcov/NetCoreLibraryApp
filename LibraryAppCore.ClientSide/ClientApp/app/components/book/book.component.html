@@ -1,95 +1,99 @@
-﻿<h1>Books List</h1>
-<input type="button" value="Add Book" class="btn btn-success" (click)="addBook(hiddenAuthorId)" *ngIf="isAuthorized" />
+﻿<ng-progress [color]="'#5cb85c'"></ng-progress>
+<h1>Books List</h1>
+<div>
+    <p>
+        <input type="button" value="Add Book" class="btn btn-success" (click)="addBook()" *ngIf="isAuthorized" />
+    </p>
+</div>
 
 <div class="table-responsive padding-top-table">
     <table class="table table-striped table-hover">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Year</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>AuthorId</th>
+                <th class="pointer" (click)="sort('Id', currentAscending)">
+					Id
+					<i class="fa" [ngClass]="{'fa-sort': currentOrderBy != 'Id', 'fa-sort-asc': (currentOrderBy == 'Id' && currentAscending), 'fa-sort-desc': (currentOrderBy == 'Id' && !currentAscending) }" aria-hidden="true"> </i>
+				</th>
+                <th class="pointer" (click)="sort('Year', currentAscending)">
+					Year
+					<i class="fa" [ngClass]="{'fa-sort': currentOrderBy != 'Year', 'fa-sort-asc': (currentOrderBy == 'Year' && currentAscending), 'fa-sort-desc': (currentOrderBy == 'Year' && !currentAscending) }" aria-hidden="true"> </i>
+				</th>
+                <th class="pointer" (click)="sort('Name', currentAscending)">
+					Name
+					<i class="fa" [ngClass]="{'fa-sort': currentOrderBy != 'Name', 'fa-sort-asc': (currentOrderBy == 'Name' && currentAscending), 'fa-sort-desc': (currentOrderBy == 'Name' && !currentAscending) }" aria-hidden="true"> </i>
+				</th>
+                <th class="pointer" (click)="sort('Description', currentAscending)">
+					Description
+					<i class="fa" [ngClass]="{'fa-sort': currentOrderBy != 'Description', 'fa-sort-asc': (currentOrderBy == 'Description' && currentAscending), 'fa-sort-desc': (currentOrderBy == 'Description' && !currentAscending) }" aria-hidden="true"> </i>
+				</th>
+                <th class="pointer" (click)="sort('AuthorName', currentAscending)">
+					Author Name
+					<i class="fa" [ngClass]="{'fa-sort': currentOrderBy != 'AuthorName', 'fa-sort-asc': (currentOrderBy == 'AuthorName' && currentAscending), 'fa-sort-desc': (currentOrderBy == 'AuthorName' && !currentAscending) }" aria-hidden="true"> </i>
+				</th>
                 <th></th>
                 <th></th>
             </tr>
         </thead>
-        <tbody *ngIf="books.length > 0">
-            <tr [@flyInOut]="state" *ngFor="let book of pagedBookItems">
-                <ng-template [ngTemplateOutlet]="loadTemplate(book)"
-                             [ngOutletContext]="{ $implicit: book}">
-                </ng-template>
+        <tbody *ngIf="booksViewModel.length > 0">
+            <tr [@flyInOut]="state" *ngFor="let book of booksViewModel">
+                <td>{{book.id}}</td>
+                <td>{{book.year}}</td>
+                <td>{{book.name}}</td>
+                <td>{{book.description}}</td>
+                <td>{{book.authorName}}</td>
+                <td>
+                    <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book.id)" *ngIf="isAuthorized" />
+                </td>
+                <td>
+                    <input type="button" value="Delete" class="btn btn-danger" (click)="deleteBook(book.id)" *ngIf="isAuthorized" />
+                </td>
             </tr>
         </tbody>
     </table>
 </div>
-<div>
-    <!-- pagination -->
-    <ul *ngIf="pager.pages && pager.pages.length && books.length > 0" [@flyInOut]="state" class="pagination">
-        <li [ngClass]="{disabled:pager.currentPage === 1}">
-            <a (click)="setPage(1)">First</a>
-        </li>
-        <li [ngClass]="{disabled:pager.currentPage === 1}">
-            <a (click)="setPage(pager.currentPage - 1)">Previous</a>
-        </li>
-        <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
-            <a (click)="setPage(page)">{{page}}</a>
-        </li>
-        <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-            <a (click)="setPage(pager.currentPage + 1)">Next</a>
-        </li>
-        <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-            <a (click)="setPage(pager.totalPages)">Last</a>
-        </li>
-    </ul>
+<div class="col-md-10">
+        <ul *ngIf="currentPage && totalNumberOfPages && booksViewModel.length > 0" [@flyInOut]="state" class="pagination">
+            <li class="pointer">
+                <select class="row-count form-control" (change)="onRowCountSelected($event.target.value)" name="rowCount">
+                    <option value="5">Row count({{selectedRowCount}})</option>
+                    <option value="{{r}}" *ngFor="let r of rowCount">
+                        {{r}}
+                    </option>
+                </select>
+            </li>
+            <li class="pointer" [ngClass]="{disabled:currentPage === 1}">
+                <a (click)="setPage(1)">First</a>
+            </li>
+            <li class="pointer" [ngClass]="{disabled:currentPage === 1}">
+                <a *ngIf="currentPage !== 1" (click)="setPage(currentPage - 1)">Previous</a>
+            </li>
+            <li class="pointer" *ngFor="let page of countNumberOfPages" [ngClass]="{active:currentPage === page}">
+                <a (click)="setPage(page)">{{page}}</a>
+            </li>
+            <li class="pointer" [ngClass]="{disabled:currentPage === totalNumberOfPages}">
+                <a *ngIf="currentPage !== totalNumberOfPages" (click)="setPage(currentPage + 1)">Next</a>
+            </li>
+            <li class="pointer" [ngClass]="{disabled:currentPage === totalNumberOfPages}">
+                <a (click)="setPage(totalNumberOfPages)">Last</a>
+            </li>
+        </ul>
 </div>
-<div>{{statusMessage}}</div>
+<div class="col-md-2" *ngIf="isAuthorized">
+      <label class="btn btn-default btn-file">
+          Upload <input #fileInput type="file" style="display: none;" accept=".xls,.xlsx" />
+     </label>
+    <button class="btn btn-success" (click)="addFile()" >Send File</button>
+</div>
 
+<app-modal-window [(visible)]="showDialog">
+    <h1 class="black">Please wait, data is load!</h1>
+    <spinner-component [spinnerShow]="showDialog">
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+    </spinner-component>
+</app-modal-window>
 
-<ng-template #readOnlyTemplate let-book>
-    <td>{{book.id}}</td>
-    <td>{{book.year}}</td>
-    <td>{{book.name}}</td>
-    <td>{{book.description}}</td>
-    <td>{{book.authorId}}</td>
-    <td>
-        <input type="button" value="Edit" class="btn btn-warning" (click)="editBook(book)" *ngIf="isAuthorized" />
-    </td>
-    <td>
-        <input type="button" value="Delete" class="btn btn-danger" (click)="deleteBook(book)" *ngIf="isAuthorized" />
-    </td>
-</ng-template>
+<div class="status-message danger">{{statusMessage}}</div>
 
-
-<ng-template #editTemplate>
-    <td>
-        <input type="text" [(ngModel)]="editedBook.id" readonly disabled class="form-control" />
-    </td>
-    <td>
-        <input type="text" name="bookYear" [(ngModel)]="editedBook.year" class="form-control" #bookYear="ngModel" required pattern="[0-9]{4}" />
-        <p [hidden]="bookYear.valid || bookYear === 0" class="danger">Year must be have four numbers !</p>
-    </td>
-    <td>
-        <input type="text" name="bookName" [(ngModel)]="editedBook.name" class="form-control"  #bookName="ngModel" required  />
-        <p [hidden]="bookName.valid" class="danger">Enter the Name!</p>
-    </td>
-    <td>
-        <input type="text" name="bookDescription" [(ngModel)]="editedBook.description" class="form-control" #bookDescription="ngModel" required />
-        <p [hidden]="bookDescription.valid" class="danger">Enter the Description!</p> 
-    </td>
-    <td>
-        <select class="form-control" (change)="onAuthorSelect($event.target.value)" name="authorId">
-            <option value="0"> Selected - </option>
-            <option value="{{a.id}}" *ngFor="let a of authors">
-                {{a.id}} - {{a.name + " " + a.surname}}
-            </option>
-        </select>
-        <p [hidden]="authorId > 0" class="danger">Chose author please!</p> 
-    </td>
-    <td>
-        <button [disabled]="authorId == 0 || bookYear.invalid || bookName.invalid || bookDescription.invalid" (click)="saveBook()" class="btn btn-success">Save</button>
-    </td>
-    <td>
-        <button (click)="cancel()" class="btn btn-warning">Cencel</button>
-    </td>
-</ng-template>

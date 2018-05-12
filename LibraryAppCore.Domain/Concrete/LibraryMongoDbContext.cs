@@ -15,8 +15,10 @@ namespace LibraryAppCore.Domain.Concrete
             var connection = new MongoUrlBuilder(connectionString);
             client = new MongoClient(connectionString);
             database = client.GetDatabase(connection.DatabaseName);
-
+            MDb = database;
         }
+
+        public IMongoDatabase MDb { get; set; }
 
         public IMongoCollection<AuthorMongoDb> Authors
         {

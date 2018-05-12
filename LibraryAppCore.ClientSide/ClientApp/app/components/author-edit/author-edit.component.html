@@ -1,0 +1,34 @@
+﻿<!-- edit form column -->
+    <h1>Edit Author</h1>
+
+    <form [@flyInOut]="state" class="form-horizontal edit-form">
+        <div class="form-group">
+            <label class="col-lg-3 control-label">AuthorId:</label>
+            <div class="col-lg-4">
+                <input type="text" [(ngModel)]="editedAuthor.id" class="form-control" name="authorId" readonly disabled />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-3 control-label">First name:</label>
+            <div class="col-lg-4">
+                <input type="text" name="authorName" [(ngModel)]="editedAuthor.name" class="form-control" #authorName="ngModel" required />
+                <p [hidden]="authorName.valid || authorName.untouched" class="danger">Enter the first name!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-3 control-label">Last name:</label>
+            <div class="col-lg-4">
+                <input type="text" name="authorSurname" [(ngModel)]="editedAuthor.surname" class="form-control" #authorSurname="ngModel" required />
+                <p [hidden]="authorSurname.valid || authorSurname.untouched" class="danger">Enter the last name!</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label"></label>
+            <div class="col-md-8">
+                <button [disabled]="authorName.invalid || authorSurname.invalid" (click)="saveAuthor()" class="btn btn-success">Save</button>
+                <span></span>
+                <button (click)="cancel()" class="btn btn-warning">Cencel</button>
+            </div>
+        </div>
+    </form>
+

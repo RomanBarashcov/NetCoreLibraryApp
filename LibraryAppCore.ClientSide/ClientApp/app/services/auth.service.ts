@@ -37,79 +37,136 @@ export class AuthService implements OnInit{
         this.oidcSecurityService.setupModule(openIdImplicitFlowConfiguration);
 
         if (this.oidcSecurityService.moduleSetup) {
+
             this.doCallbackLogicIfRequired();
+
         } else {
+
             this.oidcSecurityService.onModuleSetup.subscribe(() => {
+
                 this.doCallbackLogicIfRequired();
+
             });
         }
     }
 
     ngOnInit() {
+
         this.isAuthorizedSubscription = this.oidcSecurityService.getIsAuthorized().subscribe(
+
             (isAuthorized: boolean) => {
+
                 this.isAuthorized = isAuthorized;
+
             });
     }
 
     getIsAuthorized(): Observable<boolean> {
+
         return this.oidcSecurityService.getIsAuthorized();
+
     }
 
     login() {
+
         console.log('start login');
         this.oidcSecurityService.authorize();
+
     }
 
     refreshSession() {
+
         console.log('start refreshSession');
         this.oidcSecurityService.authorize();
+
     }
 
     logout() {
+
         console.log('start logoff');
         this.oidcSecurityService.logoff();
+
     }
 
     private doCallbackLogicIfRequired() {
+
         if (typeof location !== "undefined" && window.location.hash) {
+
             this.oidcSecurityService.authorizedCallback();
+
         }
     }
 
     get(url: string, options?: RequestOptions): Observable<Response> {
+
         return this.http.get(url, this.setRequestOptions(options));
+
     }
 
     put(url: string, data: any, options?: RequestOptions): Observable<Response> {
+
         const body = JSON.stringify(data);
         return this.http.put(url, body, this.setRequestOptions(options));
+
     }
 
     delete(url: string, options?: RequestOptions): Observable<Response> {
+
         return this.http.delete(url, this.setRequestOptions(options));
+
     }
 
     post(url: string, data: any, options?: RequestOptions): Observable<Response> {
+
         const body = JSON.stringify(data);
         return this.http.post(url, body, this.setRequestOptions(options)).catch(this.handleError);
+
+    }
+
+    postFormData(url: string, data: any, options?: RequestOptions): Observable<Response>{
+
+        return this.http.post(url, data, this.setRequestOptionsFormData(options)).catch(this.handleError);
+
+    }
+
+    private setRequestOptionsFormData(options?: RequestOptions | null) {
+         
+        options = new RequestOptions({ headers: this.getHeadersFormData() });
+        
+        return options;
     }
 
     private setRequestOptions(options?: RequestOptions | null) {
+
         if (options) {
+
             this.appendAuthHeader(options.headers);
+
         }
         else {
+
             options = new RequestOptions({ headers: this.getHeaders() });
+
         }
+
         return options;
     }
 
     private getHeaders() {
+
         const headers = new Headers();
         headers.append('Content-Type', 'application/json'); 
         this.appendAuthHeader(headers);
         return headers;
+
+    }
+
+    private getHeadersFormData() {
+
+        const headers = new Headers();
+        this.appendAuthHeader(headers);
+        return headers;
+
     }
 
     private appendAuthHeader(headers?: Headers | null) {
@@ -125,8 +182,10 @@ export class AuthService implements OnInit{
     }
 
     private handleError(error: any) {
+
         console.error(error);
         return Observable.throw(error);
+
     }
 
 }

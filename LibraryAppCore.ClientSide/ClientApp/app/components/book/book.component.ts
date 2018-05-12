@@ -1,17 +1,20 @@
 ﻿import { TemplateRef, ViewChild } from '@angular/core';
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Response } from '@angular/http';
+import { Response, RequestOptions, Http } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 import { AuthService } from '../../services/auth.service';
 import { Book } from '../../models/book';
+import { BookViewModel } from '../../models/bookViewModel';
+import { BookPagedResult } from '../../models/bookPagedResult';
+import { AuthorPagedResult } from '../../models/authorPagedResult';
 import { Author } from '../../models/author';
 import { Config } from '../../config';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as _ from 'underscore';
-import { PagerService } from '../../services/pagination.service';
 import { trigger, state, style, animate, transition, group } from '@angular/animations';
+import { NgProgress } from 'ngx-progressbar';
 
 @Component({
     selector: 'books-app',
@@ -20,26 +23,26 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
     providers: [AuthService, Config],
     animations: [
         trigger('flyInOut', [
-            state('in', style({transform: 'translateX(0)', opacity: 1})),
+            state('in', style({ transform: 'translateX(0)', opacity: 1 })),
             transition('void => *', [
-                style({transform: 'translateX(0px)', opacity: 0}),
+                style({ transform: 'translateX(0px)', opacity: 0 }),
                 group([
-                    animate('0.5s 0.1s ease', style({
+                    animate('1s  ease', style({
                         transform: 'translateX(0)',
 
                     })),
-                    animate('0.5s ease', style({
+                    animate('1s ease', style({
                         opacity: 1
                     }))
                 ])
             ]),
             transition('* => void', [
                 group([
-                    animate('0.5s ease', style({
+                    animate('0s ease', style({
                         transform: 'translateX(0px)',
 
                     })),
-                    animate('0.5s 0.2s ease', style({
+                    animate('0s  ease', style({
                         opacity: 0
                     }))
                 ])
@@ -47,233 +50,304 @@ import { trigger, state, style, animate, transition, group } from '@angular/anim
         ])
     ]
 })
-export class BookComponent {
-    
-    @ViewChild('readOnlyTemplate') readOnlyTemplate: TemplateRef<any>;
-    @ViewChild('editTemplate') editTemplate: TemplateRef<any>;
+export class BookComponent implements OnDestroy {
+
+    @ViewChild("fileInput") fileInput: any;
 
     books: Book[] = [];
     authors: Author[] = [];
-    editedBook: Book;
+    bookPagedResult: BookPagedResult;
     authorData: Author;
-    editedBookNull: Book;
+    booksViewModel: BookViewModel[] = [];
+
     isNewRecord: boolean;
     statusMessage: string;
     hiddenAuthorId: string;
     private sub: Subscription;
     private id: number;
-    private allItems: any[];
-    pagedBookItems: any[];
-    pager: any = {};
     error: any;
     state: string = '';
+
     private bookApiUrl: string;
     private authorApiUrl: string;
+    private documentApiUrl: string;
 
     isAuthorized: boolean;
     private isAuthorizedSubscription: Subscription;
-    
-    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private pagerService: PagerService, private config: Config) {
+
+    currentPage: number;
+    currentOrderBy: string;
+    currentAscending: boolean;
+    pageSize: number;
+    rowCount: number[] = [5, 10, 20];
+    selectedRowCount: number;
+    countNumberOfPages: number[];
+    totalNumberOfPages: number;
+    totalNumberOfRecords: number;
+
+    showDialog: boolean = false;
+
+    constructor(private authService: AuthService, private activateRoute: ActivatedRoute, private config: Config, private router: Router, private http: Http, private ngProgress: NgProgress) {
+
+        this.ngProgress.start();
         this.authorApiUrl = this.config.AuthorsApiUrl;
         this.bookApiUrl = this.config.BookApiUrl;
+        this.documentApiUrl = this.config.DocumentApiUrl;
+        this.selectedRowCount = 5;
+        this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id'], 1, "Id", true) : this.loadBooks(1, "Id", true) });
+    }
 
-        this.sub = activateRoute.params.subscribe((params) => { params['id'] != null ? this.loadBookByAuthor(params['id']) : this.loadBooks() });
+    ngOnDestroy() {
+
+        this.sub.unsubscribe();
+
     }
 
     animate() {
+
         this.state = (this.state === '' ? 'in' : '');
-    }
-    
-    loadBooks() {
 
-        this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe(
-            (isAuthorized: boolean) => {
-                this.isAuthorized = isAuthorized;
-            });
-        
-        this.authService.get(this.bookApiUrl).subscribe(result => {
-            this.books = result.json();
-            if (this.books != null) {
-                this.setPage(1);
-            } else {
-                this.setPage(0);
-                this.books = [];
-            }
-            this.getAuthors();
-            this.animate();
-        },
+    }
+
+    sort(orderBy: string, ascending: boolean) {
+
+        this.ngProgress.start();
+        ascending = ascending ? false : true;
+        this.loadBooks(this.currentPage, orderBy, ascending);
+
+    };
+
+    onRowCountSelected(rowCoutn: number) {
+
+        this.ngProgress.start();
+        this.selectedRowCount = rowCoutn;
+        this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
+    }
+
+    loadBooks(page: number, orderBy: string, ascending: boolean) {
+
+        this.currentPage = page;
+        this.currentOrderBy = orderBy;
+        this.currentAscending = ascending;
+        this.booksViewModel = [];
+
+        this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe((isAuthorized: boolean) => {
+
+            this.isAuthorized = isAuthorized;
+
+        });
+
+        this.authService.get(this.bookApiUrl + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
+
+                this.bookPagedResult = result.json();
+                this.pageSize = this.bookPagedResult.pageSize;
+                this.totalNumberOfRecords = this.bookPagedResult.totalNumberOfRecords;
+                this.totalNumberOfPages = this.bookPagedResult.totalNumberOfPages.length;
+                this.configureCountPages(this.bookPagedResult.totalNumberOfPages);
+
+                if (this.bookPagedResult.results != null) {
+
+                    for (let b of this.bookPagedResult.results) {
+
+                         this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, b.authorName));
+
+                    }
+
+                } else {
+
+                    this.books = [];
+
+                }
+
+                this.ngProgress.done();
+                this.animate();
+                this.state = "in";
+
+            },
             error => {
-                this.statusMessage = error;
-                console.log(error);
+
+                    this.statusMessage = error;
+                    console.log(error);
+
             });
     }
 
-    loadBookByAuthor(id: string) {
+    configureCountPages(numberArr: number[]) {
 
-        this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe(
-            (isAuthorized: boolean) => {
-                this.isAuthorized = isAuthorized;
-            });
+        this.countNumberOfPages = [];
 
-        this.getAuthors();
+        if (this.currentPage + 1 <= numberArr.length && numberArr.length > 4) {
 
-        this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id).subscribe(result => {
-            this.books = result.json();
+            let index: number = this.currentPage;
+            let countPages: number;
 
-            if (this.books != null) {
-                    this.pagedBookItems = this.books;
-                    console.log("loadBookByAuthor() component result: " + this.books);
-                        if (this.pager.totalPages > 0) {
-                            this.setPage(this.pager.totalPages);
-                        }
+            for (let p: number = index; p <= index + 4; p++) {
+
+                if (this.currentPage == 1) {
+                    countPages = numberArr[p - 1];
+                }
+                else if (this.currentPage == 2) {
+                    countPages = numberArr[p - 2];
                 }
                 else {
-                    this.books = [];
+                    countPages = numberArr[p - 3];
                 }
-            this.hiddenAuthorId = id;
-        },
-            error => {
-                this.statusMessage = error;
-                console.log(error);
-            });
-    }
 
-    addBook(authorId: string) {
-        if (this.isAuthorized) {
-            if (authorId != undefined) {
-                this.editedBook = new Book("", 0, "", "", authorId);
-            }
-            else {
-                this.editedBook = new Book("", 0, "", "", "");
-            }
-
-            this.books.push(this.editedBook);
-            this.pagedBookItems = this.books;
-            this.isNewRecord = true;
-            if (this.pager.totalPages > 0) {
-                this.setPage(this.pager.totalPages);
+                this.countNumberOfPages.push(countPages);
             }
         }
-        else{
-            this.statusMessage = "Please log in!";
-        }
-    }
+        else if (this.currentPage == numberArr.length) {
 
-    editBook(book: Book) {
-        if (this.isAuthorized) {
-            if (this.authors == null) {
-            }
-            this.editedBook = new Book(book.id, book.year, book.name, book.description, book.authorId);
-        }else{
-            this.statusMessage = "Please log in!";
-        }
-    }
+            this.countNumberOfPages.push(numberArr.length);
 
-    loadTemplate(book: Book) {
-        if (this.editedBook && this.editedBook.id == book.id) {
-            return this.editTemplate;
-        } else {
-            return this.readOnlyTemplate;
-        }
-    }
-
-    saveBook() {
-        if (this.isNewRecord) {
-            this.authService.post(this.bookApiUrl, this.editedBook).subscribe((resp: Response) => {
-                if (resp.status == 200) {
-                    this.statusMessage = 'Saved successfully!';
-                    this.loadBooks();
-                    
-                }
-            },
-                error => {
-                    this.statusMessage = error + ' Check all your data, and try again! ';
-                    console.log(error);
-                    this.loadBooks();
-                });
-
-            this.isNewRecord = false;
-            this.editedBook = this.editedBookNull;
-
-        } else {
-            this.authService.put(this.bookApiUrl + "/" + this.editedBook.id, this.editedBook).subscribe((resp: Response) => {
-                if (resp.status == 200) {
-                    this.statusMessage = 'Updated successfully!';
-                    this.loadBooks();
-                }
-            },
-                error => {
-                    this.statusMessage = error + ' Check all your data, and try again! ';
-                    console.log(error);
-                    this.loadBooks();
-                });
-
-            this.editedBook = this.editedBookNull;
-        }
-    }
-
-    cancel() {
-        if (this.isNewRecord) {
-            this.books.pop();
-            this.isNewRecord = false;
         }
         else {
-            this.books.pop();
+
+            this.countNumberOfPages = numberArr;
         }
-        this.activateRoute.params.subscribe((params) => {
-            params['id'] != null ? this.loadBookByAuthor(this.editedBook.authorId) : this.loadBooks()
+    }
+
+    loadBookByAuthor(id: string, page: number, orderBy: string, ascending: boolean) {
+
+        this.currentPage = page;
+        this.currentOrderBy = orderBy;
+        this.currentAscending = ascending;
+        this.booksViewModel = [];
+
+        this.isAuthorizedSubscription = this.authService.getIsAuthorized().subscribe((isAuthorized: boolean) => {
+
+            this.isAuthorized = isAuthorized;
         });
-        this.editedBook = this.editedBookNull;
+
+        this.authService.get(this.config.BookApiUrl + "/GetBookByAuthorId/" + id + "?page=" + page + "&pageSize=" + this.selectedRowCount + "&orderBy=" + orderBy + "&ascending=" + ascending).subscribe(result => {
+
+                this.bookPagedResult = result.json();
+
+                if (this.bookPagedResult.results != null) {
+
+                    for (let b of this.bookPagedResult.results) {
+
+                        this.booksViewModel.push(new BookViewModel(b.id, b.year, b.name, b.description, b.authorId, b.authorName));
+                    }
+                }
+                else {
+
+                    this.booksViewModel = [];
+                }
+
+                this.ngProgress.done();
+                this.hiddenAuthorId = id;
+                this.animate();
+                this.state = "in";
+
+            },
+                error => {
+
+                    this.statusMessage = error;
+                    console.log(error);
+
+                });
+    }
+
+    addBook() {
+
+        this.isNewRecord = true;
+
+        if (this.isAuthorized) {
+
+            if (this.hiddenAuthorId != undefined) {
+
+                this.router.navigate(['/addBook', this.hiddenAuthorId]);   
+            }
+            else {
+
+                this.router.navigate(['/addBook']);   
+            }
+        }
+        else {
+
+            this.statusMessage = "Please log in!";
+        }
+    }
+
+    editBook(bookId: number) {
+
+        if (this.hiddenAuthorId != undefined) {
+
+            this.router.navigate(['/editBook', this.hiddenAuthorId, bookId]);
+
+        } else {
+
+            this.router.navigate(['/editBook', bookId]);
+        }
     }
 
     deleteBook(book: Book) {
+
+        this.ngProgress.start();
+
         if (this.isAuthorized) {
+
             this.authService.delete(this.bookApiUrl + "/" + book.id).subscribe((resp: Response) => {
-                    if (resp.status == 200) {
-                        this.statusMessage = 'Deleted successfully!';
-                            this.loadBooks();
-                    }
-                },
+
+                if (resp.status == 200) {
+
+                    this.statusMessage = 'Deleted successfully!';
+                    this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
+                }
+            },
                 error => {
+
                     this.statusMessage = error;
                     console.log(error);
+
                 });
         }
-        else{
+        else {
+
             this.statusMessage = "Please log in!";
         }
     }
 
-    getAuthors(){
-        this.authService.get(this.authorApiUrl).subscribe(result => {
-            this.authors = result.json();
+    addFile(): void {
 
-            if (this.authors == null) {
-                this.authors = [];
-            }
-            
-        },
-            error => {
-                this.statusMessage = error;
-                console.log(error);
-            });
-    }
+        this.ngProgress.start();
+        this.showDialog = true;
+        let fi = this.fileInput.nativeElement;
 
-    onAuthorSelect(authorId: string) {
-        this.editedBook.authorId = authorId;
-    }
+        if (fi.files && fi.files[0]) {
+
+            let fileToUpload = fi.files[0];
+            let data = new FormData();
+            data.append("file", fileToUpload);
+
+            this.authService.postFormData(this.documentApiUrl + "/Upload/", data)
+                .subscribe(res => {
+
+                    if (res.status == 200 && res.text() == "Data added successfully") {
+
+                        this.loadBooks(this.currentPage, this.currentOrderBy, this.currentAscending);
+                    }
+                    else if (res.status == 200 && res.text() == "All data is dublicating!") {
+
+                        this.statusMessage = res.text();
+                    }
+                    else {
+
+                        this.statusMessage = res.text();
+                    }
+
+                    this.ngProgress.done();
+                    this.showDialog = false;
+                    console.log(res);
+                });
+        }
+    } 
 
     setPage(page: number) {
-        if (page < 1 || page > this.pager.totalPages) {
-            return;
-        }
 
-        // get pager object from service
-        this.pager = this.pagerService.getPager(this.books.length, page);
-
-        // get current page of items
-        this.pagedBookItems = this.books.slice(this.pager.startIndex, this.pager.endIndex + 1);
-
+        this.ngProgress.start();
+        this.loadBooks(page, this.currentOrderBy, this.currentAscending);
     }
 
 }

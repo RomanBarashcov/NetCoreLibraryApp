@@ -24,15 +24,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\app\category.pipe.ts" />
+    <None Remove="ClientApp\app\components\author-edit\author-edit.component.ts" />
     <None Remove="ClientApp\app\components\author\author.component.ts" />
+    <None Remove="ClientApp\app\components\book-edit\book-edit.component.ts" />
     <None Remove="ClientApp\app\components\book\book.component.ts" />
     <None Remove="ClientApp\app\components\dbconnection\dbcon.component.ts" />
+    <None Remove="ClientApp\app\components\modal-window\modal-windows.component.ts" />
     <None Remove="ClientApp\app\config.ts" />
     <None Remove="ClientApp\app\models\author.ts" />
+    <None Remove="ClientApp\app\models\authorPagedResult.ts" />
     <None Remove="ClientApp\app\models\book.ts" />
+    <None Remove="ClientApp\app\models\bookPagedResult.ts" />
+    <None Remove="ClientApp\app\models\bookViewModel.ts" />
     <None Remove="ClientApp\app\models\dbconnection.ts" />
     <None Remove="ClientApp\app\services\dbconnection.service.ts" />
-    <None Remove="ClientApp\app\services\pagination.service.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,15 +48,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\components\author-edit\author-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\author\author.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\book-edit\book-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\book\book.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dbconnection\dbcon.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\modal-window\modal-windows.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\config.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\author.ts" />
+    <TypeScriptCompile Include="ClientApp\app\models\authorPagedResult.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\book.ts" />
+    <TypeScriptCompile Include="ClientApp\app\models\bookPagedResult.ts" />
+    <TypeScriptCompile Include="ClientApp\app\models\bookViewModel.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\dbconnection.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\dbconnection.service.ts" />
-    <TypeScriptCompile Include="ClientApp\app\services\pagination.service.ts" />
   </ItemGroup>
 
   <ItemGroup>

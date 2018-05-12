@@ -1,71 +1,154 @@
 ﻿using LibraryAppCore.Domain.Abstracts;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using LibraryAppCore.Domain.Entities;
 using System.Threading.Tasks;
 using LibraryAppCore.Domain.Entities.MondoDb;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using LibraryAppCore.Domain.Pagination;
+using System.Linq;
+using LibraryAppCore.Domain.QueryResultObjects.MongoDb;
 
 namespace LibraryAppCore.Domain.Concrete.MongoDb
 {
     public class BookMongoDbConcrete : IBookRepository
     {
-        private IEnumerable<Book> result = null;
-        private IConvertDataHelper<BookMongoDb, Book> mongoDbDataConvert;
+        private IConvertDataHelper<BookMongoDbQueryResult, Book> mongoDbDataConvert;
         private IDataRequired<Book> dataReqiered;
-        LibraryMongoDbContext db;
+        private LibraryMongoDbContext db;
+        private IPagination<BookMongoDbQueryResult> pagination;
 
-        public BookMongoDbConcrete(LibraryMongoDbContext context, IConvertDataHelper<BookMongoDb, Book> mDbDataConvert, IDataRequired<Book> dReqiered)
+        public BookMongoDbConcrete(LibraryMongoDbContext context, IConvertDataHelper<BookMongoDbQueryResult, Book> mDbDataConvert, IDataRequired<Book> dReqiered, IPagination<BookMongoDbQueryResult> paging)
         {
             this.db = context;
             this.mongoDbDataConvert = mDbDataConvert;
             this.dataReqiered = dReqiered;
+            this.pagination = paging;
         }
 
-        public async Task<IEnumerable<Book>> GetAllBooks()
+        public async Task<PagedResults<Book>> GetAllBooks(int page, int pageSize, string orderBy, bool ascending)
         {
-            var builder = Builders<BookMongoDb>.Filter;
-            var filters = new List<FilterDefinition<BookMongoDb>>();
-            List<BookMongoDb> CollectionResult = await db.Books.Find(builder.Empty).ToListAsync();
+            PagedResults<Book> result = null;
 
-            if (CollectionResult != null)
+            var BookQueryResult = from b in db.Books.AsQueryable()
+                                  join a in db.Authors.AsQueryable() on b.AuthorId equals a.Id into joinedResult
+                                  from r in joinedResult.DefaultIfEmpty()
+                                  select new BookMongoDbQueryResult
+                                  {
+                                      Id = b.Id,
+                                      Year = b.Year,
+                                      Name = b.Name,
+                                      Description = b.Description,
+                                      AuthorId = b.AuthorId,
+                                      AuthorName = r.Name + " " + r.Surname
+                                  };
+
+            PagedResults<BookMongoDbQueryResult> bookPagedResult = await pagination.CreatePagedResultsAsync(BookQueryResult, page, pageSize, orderBy, ascending);
+
+            if (bookPagedResult != null)
             {
-                mongoDbDataConvert.InitData(CollectionResult);
-                result = mongoDbDataConvert.GetIEnumerubleDbResult();
+                mongoDbDataConvert.InitData(bookPagedResult);
+                result = mongoDbDataConvert.GetFormatedPagedResults();
             }
+
+            return result;
+        }
+
+        public async Task<Book> GetBookById(string bookId)
+        {
+            Book result = null;
+
+            if (!String.IsNullOrEmpty(bookId))
+            {
+                var BookQueryResult = from b in db.Books.AsQueryable().Where(b => b.Id == bookId)
+                                      join a in db.Authors.AsQueryable() on b.AuthorId equals a.Id into joinedResult
+                                      from r in joinedResult.DefaultIfEmpty()
+                                      select new Book
+                                      {
+                                          Id = b.Id,
+                                          Year = b.Year,
+                                          Name = b.Name,
+                                          Description = b.Description,
+                                          AuthorId = b.AuthorId,
+                                          AuthorName = r.Name + " " + r.Surname
+                                      };
+
+                result = new Book(BookQueryResult);
+            }
+
             return result;
         }
 
         public async Task<int> CreateBook(Book book)
         {
             int DbResult = 0;
+
             if (dataReqiered.IsDataNoEmpty(book))
             {
-                BookMongoDb newBook = new BookMongoDb { Id = book.Id, Year = book.Year, Name = book.Name, Description = book.Description, AuthorId = book.AuthorId };
-                try
+                bool isNewBook = await CheckingBookOnDuplicate(book);
+
+                if (isNewBook)
                 {
-                    await db.Books.InsertOneAsync(newBook);
-                    DbResult = 1;
-                }
-                catch
-                {
-                    return DbResult;
+                    BookMongoDb newBook = new BookMongoDb { Id = book.Id, Year = book.Year, Name = book.Name, Description = book.Description, AuthorId = book.AuthorId };
+
+                    try
+                    {
+                        await db.Books.InsertOneAsync(newBook);
+                        DbResult = 1;
+                    }
+                    catch
+                    {
+                        return DbResult;
+                    }
                 }
             }
+
             return DbResult;
         }
+
+
+        private async Task<bool> CheckingBookOnDuplicate(Book book)
+        {
+            bool isNewBook = false;
+
+            if (dataReqiered.IsDataNoEmpty(book))
+            {
+                var filter = new BsonDocument("$and", new BsonArray
+                {
+                    new BsonDocument("Name" , book.Name),
+                    new BsonDocument("Description", book.Description)
+                });
+
+                List<BookMongoDb> createdBook = await db.Books.Find(filter).ToListAsync();
+
+                if(createdBook.Count > 0)
+                {
+                    isNewBook = false;
+                }
+                else
+                {
+                    isNewBook = true;
+                }
+                
+            }
+
+            return isNewBook;
+        }
+
 
         public async Task<int> UpdateBook(string bookId, Book book)
         {
             int DbResult = 0;
+
             if (!String.IsNullOrEmpty(bookId) && dataReqiered.IsDataNoEmpty(book))
             {
                 List<BookMongoDb> oldBookData = await db.Books.Find(new BsonDocument("_id", new ObjectId(bookId))).ToListAsync();
+
                 if (oldBookData != null)
                 {
                     BookMongoDb newBookData = new BookMongoDb { Id = book.Id, Year = book.Year, Name = book.Name, Description = book.Description, AuthorId = book.AuthorId };
+
                     try
                     {
                         await db.Books.ReplaceOneAsync(new BsonDocument("_id", new ObjectId(bookId)), newBookData);
@@ -77,35 +160,56 @@ namespace LibraryAppCore.Domain.Concrete.MongoDb
                     }
                 }
             }
+
             return DbResult;
         }
 
         public async Task<int> DeleteBook(string bookId)
         {
             int DbResult = 0;
+
             if (!String.IsNullOrEmpty(bookId))
             {
                 List<BookMongoDb> deletingBook = await db.Books.Find(new BsonDocument("_id", new ObjectId(bookId))).ToListAsync();
+
                 if (deletingBook != null)
                 {
                     await db.Books.DeleteOneAsync(new BsonDocument("_id", new ObjectId(bookId)));
                     DbResult = 1;
                 }
             }
+
             return DbResult;
         }
 
-        public async Task<IEnumerable<Book>> GetBookByAuthorId(string authorId)
+        public async Task<PagedResults<Book>> GetBookByAuthorId(string authorId, int page, int pageSize, string orderBy, bool ascending)
         {
+            PagedResults<Book> result = null;
+
             if (!String.IsNullOrEmpty(authorId))
             {
-                List<BookMongoDb> BooksByAuthor = await db.Books.Find(new BsonDocument("AuthorId", authorId)).ToListAsync();
-                if (BooksByAuthor != null)
+                var BookQueryResult = from b in db.Books.AsQueryable().Where(b => b.AuthorId == authorId)
+                                      join a in db.Authors.AsQueryable() on b.AuthorId equals a.Id into joinedResult
+                                      from r in joinedResult.DefaultIfEmpty()
+                                      select new BookMongoDbQueryResult
+                                      {
+                                          Id = b.Id,
+                                          Year = b.Year,
+                                          Name = b.Name,
+                                          Description = b.Description,
+                                          AuthorId = b.AuthorId,
+                                          AuthorName = r.Name + " " + r.Surname
+                                      };
+
+                PagedResults<BookMongoDbQueryResult> booksPagedResult = await pagination.CreatePagedResultsAsync(BookQueryResult, page, pageSize, orderBy, ascending);
+
+                if (booksPagedResult != null)
                 {
-                    mongoDbDataConvert.InitData(BooksByAuthor);
-                    result = mongoDbDataConvert.GetIEnumerubleDbResult();
+                    mongoDbDataConvert.InitData(booksPagedResult);
+                    result = mongoDbDataConvert.GetFormatedPagedResults();
                 }
             }
+
             return result;
         }
     }

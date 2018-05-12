@@ -1,8 +1,5 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LibraryAppCore.Domain.Entities.MondoDb
 {
@@ -13,6 +10,7 @@ namespace LibraryAppCore.Domain.Entities.MondoDb
         public string Name { get; set; }
         public string Description { get; set; }
         public int Year { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
         public string AuthorId { get; set; }
         public AuthorMongoDb Author { get; set; }
     }

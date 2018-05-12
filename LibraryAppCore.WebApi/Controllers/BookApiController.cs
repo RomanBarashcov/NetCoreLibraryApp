@@ -6,8 +6,7 @@ using LibraryAppCore.Domain.Entities;
 using LibraryAppCore.Domain.Abstracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using LibraryAppCore.Domain.Pagination;
 
 namespace LibraryAppCore.WebApi.Controllers
 {
@@ -24,10 +23,18 @@ namespace LibraryAppCore.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<Book>> GetBooks()
+        public async Task<PagedResults<Book>> GetBooks(int page, int pageSize, string orderBy, bool ascending)
         {
-            IEnumerable<Book> Books = await repository.GetAllBooks();
+            PagedResults<Book> Books = await repository.GetAllBooks(page, pageSize, orderBy, ascending);
             return Books;
+        }
+
+        [Authorize]
+        [HttpGet("/BookApi/GetBookById/{id}")]
+        public async Task<Book> GetBookById(string id)
+        {
+            Book Book = await repository.GetBookById(id);
+            return Book;
         }
 
         [Authorize]
@@ -36,14 +43,17 @@ namespace LibraryAppCore.WebApi.Controllers
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
+
             if (dataReqiered.IsDataNoEmpty(book))
             {
                 DbResult = await repository.CreateBook(book);
+
                 if (DbResult != 0)
                 {
                     ActionRes = Ok();
                 }
             }
+
             return ActionRes;
         }
 
@@ -53,14 +63,17 @@ namespace LibraryAppCore.WebApi.Controllers
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
+
             if (!String.IsNullOrEmpty(id) && dataReqiered.IsDataNoEmpty(book))
             {
                 DbResult = await repository.UpdateBook(id, book);
+
                 if (DbResult != 0)
                 {
                     ActionRes = Ok();
                 }
             }
+
             return ActionRes;
         }
 
@@ -70,26 +83,31 @@ namespace LibraryAppCore.WebApi.Controllers
         {
             int DbResult = 0;
             IActionResult ActionRes = BadRequest();
+
             if (!String.IsNullOrEmpty(id))
             {
                 DbResult = await repository.DeleteBook(id);
+
                 if (DbResult != 0)
                 {
                     ActionRes = Ok();
                 }
             }
+
             return ActionRes;
         }
 
         [AllowAnonymous]
         [HttpGet("/BookApi/GetBookByAuthorId/{id}")]
-        public async Task<IEnumerable<Book>> GetBookByAuthorId(string id)
+        public async Task<PagedResults<Book>> GetBookByAuthorId(string id, int page, int pageSize, string orderBy, bool ascending)
         {
-            IEnumerable<Book> Books = null;
+            PagedResults<Book> Books = null;
+
             if (!String.IsNullOrEmpty(id))
             {
-                Books = await repository.GetBookByAuthorId(id);
+                Books = await repository.GetBookByAuthorId(id, page, pageSize, orderBy, ascending);
             }
+
             return Books;
         }
     }

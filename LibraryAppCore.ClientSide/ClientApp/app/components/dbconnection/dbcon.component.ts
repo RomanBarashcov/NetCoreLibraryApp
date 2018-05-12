@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { DbConnectionService } from '../../services/dbconnection.service';
 import { trigger, state, style, animate, transition, group } from '@angular/animations';
+import { NgProgress } from 'ngx-progressbar';
 
 @Component({
     selector: 'chose-connection-string',
@@ -50,24 +51,44 @@ export class DbConnectionComponent implements OnDestroy {
     chosedDb: string;
     state: string = '';
     
-    constructor(private serv: DbConnectionService, private activatedRoute: ActivatedRoute, private router: Router) {
+    constructor(private serv: DbConnectionService, private activatedRoute: ActivatedRoute, private router: Router, private ngProgress: NgProgress) {
+
+        this.loadProgressBar();
         this.sub = activatedRoute.params.subscribe();
+
     }
     
     animateMe() {
+
         this.state = (this.state === '' ? 'in' : '');
+
+    }
+
+    loadProgressBar() {
+        this.ngProgress.start();
+        this.ngProgress.done();
     }
     
     choseDb(conString: string) {
+
+        this.ngProgress.start();
         this.conStringDb = new DbConnection(conString);
         console.log("Chosed Db Connection: " + this.conStringDb);
+
         this.serv.sendConnectionString(this.conStringDb).subscribe(error => { this.error = error; console.log(error); });
+
         if (this.error != null) {
+
             this.chosedDb = " Chosed " + conString + " Db successful! You can chose any tab!";
+
         }
+
+        this.ngProgress.done();
     }
 
     ngOnDestroy() {
+
         this.sub.unsubscribe();
+
     }
 }

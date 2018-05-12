@@ -1,5 +1,14 @@
-﻿body {
-}
-.padding-top-table{
+﻿.padding-top-table{
     padding-top:24px;
+}
+.pointer {
+    cursor: pointer;
+}
+.danger {
+    color: red;
+}
+.row-count {
+    display: unset;
+    width: 120px;
+    padding: 6px 1px;
 }
